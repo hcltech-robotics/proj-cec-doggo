@@ -1,0 +1,5 @@
+<visual>
+  <geometry>
+    <mesh filename="./Go2.glb"/>
+  </geometry>
+</visual>
