@@ -45,8 +45,6 @@ let gui: GUI
 
 const animation = { enabled: true, play: true }
 
-init()
-animate()
 
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -288,4 +286,8 @@ function animate() {
   cameraControls.update()
 
   renderer.render(scene, camera)
+}
+
+export {
+  animate, init
 }
