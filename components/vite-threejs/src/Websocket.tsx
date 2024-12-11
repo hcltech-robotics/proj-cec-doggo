@@ -16,7 +16,7 @@ async function main() {
                 deserializers.set(subId, (data: any) => JSON.parse(textDecoder.decode(data)));
             } else if (channel.encoding === "cdr") {
                 // message definition comes from `parse()` in @foxglove/rosmsg
-                const messageDefinition = parse(channel.schema)
+                const messageDefinition = parse(channel.schema, {ros2: true})
                 const cdrReader = new MessageReader(messageDefinition);
                 const subId = client.subscribe(channel.id);
                 //const textDecoder = new TextDecoder();
