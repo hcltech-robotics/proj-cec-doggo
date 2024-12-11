@@ -42,9 +42,69 @@ let pointLightHelper: PointLightHelper
 let clock: Clock
 let stats: Stats
 let gui: GUI
+let robot: URDFRobot
 
 const animation = { enabled: true, play: true }
 
+import { LoadingManager } from "three";
+import URDFLoader, { URDFRobot } from "urdf-loader";
+
+function loadRobot() {
+  const manager = new LoadingManager();
+  const loader = new URDFLoader(manager);
+  // loader.packages = {
+  //   packageName: "go2_robot_sdk/dae", // The equivalent of a (list of) ROS package(s):// directory
+  // };
+  loader.load(
+    "./go2.urdf", // The path to the URDF within the package OR absolute
+    (r) => {
+      robot = r
+      // The robot is loaded!
+      scene.add(robot);
+      robot.rotateX(270 * Math.PI / 180)
+      robot.translateZ(0.45)
+    }
+  );
+}
+
+function animateJoints() {
+  const joints = ["Head_upper_joint",
+    "Head_lower_joint",
+    "FL_hip_joint",
+    "FL_thigh_joint",
+    "FL_calf_joint",
+    "FL_calflower_joint",
+    "FL_calflower1_joint",
+    "FL_foot_joint",
+    "FR_hip_joint",
+    "FR_thigh_joint",
+    "FR_calf_joint",
+    "FR_calflower_joint",
+    "FR_calflower1_joint",
+    "FR_foot_joint",
+    "RL_hip_joint",
+    "RL_thigh_joint",
+    "RL_calf_joint",
+    "RL_calflower_joint",
+    "RL_calflower1_joint",
+    "RL_foot_joint",
+    "RR_hip_joint",
+    "RR_thigh_joint",
+    "RR_calf_joint",
+    "RR_calflower_joint",
+    "RR_calflower1_joint",
+    "RR_foot_joint",
+    "imu_joint",
+    "radar_joint",
+  ]
+  // for (const x of joints) {
+  //   const j = robot.joints[x]
+  //   // debugger
+  //   if (j.jointValue && j.jointValue[0]) {
+  //     robot.setJointValue(x, j.jointValue[0].valueOf() + 0.1);
+  //   }
+  // }
+}
 
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -55,6 +115,7 @@ function init() {
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = PCFSoftShadowMap
     scene = new Scene()
+    loadRobot()
   }
 
   // ===== 👨🏻‍💼 LOADING MANAGER =====
@@ -117,7 +178,7 @@ function init() {
     plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
 
-    scene.add(cube)
+    // scene.add(cube)
     scene.add(plane)
   }
 
@@ -272,6 +333,7 @@ function animate() {
 
   stats.update()
 
+  // animateJoints()
   if (animation.enabled && animation.play) {
     animations.rotate(cube, clock, Math.PI / 3)
     animations.bounce(cube, clock, 1, 0.5, 0.5)
