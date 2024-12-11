@@ -9,8 +9,12 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@foxglove/cdr": "^3.3.0",
+    "@foxglove/rosmsg": "^5.0.4",
+    "@foxglove/rosmsg2-serialization": "^3.0.1",
     "@foxglove/ws-protocol": "^0.7.4",
     "@types/three": "^0.170.0",
+    "@types/ws": "^8.5.13",
     "typescript": "^5.7.2",
     "urdf-loader": "^0.12.3",
     "vite": "^6.0.2"
@@ -23,6 +27,7 @@
     "lil-gui": "^0.19.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.171.0"
+    "three": "^0.171.0",
+    "ws": "^8.18.0"
   }
 }
