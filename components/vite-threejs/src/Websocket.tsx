@@ -3,7 +3,7 @@ import { FoxgloveClient } from "@foxglove/ws-protocol";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { parse, stringify } from "@foxglove/rosmsg";
 
-async function main() {
+async function main(transform_cb) {
     const client = new FoxgloveClient({
         ws: new WebSocket(`ws://localhost:8765`, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
     });
@@ -34,6 +34,7 @@ async function main() {
             timestamp,
             data: deserializers.get(subscriptionId)(data),
         });
+        transform_cb({subscriptionId, timestamp, data})
     });
 }
 

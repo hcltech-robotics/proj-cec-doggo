@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { init, animate } from "./scene";
+import { init, animate ,transform_cb} from "./scene";
 import { main } from "./Websocket";
 
 const App = () => {
@@ -9,7 +9,7 @@ const App = () => {
 
   }, [])
   useEffect(() => {
-    main()
+    main(transform_cb)
   }, [])
   return null;
 };

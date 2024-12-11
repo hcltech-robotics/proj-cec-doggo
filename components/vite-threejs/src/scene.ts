@@ -106,6 +106,10 @@ function animateJoints() {
   // }
 }
 
+function transform_cb(p) {
+  console.log(p)
+}
+
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
   {
@@ -351,5 +355,5 @@ function animate() {
 }
 
 export {
-  animate, init
+  animate, init, transform_cb
 }
