@@ -15,9 +15,12 @@ async function main() {
                 const textDecoder = new TextDecoder();
                 deserializers.set(subId, (data: any) => JSON.parse(textDecoder.decode(data)));
             } else if (channel.encoding === "cdr") {
-                debugger
                 // message definition comes from `parse()` in @foxglove/rosmsg
-                //const reader = new MessageReader(messageDefinition);
+                const messageDefinition = parse(channel.schema)
+                const cdrReader = new MessageReader(messageDefinition);
+                const subId = client.subscribe(channel.id);
+                //const textDecoder = new TextDecoder();
+                deserializers.set(subId, (data: any) => cdrReader.readMessage(data));
 
             } else {
                 console.warn(`Unsupported encoding ${channel.encoding}`);
