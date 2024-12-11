@@ -78,8 +78,9 @@ ros2 bag play output.bag
 
 mcap info <filename>.mcap
 ```
-
+## Install and validate tools
 ```bash
+sudo apt install npm
 sudo npm install -g wscat
 wscat --version
 
@@ -90,9 +91,27 @@ foxglove-bridge --help
 pip install mcap
 mcap --version
 pip install mcap-ros2-support
-mcap info --help
+pip install foxglove-bridge
 
 wscat -c ws://echo.websocket.org
 http://localhost:8765
 mcap info <your_file>.mcap
+
+sudo apt install ros-rolling-rosbag2-storage-mcap
+pip install mcap-ros2-support
+sudo apt install ros-humble-rosbag2-storage-mcap
+
+https://docs.foxglove.dev/docs/connecting-to-data/ros-foxglove-bridge/
+sudo apt install ros-$ROS_DISTRO-foxglove-bridge
+sudo snap install foxglove-studio
+foxglove-studio
+```
+
+## Playground
+
+```bash
+# ros2 bag play -s mcap ./rosbag2_2024_12_09-18_48_17_0.mcap 
+ros2 bag play -s mcap .
+
+ros2 launch foxglove_bridge foxglove_bridge_launch.xml send_buffer_limit:=100000000
 ```
