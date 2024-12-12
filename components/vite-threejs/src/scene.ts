@@ -23,7 +23,6 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
-import './style.css'
 
 const CANVAS_ID = 'scene'
 
