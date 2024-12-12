@@ -46,7 +46,8 @@ async function main(transform_cb) {
         // });
         // debugger
         const parsedData = deserializers.get(subscriptionId)(data)
-        if (parsedData.channelTopic === "/joint_states") {
+        //debugger
+        if (parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/tf" || parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/odom") {
             transform_cb({ subscriptionId, timestamp, data: parsedData });
         }
     });

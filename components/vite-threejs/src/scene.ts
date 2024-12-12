@@ -9,12 +9,15 @@ import {
   Mesh,
   MeshLambertMaterial,
   MeshStandardMaterial,
+  Object3D,
   PCFSoftShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   PointLight,
   PointLightHelper,
+  Quaternion,
   Scene,
+  Vector3,
   WebGLRenderer,
 } from 'three'
 import { DragControls } from 'three/examples/jsm/controls/DragControls'
@@ -43,6 +46,7 @@ let stats: Stats
 let gui: GUI
 let robot: URDFRobot
 
+Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
 
 import { LoadingManager } from "three";
@@ -60,7 +64,8 @@ function loadRobot() {
       robot = r
       // The robot is loaded!
       scene.add(robot);
-      robot.rotateX(270 * Math.PI / 180)
+      // robot.rotateX(270 * Math.PI / 180)
+      //robot.rotation.set(-Math.PI / 2, 0, 0)
       robot.translateZ(0.45)
     }
   );
@@ -106,13 +111,44 @@ function animateJoints() {
 }
 
 function transform_cb(p) {
-  console.trace(p)
+  //console.trace(p)
   const { data, timeStamp } = p
   const msgData = data.messageData
-  for (let i = 0; i < msgData.name.length; i++) {
-    const n = msgData.name[i]
-    const v = msgData.position[i]
-    robot.setJointValue(n, v)
+  //debugger
+  if (data.channelTopic === "/joint_states") {
+    for (let i = 0; i < msgData.name.length; i++) {
+      const n = msgData.name[i]
+      const v = msgData.position[i]
+      robot.setJointValue(n, v)
+    }
+  } else if (data.channelTopic === "/tf") {
+    for (let i = 0; i < msgData.transforms.length; i++) {
+      const t = msgData.transforms[i]
+      const frame = t.child_frame_id
+      if (frame === "base_link") {
+        const translation = t.transform.translation
+        const rotation = t.transform.rotation
+        // WORKS but not needed
+        // const part = robot.getObjectByName(frame)
+        // if (part) {
+        //   part.position.(translation.x, translation.y, translation.z)
+        //   part.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
+        // }  
+        //robot.translateX(translation.x/10)
+        //robot.translateY(translation.y/10)
+        //robot.translateZ(translation.z/10)
+        robot.quaternion.copy(new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w))
+
+      }
+    }
+  } else if (data.channelTopic === "/odom") {
+    // console.trace(msgData)
+
+    // const r = msgData.pose.pose.oritentation
+    // const p = msgData.pose.pose.position
+
+    // robot.setRotationFromQuaternion()
+    // robot.position.set()
   }
 }
 
@@ -185,7 +221,7 @@ function init() {
       opacity: 0.4,
     })
     const plane = new Mesh(planeGeometry, planeMaterial)
-    plane.rotateX(Math.PI / 2)
+    //plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
 
     // scene.add(cube)
@@ -196,6 +232,7 @@ function init() {
   {
     camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
     camera.position.set(2, 2, 5)
+    //camera.up.set(0,0,1)
   }
 
   // ===== 🕹️ CONTROLS =====
@@ -257,6 +294,8 @@ function init() {
 
     const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
     gridHelper.position.y = -0.01
+    //gridHelper.rotation.set(0,1,0)
+    gridHelper.rotateX(Math.PI / 2); 
     scene.add(gridHelper)
   }
 
