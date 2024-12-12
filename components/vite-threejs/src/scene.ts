@@ -106,7 +106,14 @@ function animateJoints() {
 }
 
 function transform_cb(p) {
-  console.log(p)
+  console.trace(p)
+  const { data, timeStamp } = p
+  const msgData = data.messageData
+  for (let i = 0; i < msgData.name.length; i++) {
+    const n = msgData.name[i]
+    const v = msgData.position[i]
+    robot.setJointValue(n, v)
+  }
 }
 
 function init() {
