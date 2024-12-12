@@ -134,9 +134,10 @@ function transform_cb(p) {
         //   part.position.(translation.x, translation.y, translation.z)
         //   part.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
         // }  
-        //robot.translateX(translation.x/10)
-        //robot.translateY(translation.y/10)
-        //robot.translateZ(translation.z/10)
+        // const factor = 100
+        // robot.translateX(translation.x/factor)
+        // robot.translateY(translation.y/factor)
+        // robot.translateZ(translation.z/factor)
         robot.quaternion.copy(new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w))
 
       }
@@ -144,8 +145,17 @@ function transform_cb(p) {
   } else if (data.channelTopic === "/odom") {
     // console.trace(msgData)
 
-    // const r = msgData.pose.pose.oritentation
-    // const p = msgData.pose.pose.position
+
+    
+    const r = msgData?.pose?.pose?.oritentation ?? null
+    const p = msgData?.pose?.pose?.position ?? null
+
+    // if (r) {
+    //   robot.quaternion.copy(new Quaternion(r.x, r.y, r.z, r.w))
+    // }
+    if (p) {
+      robot.position.copy(new Vector3(p.x, p.y, p.z))
+    }
 
     // robot.setRotationFromQuaternion()
     // robot.position.set()
@@ -232,6 +242,7 @@ function init() {
   {
     camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
     camera.position.set(2, 2, 5)
+    window.camera = camera
     //camera.up.set(0,0,1)
   }
 
