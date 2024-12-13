@@ -35,7 +35,7 @@ const App = () => {
       tools.unSubscribeUI();
     };
   }, [setState]);
-  return <CustomGUI data={data} />;
+  return <CustomGUI data={data} show={true} />;
 };
 
 export default App;
