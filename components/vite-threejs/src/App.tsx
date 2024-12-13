@@ -15,7 +15,7 @@ class ExternalTools {
     console.log("Subscribed...")
     this.guiCallback = cb
     registerGUIConnector(cb)
-    this.guiCallback(Math.floor(Math.random() * 100))
+    // this.guiCallback(Math.floor(Math.random() * 100))
     return null;
   }
   unSubscribeUI() {

@@ -147,7 +147,7 @@ function transform_cb(p) {
     // console.trace(msgData)
 
 
-    
+
     const r = msgData?.pose?.pose?.oritentation ?? null
     const p = msgData?.pose?.pose?.position ?? null
 
@@ -164,8 +164,19 @@ function transform_cb(p) {
 }
 
 function registerGUIConnector(cb) {
+  // INTERACT FROM THREEJS TO REACT STATE
+  // useage: call GUICB to show data in the react gui controller part... (it's a state setter function or reducer)
   guiCB = cb
 }
+
+document.addEventListener('hackathonGuiEvent', (event) => {
+  // INTERACT FROM REACT EVENT HANDLER TO THREEJS
+  // usage: dispatch a custom event on the document
+  console.log(event.detail)
+  console.log(event?.detail?.message ?? "NO MESSAGE FOUND");
+})
+
+
 
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -311,7 +322,7 @@ function init() {
     const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
     gridHelper.position.y = -0.01
     //gridHelper.rotation.set(0,1,0)
-    gridHelper.rotateX(Math.PI / 2); 
+    gridHelper.rotateX(Math.PI / 2);
     scene.add(gridHelper)
   }
 
@@ -399,7 +410,7 @@ function animate() {
   stats.update()
   if (guiCB) {
     //console.log(guiCB)
-   // guiCB(Math.random())
+    // guiCB(Math.random())
   }
 
   // animateJoints()
