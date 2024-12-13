@@ -4,9 +4,11 @@ import {
   AxesHelper,
   BoxGeometry,
   Clock,
+  Color,
   GridHelper,
   LoadingManager,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   MeshStandardMaterial,
   Object3D,
@@ -45,6 +47,7 @@ let clock: Clock
 let stats: Stats
 let gui: GUI
 let robot: URDFRobot
+let voxelManager: VoxelManager
 let guiCB
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
@@ -250,6 +253,16 @@ function init() {
     //plane.rotateX(Math.PI / 2)
     plane.receiveShadow = true
 
+    voxelManager = new VoxelManager(scene);
+    // Add random voxels every 100ms
+    setInterval(() => {
+      const x = Math.random() * 6 - 3;
+      const y = Math.random() * 6 - 3;
+      const z = Math.random() * 10;
+      const strength = Math.random() * 100;
+      voxelManager.addVoxel(x, y, z, strength);
+    }, 100);
+
     // scene.add(cube)
     scene.add(plane)
   }
@@ -406,6 +419,7 @@ function init() {
 
 function animate() {
   requestAnimationFrame(animate)
+  voxelManager.fadeVoxels();
 
   stats.update()
   if (guiCB) {
@@ -428,6 +442,62 @@ function animate() {
   cameraControls.update()
 
   renderer.render(scene, camera)
+}
+
+
+class VoxelManager {
+  constructor(scene, fadeRate = 0.01) {
+    this.scene = scene;
+    this.voxels = new Map();
+    this.fadeRate = fadeRate;
+    this.materials = {};
+  }
+
+  addVoxel(x, y, z, strength) {
+    const key = `${x},${y},${z}`;
+
+    if (this.voxels.has(key)) {
+      const voxelData = this.voxels.get(key);
+      voxelData.strength = Math.max(voxelData.strength, strength);
+      voxelData.alpha = 1.0;
+    } else {
+      const color = this._getColorByStrength(strength);
+      const material = this._getMaterial(color);
+      const geometry = new BoxGeometry(0.1, 0.1, 0.1);
+      const voxel = new Mesh(geometry, material);
+      voxel.position.set(x, y, z);
+
+      this.scene.add(voxel);
+      this.voxels.set(key, { voxel, strength, alpha: 1.0 });
+    }
+  }
+
+  fadeVoxels() {
+    for (const [key, voxelData] of this.voxels) {
+      voxelData.alpha -= this.fadeRate;
+      if (voxelData.alpha <= 0) {
+        this.scene.remove(voxelData.voxel);
+        this.voxels.delete(key);
+      } else {
+        voxelData.voxel.material.transparent = true;
+        voxelData.voxel.material.opacity = voxelData.alpha;
+      }
+    }
+  }
+
+  _getMaterial(color) {
+    const colorKey = color.getHexString();
+    if (!this.materials[colorKey]) {
+      this.materials[colorKey] = new MeshBasicMaterial({ color });
+    }
+    return this.materials[colorKey];
+  }
+
+  _getColorByStrength(strength) {
+    const color = new Color();
+    color.setHSL(strength / 100, 1.0, 0.5);
+    return color;
+  }
 }
 
 export {
