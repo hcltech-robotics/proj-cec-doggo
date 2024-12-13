@@ -1,0 +1,28 @@
+.custom-gui {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px;
+}
+
+.custom-gui button {
+    margin:5px;
+    color: black;
+    pointer-events: all;
+}
+
+.custom-gui .control {
+    background: #eeeeee4f;
+    border-radius: 20px;
+    border: 1px solid black;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -45,6 +45,7 @@ let clock: Clock
 let stats: Stats
 let gui: GUI
 let robot: URDFRobot
+let guiCB
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
@@ -160,6 +161,10 @@ function transform_cb(p) {
     // robot.setRotationFromQuaternion()
     // robot.position.set()
   }
+}
+
+function registerGUIConnector(cb) {
+  guiCB = cb
 }
 
 function init() {
@@ -392,6 +397,10 @@ function animate() {
   requestAnimationFrame(animate)
 
   stats.update()
+  if (guiCB) {
+    //console.log(guiCB)
+   // guiCB(Math.random())
+  }
 
   // animateJoints()
   if (animation.enabled && animation.play) {
@@ -411,5 +420,5 @@ function animate() {
 }
 
 export {
-  animate, init, transform_cb
+  animate, init, transform_cb, registerGUIConnector
 }
