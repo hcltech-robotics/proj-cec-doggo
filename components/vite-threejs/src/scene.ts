@@ -8,7 +8,6 @@ import {
   GridHelper,
   LoadingManager,
   Mesh,
-  MeshBasicMaterial,
   MeshLambertMaterial,
   MeshStandardMaterial,
   Object3D,
@@ -55,6 +54,22 @@ const animation = { enabled: true, play: true }
 
 import { LoadingManager } from "three";
 import URDFLoader, { URDFRobot } from "urdf-loader";
+
+let randomVoxelInterval = null
+let randomVoxelConfig = { delay: 100 }
+
+function randomVoxels(delay = 100) {
+  if (randomVoxelInterval) {
+    clearInterval(randomVoxelInterval)
+  }
+  randomVoxelInterval = setInterval(() => {
+    const x = Math.random() * 6 - 3;
+    const y = Math.random() * 6 - 3;
+    const z = Math.random() * 10;
+    const strength = Math.random() * 100;
+    voxelManager.addVoxel(x, y, z, strength);
+  }, delay);
+}
 
 function loadRobot() {
   const manager = new LoadingManager();
@@ -255,13 +270,7 @@ function init() {
 
     voxelManager = new VoxelManager(scene);
     // Add random voxels every 100ms
-    setInterval(() => {
-      const x = Math.random() * 6 - 3;
-      const y = Math.random() * 6 - 3;
-      const z = Math.random() * 10;
-      const strength = Math.random() * 100;
-      voxelManager.addVoxel(x, y, z, strength);
-    }, 100);
+    randomVoxels()
 
     // scene.add(cube)
     scene.add(plane)
@@ -350,37 +359,39 @@ function init() {
   {
     gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
 
-    const cubeOneFolder = gui.addFolder('Cube one')
+    const cubeFolder = gui.addFolder('Cubes')
 
-    cubeOneFolder.add(cube.position, 'x').min(-5).max(5).step(0.5).name('pos x')
-    cubeOneFolder
-      .add(cube.position, 'y')
-      .min(-5)
-      .max(5)
-      .step(1)
-      .name('pos y')
-      .onChange(() => (animation.play = false))
-      .onFinishChange(() => (animation.play = true))
-    cubeOneFolder.add(cube.position, 'z').min(-5).max(5).step(0.5).name('pos z')
+    // cubeFolder.add(cube.position, 'x').min(-5).max(5).step(0.5).name('pos x')
+    // cubeFolder
+    //   .add(cube.position, 'y')
+    //   .min(-5)
+    //   .max(5)
+    //   .step(1)
+    //   .name('pos y')
+    //   .onChange(() => (animation.play = false))
+    //   .onFinishChange(() => (animation.play = true))
+    // cubeFolder.add(cube.position, 'z').min(-5).max(5).step(0.5).name('pos z')
 
-    cubeOneFolder.add(cube.material, 'wireframe')
-    cubeOneFolder.addColor(cube.material, 'color')
-    cubeOneFolder.add(cube.material, 'metalness', 0, 1, 0.1)
-    cubeOneFolder.add(cube.material, 'roughness', 0, 1, 0.1)
+    cubeFolder.add(cube.material, 'wireframe')
+    cubeFolder.add(voxelManager, 'fadeRate', 0.0001, 0.1, 0.0001)
+    cubeFolder.add(randomVoxelConfig, 'delay', 100, 10000, 10).onFinishChange(() => (randomVoxels(randomVoxelConfig.delay)))
+    // cubeFolder.addColor(cube.material, 'color')
+    // cubeFolder.add(cube.material, 'metalness', 0, 1, 0.1)
+    // cubeFolder.add(cube.material, 'roughness', 0, 1, 0.1)
 
-    cubeOneFolder
-      .add(cube.rotation, 'x', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
-      .name('rotate x')
-    cubeOneFolder
-      .add(cube.rotation, 'y', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
-      .name('rotate y')
-      .onChange(() => (animation.play = false))
-      .onFinishChange(() => (animation.play = true))
-    cubeOneFolder
-      .add(cube.rotation, 'z', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
-      .name('rotate z')
+    // cubeFolder
+    //   .add(cube.rotation, 'x', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
+    //   .name('rotate x')
+    // cubeFolder
+    //   .add(cube.rotation, 'y', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
+    //   .name('rotate y')
+    //   .onChange(() => (animation.play = false))
+    //   .onFinishChange(() => (animation.play = true))
+    // cubeFolder
+    //   .add(cube.rotation, 'z', -Math.PI * 2, Math.PI * 2, Math.PI / 4)
+    //   .name('rotate z')
 
-    cubeOneFolder.add(animation, 'enabled').name('animated')
+    // cubeFolder.add(animation, 'enabled').name('animated')
 
     const controlsFolder = gui.addFolder('Controls')
     controlsFolder.add(dragControls, 'enabled').name('drag controls')
@@ -493,15 +504,28 @@ class VoxelManager {
         color,
         metalness: 0.5,
         roughness: 0.7,
+        wireframe: cube.material.wireframe,
       })
     }
     return this.materials[colorKey];
   }
 
+  // _getColorByStrength(strength) {
+  //   const color = new Color();
+  //   color.setHSL((strength /100), 1.0, 0.5);
+  //   return color;
+  // }
   _getColorByStrength(strength) {
-    const color = new Color();
-    color.setHSL(strength / 100, 1.0, 0.5);
-    return color;
+    const colors = [
+      new Color(0xff0000), // Red
+      new Color(0xffa500), // Orange
+      new Color(0xffff00), // Yellow
+      new Color(0x008000), // Green
+      new Color(0x0000ff)  // Blue
+    ];
+
+    const index = Math.min(Math.floor(strength / 20), colors.length - 1);
+    return colors[index];
   }
 }
 
