@@ -465,6 +465,7 @@ class VoxelManager {
       const material = this._getMaterial(color);
       const geometry = new BoxGeometry(0.1, 0.1, 0.1);
       const voxel = new Mesh(geometry, material);
+
       voxel.position.set(x, y, z);
 
       this.scene.add(voxel);
@@ -488,7 +489,11 @@ class VoxelManager {
   _getMaterial(color) {
     const colorKey = color.getHexString();
     if (!this.materials[colorKey]) {
-      this.materials[colorKey] = new MeshBasicMaterial({ color });
+      this.materials[colorKey] = new MeshStandardMaterial({
+        color,
+        metalness: 0.5,
+        roughness: 0.7,
+      })
     }
     return this.materials[colorKey];
   }
