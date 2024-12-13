@@ -1,8 +1,8 @@
-import "./gui.css"
+import "./overlaygui.css"
 
-function CustomGUI(props) {
+function OverlayGUI(props) {
     const value = props?.data ?? -1
-    if (props?.show) {
+    if (!props?.show) {
         return null
     }
 
@@ -23,4 +23,4 @@ function CustomGUI(props) {
     </div >
 }
 
-export { CustomGUI }
+export { OverlayGUI }

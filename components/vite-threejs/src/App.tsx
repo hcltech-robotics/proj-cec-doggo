@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { init, animate, transform_cb, registerGUIConnector } from "./scene";
 import { main } from "./Websocket";
-import { CustomGUI } from "./gui";
+import { OverlayGUI } from "./overlaygui/overlaygui";
 
 class ExternalTools {
   guiCallback = (n: number) => {};
@@ -35,7 +35,7 @@ const App = () => {
       tools.unSubscribeUI();
     };
   }, [setState]);
-  return <CustomGUI data={data} show={true} />;
+  return <OverlayGUI data={data} show={true} />;
 };
 
 export default App;
