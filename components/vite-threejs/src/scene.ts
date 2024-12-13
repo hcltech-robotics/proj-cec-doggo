@@ -67,7 +67,15 @@ function randomVoxels(delay = 100) {
     const y = Math.random() * 6 - 3;
     const z = Math.random() * 10;
     const strength = Math.random() * 100;
+    const factor = 0.1
     voxelManager.addVoxel(x, y, z, strength);
+    voxelManager.addVoxel(x, y - 1 * factor, z, strength);
+    voxelManager.addVoxel(x, y + 1 * factor, z, strength);
+    voxelManager.addVoxel(x, y, z - 1 * factor, strength);
+    voxelManager.addVoxel(x, y, z + 1 * factor, strength);
+    voxelManager.addVoxel(x - 1 * factor, y, z, strength);
+    voxelManager.addVoxel(x + 1 * factor, y, z, strength);
+
   }, delay);
 }
 
@@ -341,7 +349,7 @@ function init() {
     pointLightHelper.visible = false
     scene.add(pointLightHelper)
 
-    const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
+    const gridHelper = new GridHelper(50, 20, 'teal', 'darkgray')
     gridHelper.position.y = -0.01
     //gridHelper.rotation.set(0,1,0)
     gridHelper.rotateX(Math.PI / 2);
