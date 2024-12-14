@@ -1,3 +1,4 @@
+import { get_client } from "../Websocket"
 import "./overlaygui.css"
 
 function OverlayGUI(props) {
@@ -13,6 +14,10 @@ function OverlayGUI(props) {
             cancelable: true,
         })
         document.dispatchEvent(event)
+        const c = get_client()
+        const gptChannel = (window.getChannelData() || []).find(e=>e.channelTopic === "/gpt_cmd")
+        console.log(gptChannel);
+        c?.sendMessage()
     }
     return <div className="custom-gui">
         <div className="control">

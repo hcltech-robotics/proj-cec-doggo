@@ -167,7 +167,7 @@ function transform_cb(p) {
   // debugger
   if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     // TODO: BAM
-    console.log("VOXELMAP", data);
+    // console.log("VOXELMAP", data);
     const vertexBinaryData = data.messageData
     // const _jsonLength = vertexBinaryData[0];
     // const _jsonOffset = 4;
@@ -291,7 +291,8 @@ function convert32(objData) {
 }
 
 function updateMesh(g) {
-  console.log(g)
+  // console.log(g)
+  // debugger
   const geometryData = g.geometryData
   // // Geometry data from JSON
   // const geometryData = {
@@ -353,8 +354,10 @@ function updateMesh(g) {
   // });
 
   if (lidarMesh) {
+    debugger
     lidarMesh.geometry.dispose();
     lidarMesh.material.dispose();
+    scene.remove(lidarMesh);
   }
 
   // Create mesh
@@ -382,7 +385,7 @@ function initWebWorker() {
   );
   window._threejsworker = threeJSWorker;
   threeJSWorker.onmessage = (re) => {
-    console.log("Binary Data", re, re.data);
+    // console.log("Binary Data", re, re.data);
     updateMesh(re.data)
     // to.loadPointCloud(re.data)
   };
