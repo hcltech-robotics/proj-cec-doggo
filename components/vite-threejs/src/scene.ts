@@ -265,8 +265,8 @@ function updateMesh(g) {
   const positions = Object.values(geometryData.positions);
   const uvs = Object.values(geometryData.uvs);
   const indices = Object.values(geometryData.indices);
-  const origin = geometryData.origin;
-  const resolution = geometryData.resolution;
+  const origin = g.origin;
+  const resolution = g.resolution;
 
   // Create BufferGeometry
   const geometry = new BufferGeometry();
@@ -282,6 +282,11 @@ function updateMesh(g) {
 
   // Create mesh
   const mesh = new Mesh(geometry, material);
+  const res = resolution || 0.1;
+  mesh.scale.set(res, res, res);
+  // console.log(origin);
+  // debugger
+  mesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
   scene.add(mesh);
 }
 
