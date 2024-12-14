@@ -3,11 +3,14 @@ import {
   AmbientLight,
   AxesHelper,
   BoxGeometry,
+  BufferGeometry,
   Clock,
   Color,
+  Float32BufferAttribute,
   GridHelper,
   LoadingManager,
   Mesh,
+  MeshBasicMaterial,
   MeshLambertMaterial,
   MeshStandardMaterial,
   Object3D,
@@ -18,6 +21,7 @@ import {
   PointLightHelper,
   Quaternion,
   Scene,
+  Uint16BufferAttribute,
   Vector3,
   WebGLRenderer,
 } from 'three'
@@ -230,6 +234,57 @@ window.getBinaryData = (filepath) => {
     });
 };
 
+function updateMesh(g) {
+  console.log(g)
+  const geometryData = g.geometryData
+  // // Geometry data from JSON
+  // const geometryData = {
+  //   "point_count": 24957,
+  //   "face_count": 25180,
+  //   "positions": {
+  //     "0": 26,
+  //     "1": 16,
+  //   },
+  //   "uvs": {
+  //     "0": 42,
+  //     "1": 0,
+  //   },
+  //   "indices": {
+  //     "0": 0,
+  //     "1": 1
+  //   },
+  //   "resolution": 0.05,
+  //   "origin": [
+  //     0.225,
+  //     -1.375,
+  //     -0.575
+  //   ]
+  // };
+
+  // Extract geometry data
+  const positions = Object.values(geometryData.positions);
+  const uvs = Object.values(geometryData.uvs);
+  const indices = Object.values(geometryData.indices);
+  const origin = geometryData.origin;
+  const resolution = geometryData.resolution;
+
+  // Create BufferGeometry
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  geometry.setIndex(new Uint16BufferAttribute(indices, 1));
+
+  // Define material
+  const material = new MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true
+  });
+
+  // Create mesh
+  const mesh = new Mesh(geometry, material);
+  scene.add(mesh);
+}
+
 function initWebWorker() {
   // let to = new ThreeObject(document.body)
 
@@ -239,7 +294,8 @@ function initWebWorker() {
   );
   window._threejsworker = threeJSWorker;
   threeJSWorker.onmessage = (re) => {
-    console.log("Binary Data", re);
+    console.log("Binary Data", re, re.data);
+    updateMesh(re.data)
     // to.loadPointCloud(re.data)
   };
 

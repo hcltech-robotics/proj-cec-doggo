@@ -107,6 +107,7 @@ sudo snap install foxglove-studio
 foxglove-studio
 ```
 
+
 ## Playground
 
 ```bash
@@ -114,4 +115,8 @@ foxglove-studio
 ros2 bag play -s mcap .
 
 ros2 launch foxglove_bridge foxglove_bridge_launch.xml send_buffer_limit:=100000000
+```
+
+```bash
+ros topic list
 ```

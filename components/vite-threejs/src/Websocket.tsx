@@ -18,6 +18,7 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
             FoxgloveClient.SUPPORTED_SUBPROTOCOL,
         ]),
     });
+    // client.sendMessage()
     const deserializers = new Map();
     client.on("advertise", (channels) => {
         for (const channel of channels) {
