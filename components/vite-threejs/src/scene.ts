@@ -54,6 +54,9 @@ const animation = { enabled: true, play: true }
 
 import { LoadingManager } from "three";
 import URDFLoader, { URDFRobot } from "urdf-loader";
+import { VRButton } from 'three/examples/jsm/Addons.js'
+
+
 
 let randomVoxelInterval = null
 let randomVoxelConfig = { delay: 100 }
@@ -212,6 +215,13 @@ function init() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.shadowMap.enabled = true
     renderer.shadowMap.type = PCFSoftShadowMap
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.xr.enabled = true; // Enable WebXR
+    document.body.appendChild(renderer.domElement);
+
+    // Add an Enter VR button
+    document.body.appendChild(VRButton.createButton(renderer));
     scene = new Scene()
     loadRobot()
   }
@@ -458,7 +468,9 @@ function animate() {
     camera.updateProjectionMatrix()
   }
 
-  cameraControls.update()
+  if (!renderer.xr.isPresenting) {
+    cameraControls.update(); // Update OrbitControls only when not in VR
+  }
 
   renderer.render(scene, camera)
 }
