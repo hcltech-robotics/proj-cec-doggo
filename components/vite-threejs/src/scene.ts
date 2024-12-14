@@ -55,8 +55,10 @@ let stats: Stats
 let gui: GUI
 let robot: URDFRobot
 let voxelManager: VoxelManager
+let threeJSWorker: Worker
 let guiCB
 let foxglove_config = { url: "ws://localhost:8765" }
+let lidarMesh: Mesh
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
@@ -153,15 +155,40 @@ function animateJoints() {
 export const subscribe_channels = new Set([
   "/joint_states",
   "/odom",
-  "/tf"
+  "/tf",
+  "/utlidar/voxel_map_compressed",
 ])
 
 function transform_cb(p) {
   //console.trace(p)
   const { data, timeStamp } = p
   const msgData = data.messageData
-  //debugger
-  if (data.channelTopic === "/joint_states") {
+  // debugger
+  if (data.channelTopic === "/utlidar/voxel_map_compressed") {
+    // TODO: BAM
+    console.log("VOXELMAP", data);
+    const vertexBinaryData = data.messageData
+    // const _jsonLength = vertexBinaryData[0];
+    // const _jsonOffset = 4;
+    // const _jsonString = String.fromCharCode.apply(
+    //   null,
+    //   vertexBinaryData.slice(_jsonOffset, _jsonOffset + _jsonLength)
+    // );
+    // const jsonOBJ = JSON.parse(_jsonString);
+    // threeJSWorker.postMessage({
+    //   resolution: jsonOBJ.data.resolution,
+    //   origin: jsonOBJ.data.origin,
+    //   width: jsonOBJ.data.width,
+    //   data: vertexBinaryData.slice(_jsonOffset + _jsonLength),
+    // });
+    threeJSWorker.postMessage({
+      resolution: vertexBinaryData.resolution,
+      origin: vertexBinaryData.origin,
+      width: vertexBinaryData.width,
+      data: vertexBinaryData.data,
+    });
+  }
+  else if (data.channelTopic === "/joint_states") {
     for (let i = 0; i < msgData.name.length; i++) {
       const n = msgData.name[i]
       const v = msgData.position[i]
@@ -330,19 +357,21 @@ function updateMesh(g) {
     transparent: false,  // Disable transparency
   });
 
-  // mesh.geometry.dispose();
-  // mesh.material.dispose();
+  if (lidarMesh) {
+    lidarMesh.geometry.dispose();
+    lidarMesh.material.dispose();
+  }
 
   // Create mesh
-  const mesh = new Mesh(geometry, material);
+  lidarMesh = new Mesh(geometry, material);
   const res = resolution || 0.1;
-  mesh.scale.set(res, res, res);
+  lidarMesh.scale.set(res, res, res);
   // console.log(origin);
   // debugger
-  mesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
+  lidarMesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
   // const ambientLight = new AmbientLight(16777215)
   // scene.add(ambientLight)
-  scene.add(mesh);
+  scene.add(lidarMesh);
   // const light = new AmbientLight(0xffffff, 1);  // Ambient light
   // scene.add(light);
 }
@@ -353,7 +382,7 @@ function initWebWorker() {
   // let to = new ThreeObject(document.body)
 
   Object3D.DEFAULT_UP = new Vector3(0, 0, 0)
-  const threeJSWorker = new Worker(
+  threeJSWorker = new Worker(
     new URL("/assets/three.worker.js", import.meta.url)
   );
   window._threejsworker = threeJSWorker;
@@ -386,8 +415,8 @@ function initWebWorker() {
     }
   }
 
-  setInterval(getData, 10000);
-  setTimeout(getData, 500)
+  // setInterval(getData, 10000);
+  // setTimeout(getData, 500)
 }
 
 

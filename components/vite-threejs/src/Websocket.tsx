@@ -56,8 +56,9 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
         // });
         // debugger
         const parsedData = deserializers.get(subscriptionId)(data)
-        //debugger
-        if (parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/tf" || parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/odom") {
+        // debugger
+        // console.log(parsedData.channelTopic)
+        if (parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/tf" || parsedData.channelTopic === "/joint_states" || parsedData.channelTopic === "/odom" || parsedData.channelTopic === "/utlidar/voxel_map_compressed") {
             transform_cb({ subscriptionId, timestamp, data: parsedData });
         }
     });
