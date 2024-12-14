@@ -501,7 +501,7 @@ function init() {
 
     voxelManager = new VoxelManager(scene);
     // Add random voxels every 100ms
-    randomVoxels()
+    // randomVoxels()
 
     // scene.add(cube)
     scene.add(plane)
