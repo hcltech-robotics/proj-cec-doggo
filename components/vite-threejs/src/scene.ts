@@ -142,6 +142,12 @@ function animateJoints() {
   // }
 }
 
+export const subscribe_channels = new Set([
+  "/joint_states",
+  "/odom",
+  "/tf"
+])
+
 function transform_cb(p) {
   //console.trace(p)
   const { data, timeStamp } = p

@@ -2,6 +2,7 @@ import { FoxgloveClient } from "@foxglove/ws-protocol";
 //import { WebSocket } from "ws";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { parse, stringify } from "@foxglove/rosmsg";
+import { subscribe_channels } from "./scene"
 
 window.channelData = {}
 window.getChannelData = () => Object.values(window.channelData).map(e => (({ sn: e.schemaName, t: e.topic, channel: e })))
@@ -20,6 +21,9 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
     const deserializers = new Map();
     client.on("advertise", (channels) => {
         for (const channel of channels) {
+            if (!subscribe_channels.has(channel.topic)) {
+                console.warn("Not subscribed to channel", channel)
+            }
             console.info("Channel advertised:", channel);
             if (channel.encoding === "json") {
                 const subId = client.subscribe(channel.id);
