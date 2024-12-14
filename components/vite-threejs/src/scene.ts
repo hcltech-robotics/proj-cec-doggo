@@ -3,9 +3,11 @@ import {
   AmbientLight,
   AxesHelper,
   BoxGeometry,
+  BufferAttribute,
   BufferGeometry,
   Clock,
   Color,
+  DoubleSide,
   Float32BufferAttribute,
   GridHelper,
   LoadingManager,
@@ -13,6 +15,7 @@ import {
   MeshBasicMaterial,
   MeshLambertMaterial,
   MeshStandardMaterial,
+  NearestFilter,
   Object3D,
   PCFSoftShadowMap,
   PerspectiveCamera,
@@ -21,6 +24,7 @@ import {
   PointLightHelper,
   Quaternion,
   Scene,
+  TextureLoader,
   Uint16BufferAttribute,
   Vector3,
   WebGLRenderer,
@@ -204,6 +208,23 @@ function transform_cb(p) {
   }
 }
 
+
+// Load the texture using TextureLoader
+const textureLoader = new TextureLoader();
+const texture = textureLoader.load(
+  '/models/axisColor4.png',
+  () => {
+    console.log('Texture loaded successfully!');
+  },
+  undefined, // Progress callback (optional)
+  (err) => {
+    console.error('Error loading texture:', err);
+  }
+);
+// Set filtering options for the texture
+texture.magFilter = NearestFilter;  // Mag filter (when zooming in)
+texture.minFilter = NearestFilter;
+
 function registerGUIConnector(cb) {
   // INTERACT FROM THREEJS TO REACT STATE
   // useage: call GUICB to show data in the react gui controller part... (it's a state setter function or reducer)
@@ -234,6 +255,13 @@ window.getBinaryData = (filepath) => {
     });
 };
 
+function convert(objData) {
+  return Uint8Array.from(objData);
+}
+function convert32(objData) {
+  return Uint32Array.from(objData);
+}
+
 function updateMesh(g) {
   console.log(g)
   const geometryData = g.geometryData
@@ -262,23 +290,48 @@ function updateMesh(g) {
   // };
 
   // Extract geometry data
-  const positions = Object.values(geometryData.positions);
-  const uvs = Object.values(geometryData.uvs);
-  const indices = Object.values(geometryData.indices);
   const origin = g.origin;
   const resolution = g.resolution;
 
   // Create BufferGeometry
+  // const positions = Object.values(geometryData.positions);
+  // const uvs = Object.values(geometryData.uvs);
+  // const indices = Object.values(geometryData.indices);
+  // const geometry = new BufferGeometry();
+  // geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
+  // geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  // geometry.setIndex(new Uint16BufferAttribute(indices, 1));
+
+  // debugger
+  const positions = convert(geometryData.positions);
+  const uvs = convert(geometryData.uvs);
+  const indices = convert32(geometryData.indices);
+  // debugger
   const geometry = new BufferGeometry();
-  geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(new Uint16BufferAttribute(indices, 1));
+  geometry.setAttribute(
+    "position",
+    new BufferAttribute(positions || [], 3)
+  );
+  geometry.setAttribute(
+    "uv",
+    new BufferAttribute(uvs || [], 2, !0)
+  );
+  geometry.setIndex(new BufferAttribute(indices || [], 1));
 
   // Define material
-  const material = new MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true
+  // const material = new MeshBasicMaterial({
+  //   color: 0x00ff00,
+  //   wireframe: true
+  // });
+
+  const material = new MeshStandardMaterial({
+    map: texture,
+    side: DoubleSide,  // Render both sides of the geometry
+    transparent: false,  // Disable transparency
   });
+
+  // mesh.geometry.dispose();
+  // mesh.material.dispose();
 
   // Create mesh
   const mesh = new Mesh(geometry, material);
@@ -287,8 +340,14 @@ function updateMesh(g) {
   // console.log(origin);
   // debugger
   mesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
+  const ambientLight = new AmbientLight(16777215)
+  scene.add(ambientLight)
   scene.add(mesh);
+  // const light = new AmbientLight(0xffffff, 1);  // Ambient light
+  // scene.add(light);
 }
+
+
 
 function initWebWorker() {
   // let to = new ThreeObject(document.body)
