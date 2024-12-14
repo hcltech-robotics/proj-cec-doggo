@@ -340,8 +340,8 @@ function updateMesh(g) {
   // console.log(origin);
   // debugger
   mesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
-  const ambientLight = new AmbientLight(16777215)
-  scene.add(ambientLight)
+  // const ambientLight = new AmbientLight(16777215)
+  // scene.add(ambientLight)
   scene.add(mesh);
   // const light = new AmbientLight(0xffffff, 1);  // Ambient light
   // scene.add(light);
@@ -433,7 +433,7 @@ function init() {
 
   // ===== 💡 LIGHTS =====
   {
-    ambientLight = new AmbientLight('white', 0.4)
+    ambientLight = new AmbientLight('white', 2)
     pointLight = new PointLight('white', 20, 100)
     pointLight.position.set(-2, 2, 2)
     pointLight.castShadow = true
