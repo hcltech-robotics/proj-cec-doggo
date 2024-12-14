@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { init, animate, transform_cb, registerGUIConnector } from "./scene";
-import { main } from "./Websocket";
 import { OverlayGUI } from "./overlaygui/overlaygui";
 
 class ExternalTools {
@@ -9,7 +8,6 @@ class ExternalTools {
   init() {
     init();
     animate();
-    main(transform_cb);
   }
   subscribeUI(cb: (n: number) => void) {
     console.log("Subscribed...")

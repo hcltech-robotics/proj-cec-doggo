@@ -6,9 +6,14 @@ import { parse, stringify } from "@foxglove/rosmsg";
 window.channelData = {}
 window.getChannelData = () => Object.values(window.channelData).map(e => (({ sn: e.schemaName, t: e.topic, channel: e })))
 
-async function main(transform_cb) {
-    const client = new FoxgloveClient({
-        ws: new WebSocket(`ws://localhost:8765`, [
+let client: FoxgloveClient | null = null
+
+async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
+    if (client) {
+        client.close()
+    }
+    client = new FoxgloveClient({
+        ws: new WebSocket(ws_url, [
             FoxgloveClient.SUPPORTED_SUBPROTOCOL,
         ]),
     });
@@ -53,4 +58,4 @@ async function main(transform_cb) {
     });
 }
 
-export { main };
+export { init_websocket };

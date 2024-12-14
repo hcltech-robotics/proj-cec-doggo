@@ -48,6 +48,7 @@ let gui: GUI
 let robot: URDFRobot
 let voxelManager: VoxelManager
 let guiCB
+let foxglove_config = { url: "ws://localhost:8765" }
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
@@ -55,6 +56,7 @@ const animation = { enabled: true, play: true }
 import { LoadingManager } from "three";
 import URDFLoader, { URDFRobot } from "urdf-loader";
 import { VRButton } from 'three/examples/jsm/Addons.js'
+import { init_websocket } from './Websocket'
 
 
 
@@ -347,6 +349,8 @@ function init() {
         toggleFullScreen(canvas)
       }
     })
+
+    init_websocket(transform_cb, foxglove_config.url);
   }
 
   // ===== 🪄 HELPERS =====
@@ -377,6 +381,11 @@ function init() {
   {
     gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
 
+
+    const foxglove = gui.addFolder('Foxglove')
+    foxglove.add(foxglove_config, 'url').onFinishChange(() => {
+      init_websocket(transform_cb, foxglove_config.url)
+    })
     const cubeFolder = gui.addFolder('Cubes')
 
     // cubeFolder.add(cube.position, 'x').min(-5).max(5).step(0.5).name('pos x')
