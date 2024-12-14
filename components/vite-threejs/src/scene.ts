@@ -213,6 +213,64 @@ document.addEventListener('hackathonGuiEvent', (event) => {
   console.log(event?.detail?.message ?? "NO MESSAGE FOUND");
 })
 
+window.getBinaryData = (filepath) => {
+
+  return fetch(filepath)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      return response.arrayBuffer();
+    })
+    .then((arrayBuffer) => {
+      return new Uint8Array(arrayBuffer);
+    })
+    .catch((error) => {
+      throw error;
+    });
+};
+
+function initWebWorker() {
+  // let to = new ThreeObject(document.body)
+
+  Object3D.DEFAULT_UP = new Vector3(0, 0, 0)
+  const threeJSWorker = new Worker(
+    new URL("/assets/three.worker.js", import.meta.url)
+  );
+  window._threejsworker = threeJSWorker;
+  threeJSWorker.onmessage = (re) => {
+    console.log("Binary Data", re);
+    // to.loadPointCloud(re.data)
+  };
+
+  const getData = () => {
+    try {
+      console.warn("TICK");
+      window.getBinaryData(`/example.bin`).then((vortexBinaryData) => {
+        const _jsonLength = vortexBinaryData[0];
+        const _jsonOffset = 4;
+        const _jsonString = String.fromCharCode.apply(
+          null,
+          vortexBinaryData.slice(_jsonOffset, _jsonOffset + _jsonLength)
+        );
+        const jsonOBJ = JSON.parse(_jsonString);
+        threeJSWorker.postMessage({
+          resolution: jsonOBJ.data.resolution,
+          origin: jsonOBJ.data.origin,
+          width: jsonOBJ.data.width,
+          data: vortexBinaryData.slice(_jsonOffset + _jsonLength),
+        });
+      });
+    } catch (e) {
+      console.error("ERROR DURING VERTEX LOAD", e);
+    }
+  }
+
+  setInterval(getData, 10000);
+  setTimeout(getData, 500)
+}
+
+
 
 
 function init() {
@@ -458,6 +516,7 @@ function init() {
     gui.add({ resetGui }, 'resetGui').name('RESET')
 
     gui.close()
+    initWebWorker()
   }
 }
 
