@@ -59,6 +59,7 @@ let threeJSWorker: Worker
 let guiCB
 let foxglove_config = { url: "ws://localhost:8765" }
 let lidarMesh: Mesh
+let lidarMaterial: Material
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
@@ -351,19 +352,13 @@ function updateMesh(g) {
   //   wireframe: true
   // });
 
-  const material = new MeshStandardMaterial({
-    map: texture,
-    side: DoubleSide,  // Render both sides of the geometry
-    transparent: false,  // Disable transparency
-  });
-
   if (lidarMesh) {
     lidarMesh.geometry.dispose();
     lidarMesh.material.dispose();
   }
 
   // Create mesh
-  lidarMesh = new Mesh(geometry, material);
+  lidarMesh = new Mesh(geometry, lidarMaterial);
   const res = resolution || 0.1;
   lidarMesh.scale.set(res, res, res);
   // console.log(origin);
@@ -562,6 +557,12 @@ function init() {
         toggleFullScreen(canvas)
       }
     })
+
+    lidarMaterial = new MeshStandardMaterial({
+      map: texture,
+      side: DoubleSide,  // Render both sides of the geometry
+      transparent: false,  // Disable transparency
+    });
 
     init_websocket(transform_cb, foxglove_config.url);
   }
