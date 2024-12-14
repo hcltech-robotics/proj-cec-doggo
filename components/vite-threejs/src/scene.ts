@@ -354,7 +354,7 @@ function updateMesh(g) {
   // });
 
   if (lidarMesh) {
-    debugger
+    // debugger
     lidarMesh.geometry.dispose();
     lidarMesh.material.dispose();
     scene.remove(lidarMesh);
