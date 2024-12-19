@@ -1,6 +1,9 @@
 # hackathon-robotics
 Go2 visualization
 
+![image](https://github.com/user-attachments/assets/ffc47eb6-c556-4cbc-b85f-6881ba3cf6ea)
+
+
 setxkbmap -option caps:swapescape
 
 ```bash
