@@ -158,6 +158,8 @@ export const subscribe_channels = new Set([
   "/odom",
   "/tf",
   "/utlidar/voxel_map_compressed",
+  "/gpt_cmd",
+  "/cmd_vel",
 ])
 
 function transform_cb(p) {
