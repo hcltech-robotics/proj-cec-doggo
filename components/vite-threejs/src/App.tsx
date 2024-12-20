@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { init, animate, transform_cb, registerGUIConnector } from "./scene";
-import { OverlayGUI } from "./overlaygui/overlaygui";
+import { OverlayGUI, CanvasFrame } from "./overlaygui/overlaygui";
 
 class ExternalTools {
   guiCallback = (n: number) => {};
@@ -33,7 +33,12 @@ const App = () => {
       tools.unSubscribeUI();
     };
   }, [setState]);
-  return <OverlayGUI data={data} show={true} />;
+  return (
+    <div>
+      <OverlayGUI data={data} show={true} />
+      <CanvasFrame />
+    </div>
+  );
 };
 
 export default App;

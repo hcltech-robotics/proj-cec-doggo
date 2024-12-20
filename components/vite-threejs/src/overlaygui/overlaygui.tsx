@@ -2,6 +2,8 @@ import { MessageWriter } from "@foxglove/rosmsg2-serialization";
 import { get_client } from "../Websocket";
 import "./overlaygui.css";
 import { parse } from "@foxglove/rosmsg";
+import { useRef, useEffect } from 'react';
+
 
 function sendChatGPTMessage() {
   const c = get_client();
@@ -75,4 +77,84 @@ function OverlayGUI(props) {
   );
 }
 
-export { OverlayGUI };
+function CanvasFrame() {
+  const canvasRef = useRef(null);
+  const contextRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    console.log("canvas:", canvas);
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      contextRef.current = ctx;
+  
+      // Draw a placeholder image
+      const placeholderImage = new Image();
+      placeholderImage.src = 'assets/loader-thumb.jpg';
+      placeholderImage.onload = () => {
+        ctx.drawImage(placeholderImage, 0, 0, canvas.width, canvas.height);
+      };
+    } else {
+      console.error('canvasRef is not attached to the DOM.');
+    }
+  }, []);
+
+  // Function to update the canvas with a Uint8Array
+  const updateCanvas = (uint8Array, width, height) => {
+    const ctx = contextRef.current;
+
+    if (!ctx) return;
+
+    // Create ImageData from Uint8Array
+    const imageData = new ImageData(new Uint8ClampedArray(uint8Array), width, height);
+
+    // Clear the canvas and draw the new image data
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    ctx.putImageData(imageData, 0, 0);
+  };
+
+  // Expose the update function to the window or a global context for external use
+  window.updateCanvas = updateCanvas;
+
+    // Function to update the canvas with a JPEG Uint8Array
+    const updateCanvasWithJPEG = (jpegUint8Array) => {
+      const ctx = contextRef.current;
+      if (!ctx) return;
+  
+      // Convert Uint8Array to a Blob
+      const blob = new Blob([jpegUint8Array], { type: 'image/jpeg' });
+  
+      // Create an object URL for the blob
+      const url = URL.createObjectURL(blob);
+  
+      // Create an image element and set the source to the object URL
+      const img = new Image();
+      img.src = url;
+  
+      img.onload = () => {
+        // Draw the image on the canvas
+        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        ctx.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height);
+  
+        // Revoke the object URL to free memory
+        URL.revokeObjectURL(url);
+      };
+  
+      img.onerror = (error) => {
+        console.error('Error loading image:', error);
+      };
+    };
+  
+    // Expose the update function to the window for external use
+    window.updateCanvasWithJPEG = updateCanvasWithJPEG;
+
+
+  return (
+    <div className="canvas-frame">
+      <canvas ref={canvasRef} width="320" height="180" style={{ border: '1px solid #333' }} />
+    </div>
+  );
+}
+
+
+export { OverlayGUI, CanvasFrame };

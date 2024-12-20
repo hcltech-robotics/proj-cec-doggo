@@ -79,6 +79,10 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
     ) {
       transform_cb({ subscriptionId, timestamp, data: parsedData });
     }
+    if ( parsedData.channelTopic === "/camera/compressed" ) {
+      console.log(parsedData);
+      window.updateCanvasWithJPEG(parsedData.messageData.data);
+    }
   });
 }
 

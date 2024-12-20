@@ -26,3 +26,25 @@
     align-items: center;
     justify-content: center;
 }
+
+.video-frame {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    pointer-events: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+}
+
+.canvas-frame {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    pointer-events: none;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 10px;
+}
