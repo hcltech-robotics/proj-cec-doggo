@@ -98,9 +98,10 @@ function randomVoxels(delay = 100) {
 function loadRobot() {
   const manager = new LoadingManager();
   const loader = new URDFLoader(manager);
-  // loader.packages = {
-  //   packageName: "go2_robot_sdk/dae", // The equivalent of a (list of) ROS package(s):// directory
-  // };
+
+  loader.packages = {
+    "go2_robot_sdk": import.meta.env.BASE_URL + "go2_robot_sdk",
+  };
   loader.load(
     "./go2.urdf", // The path to the URDF within the package OR absolute
     (r) => {
@@ -243,7 +244,7 @@ function transform_cb(p) {
 // Load the texture using TextureLoader
 const textureLoader = new TextureLoader();
 const texture = textureLoader.load(
-  '/models/axisColor4.png',
+  import.meta.env.BASE_URL + 'models/axisColor4.png',
   () => {
     console.log('Texture loaded successfully!');
   },
@@ -396,7 +397,7 @@ function initWebWorker() {
   const getData = () => {
     try {
       console.warn("TICK");
-      window.getBinaryData(`/example.bin`).then((vortexBinaryData) => {
+      window.getBinaryData(`${import.meta.env.BASE_URL}assets/example.bin`).then((vortexBinaryData) => {
         const _jsonLength = vortexBinaryData[0];
         const _jsonOffset = 4;
         const _jsonString = String.fromCharCode.apply(
