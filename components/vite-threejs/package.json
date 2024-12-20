@@ -25,6 +25,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "globals": "^15.13.0",
     "lil-gui": "^0.19.2",
+    "lucide-react": "^0.469.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.171.0",
