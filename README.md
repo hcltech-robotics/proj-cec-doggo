@@ -1,7 +1,7 @@
 # hackathon-robotics
 Go2 visualization
 
-![image](https://github.com/user-attachments/assets/ffc47eb6-c556-4cbc-b85f-6881ba3cf6ea)
+![image](https://github.com/user-attachments/assets/319fa39e-34f0-425b-9c6d-20d2e1458e9c)
 
 
 setxkbmap -option caps:swapescape
