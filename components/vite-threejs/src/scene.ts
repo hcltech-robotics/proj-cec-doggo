@@ -35,6 +35,10 @@ import Stats from 'three/examples/jsm/libs/stats.module'
 import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
+import { LoadingManager } from "three";
+import URDFLoader, { URDFRobot } from "urdf-loader";
+import { VRButton } from 'three/examples/jsm/Addons.js'
+import { init_websocket } from './Websocket'
 
 const CANVAS_ID = 'scene'
 
@@ -63,11 +67,9 @@ let lidarMaterial: Material
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
-
-import { LoadingManager } from "three";
-import URDFLoader, { URDFRobot } from "urdf-loader";
-import { VRButton } from 'three/examples/jsm/Addons.js'
-import { init_websocket } from './Websocket'
+const userSettings = {
+  apiKey: 'defaultapiKey',
+};
 
 
 
@@ -643,6 +645,14 @@ function init() {
 
     const controlsFolder = gui.addFolder('Controls')
     controlsFolder.add(dragControls, 'enabled').name('drag controls')
+
+    
+    const pwd = controlsFolder.add(userSettings, 'apiKey').name('apiKey').onChange((value) => {
+      //console.log('apiKey changed:', value);
+    })
+    for (let inp of pwd.domElement.getElementsByTagName("input")){
+      inp.setAttribute("type", "password")
+    }
 
     const lightsFolder = gui.addFolder('Lights')
     lightsFolder.add(pointLight, 'visible').name('point light')
