@@ -4,32 +4,16 @@ import "./overlaygui.css";
 import { parse } from "@foxglove/rosmsg";
 import { useRef, useEffect, useState } from "react";
 
-function sendChatGPTMessage() {
-  const c = get_client();
-  debugger;
-  const subscribedChannel = (window.getChannelData() || []).find(
-    (e) => e.t === "/gpt_cmd"
-  );
-  console.log(subscribedChannel);
-  if (subscribedChannel) {
-    const channel = subscribedChannel.channel;
-    const messageDefinition = parse(channel.schema, { ros2: true });
-    const writer = new MessageWriter(messageDefinition);
-    const data = `please say what is 2+2?`;
-    const message = writer.writeMessage({ data });
-    const msg = c?.sendMessage(channel.id, message);
-    console.log(msg);
-  }
-}
-
 function sendTwistMessage() {
   const c = get_client();
-  debugger;
+  //debugger;
   const subscribedChannel = (window.getChannelData() || []).find(
     (e) => e.t === "/cmd_vel"
   );
   console.log(subscribedChannel);
-  if (subscribedChannel) {
+
+
+  if (false && subscribedChannel) {
     const channel = subscribedChannel.channel;
     const messageDefinition = parse(channel.schema, { ros2: true });
     const writer = new MessageWriter(messageDefinition);
@@ -48,9 +32,36 @@ function sendTwistMessage() {
     const message = writer.writeMessage({ data: cmdVelMessage });
     const msg = c?.sendMessage(channel.id, message);
     console.log(msg);
+  } else {
+    const twistmessage = "MSG: geometry_msgs/Twist\n# This expresses velocity in free space broken into its linear and angular parts.\n\nVector3  linear\nVector3  angular\n\n================================================================================\nMSG: geometry_msgs/Vector3\n# This represents a vector in free space.\n\n# This is semantically different than a point.\n# A vector is always anchored at the origin.\n# When a transform is applied to a vector, only the rotational component is applied.\n\nfloat64 x\nfloat64 y\nfloat64 z\n"
+const messageDefinition = parse(twistmessage, { ros2: true });
+
+    const channelId = c.advertise({
+      topic: "/cmd_vel",
+      encoding: "json",
+      schemaName: "geometry_msgs/Twist",
+    });
+
+    const writer = new MessageWriter(messageDefinition);
+    const cmdVelMessage = {
+      linear: {
+        x: 1.0, // Move forward at 1 m/s
+        y: 0.0,
+        z: 0.0,
+      },
+      angular: {
+        x: 0.0,
+        y: 0.0,
+        z: 0.5, // Rotate at 0.5 rad/s around z-axis
+      },
+    };
+    const message = writer.writeMessage({ data: cmdVelMessage });
+    const msg = c?.sendMessage(channelId, message);
+    console.log(msg);
+    // see message with: ros2 topic echo /cmd_vel
+
   }
 }
-
 function OverlayGUI(props) {
   const value = props?.data ?? -1;
   if (!props?.show) {
@@ -148,15 +159,15 @@ function CanvasFrame() {
   return (
     <>
       <div className={`canvas-container ${isZoomed ? 'zoomed' : ''}`}>
-        <canvas 
-          ref={canvasRef} 
-          width="320" 
-          height="180" 
+        <canvas
+          ref={canvasRef}
+          width="320"
+          height="180"
           className="canvas"
           onClick={toggleZoom}
         />
       </div>
-      
+
       {isZoomed && (
         <div className="overlay" onClick={toggleZoom} />
       )}

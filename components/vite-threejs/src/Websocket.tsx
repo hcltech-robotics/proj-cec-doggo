@@ -14,9 +14,28 @@ window.getChannelData = () =>
 
 let client: FoxgloveClient | null = null;
 
+window.send_message =(txt: string) => {
+  //ros2 topic echo /chatter
+  const client = window.get_client()
+
+  const channelId = client.advertise({
+    topic: "/chatter",
+    encoding: "json",
+    schemaName: "std_msgs/String",
+  });
+
+  const message = new Uint8Array(
+    new TextEncoder().encode(JSON.stringify({ data: txt }))
+    );
+  client.sendMessage(channelId, message); 
+}
+
+
 export function get_client() {
   return client;
 }
+
+window.get_client = get_client
 
 async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
   if (client) {
