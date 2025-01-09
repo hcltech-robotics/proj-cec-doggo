@@ -1,41 +1,18 @@
-import { FoxgloveClient } from "@foxglove/ws-protocol";
-//import { WebSocket } from "ws";
+import { Channel, FoxgloveClient } from "@foxglove/ws-protocol";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
-import { parse, stringify } from "@foxglove/rosmsg";
-import { subscribe_channels } from "./scene";
+import { parse } from "@foxglove/rosmsg";
+import { subscribe_channels } from "./robot/channelData";
 
-window.channelData = {};
-window.getChannelData = () =>
-  Object.values(window.channelData).map((e) => ({
-    sn: e.schemaName,
-    t: e.topic,
-    channel: e,
-  }));
 
 let client: FoxgloveClient | null = null;
+const channelData: Record<string, Channel> = {}
 
-window.send_message =(txt: string) => {
-  //ros2 topic echo /chatter
-  const client = window.get_client()
-
-  const channelId = client.advertise({
-    topic: "/chatter",
-    encoding: "json",
-    schemaName: "std_msgs/String",
-  });
-
-  const message = new Uint8Array(
-    new TextEncoder().encode(JSON.stringify({ data: txt }))
-    );
-  client.sendMessage(channelId, message); 
-}
-
-
-export function get_client() {
+export function getClient() {
   return client;
 }
-
-window.get_client = get_client
+export function getChannelData() {
+  return channelData;
+}
 
 async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
   if (client) {
@@ -44,12 +21,15 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
   client = new FoxgloveClient({
     ws: new WebSocket(ws_url, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
   });
-  // client.sendMessage()
   const deserializers = new Map();
   client.on("advertise", (channels) => {
+    if (!client) {
+      return
+    }
     for (const channel of channels) {
       if (!subscribe_channels.has(channel.topic)) {
         console.warn("Not subscribed to channel", channel);
+        continue
       }
       console.info("Channel advertised:", channel);
       if (channel.encoding === "json") {
@@ -63,7 +43,7 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
         const messageDefinition = parse(channel.schema, { ros2: true });
         const cdrReader = new MessageReader(messageDefinition);
         const subId = client.subscribe(channel.id);
-        window.channelData[subId] = channel;
+        channelData[subId] = channel;
         //const textDecoder = new TextDecoder();
         deserializers.set(subId, (data: any) => ({
           channelSchemaName: channel.schemaName,
@@ -79,23 +59,8 @@ async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
   });
   client.on("message", (m) => {
     const { subscriptionId, timestamp, data } = m;
-    // console.log({
-    //     subscriptionId,
-    //     timestamp,
-    //     data: deserializers.get(subscriptionId)(data),
-    //     m
-    // });
-    // debugger
     const parsedData = deserializers.get(subscriptionId)(data);
-    // debugger
-    // console.log(parsedData.channelTopic)
-    if (
-      parsedData.channelTopic === "/joint_states" ||
-      parsedData.channelTopic === "/tf" ||
-      parsedData.channelTopic === "/joint_states" ||
-      parsedData.channelTopic === "/odom" ||
-      parsedData.channelTopic === "/utlidar/voxel_map_compressed"
-    ) {
+    if (["/joint_states", "/tf", "/joint_states", "/odom", "/utlidar/voxel_map_compressed"].some(c=>c == parsedData.channelTopic)) {
       transform_cb({ subscriptionId, timestamp, data: parsedData });
     }
     if ( parsedData.channelTopic === "/camera/compressed" ) {
