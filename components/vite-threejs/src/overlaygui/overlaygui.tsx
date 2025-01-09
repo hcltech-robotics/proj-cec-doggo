@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 
 
 interface OverlayGUIProps {
+  data?: number
   show?: boolean
 }
 function OverlayGUI(props: OverlayGUIProps) {

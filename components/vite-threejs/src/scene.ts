@@ -31,8 +31,8 @@ import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
 import URDFLoader, { URDFRobot } from "urdf-loader";
-import { VRButton } from 'three/examples/jsm/Addons.js'
 import { init_websocket } from './Websocket'
+// import { VRButton } from 'three/examples/jsm/Addons.js'
 
 const CANVAS_ID = 'scene'
 

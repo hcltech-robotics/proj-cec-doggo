@@ -1,0 +1,1 @@
+export type GuiCallback = (n: number) => void

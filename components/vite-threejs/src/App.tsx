@@ -2,16 +2,17 @@ import { useEffect, useState } from "react";
 import { init, animate } from "./scene";
 import { OverlayGUI, CanvasFrame } from "./overlaygui/overlaygui";
 import ChatInput from './overlaygui/chatinput';
+import { GuiCallback } from "./types";
 
 
 class ExternalTools {
-  guiCallback = (n: number) => undefined
+  guiCallback = (n: number) => {}
   constructor() { }
   init() {
     init();
     animate();
   }
-  subscribeUI(cb: (n: number) => undefined) {
+  subscribeUI(cb: GuiCallback) {
     console.log("Subscribed...")
     this.guiCallback = cb
     // registerGUIConnector(cb)
@@ -29,7 +30,7 @@ tools.init();
 const App = () => {
   const [data, setState] = useState(0)
   useEffect(() => {
-    tools.subscribeUI(setState);
+    tools.subscribeUI((n) => setState(n));
     return () => {
       tools.unSubscribeUI();
     };
