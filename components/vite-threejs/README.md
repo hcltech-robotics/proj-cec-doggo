@@ -37,7 +37,7 @@ npx degit pachoclo/vite-threejs-ts-template threejs-project
 - [x] Shadows
 - [x] Stats (FPS, ms)
 - [x] Full screen (double-click on canvas)
-- [x] Debug GUI
+- [x] Debug GUI (renamed to: ⚙️ Configuration)
 
 ## Tech Stack
 

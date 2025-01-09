@@ -600,9 +600,9 @@ function init() {
     document.body.appendChild(stats.dom)
   }
 
-  // ==== 🐞 DEBUG GUI ====
+  // ==== ⚙️ Configuration ====
   {
-    gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+    gui = new GUI({ title: '⚙️ Configuration', width: 300 });
 
 
     const foxglove = gui.addFolder('Foxglove')

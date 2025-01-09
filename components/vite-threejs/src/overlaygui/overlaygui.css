@@ -77,12 +77,30 @@
 }
 
 .chat-button:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .chat-button svg {
     width: 24px;
     height: 24px;
+}
+
+.chat-button.active-speech-recognition {
+    animation: ripple 1000ms infinite;
+}
+
+@keyframes ripple {
+    0% {
+        box-shadow: 0 0 0 0px transparent, 0 0 0 0px #ffffff75,
+        0 0 0 0px transparent, 0 0 0 0px #ffffff75, 0 0 0 0px transparent,
+        0 0 0 0px #ffffff75, 0 0 0 0px transparent, 0 0 0 0px #ffffff75;
+    }
+    100% {
+        box-shadow: 0 0 0 5px transparent, 0 0 0 7px rgba(255, 255, 255, 0),
+        0 0 0 20px transparent, 0 0 0 22px rgba(255, 255, 255, 0),
+        0 0 0 40px transparent, 0 0 0 42px rgba(255, 255, 255, 0),
+        0 0 0 65px transparent, 0 0 0 67px rgba(255, 255, 255, 0);
+    }
 }
 
 /* Rest of your existing CSS */

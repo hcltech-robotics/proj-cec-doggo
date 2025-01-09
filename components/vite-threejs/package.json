@@ -20,10 +20,12 @@
     "vite": "^6.0.2"
   },
   "dependencies": {
+    "@langchain/openai": "^0.3.16",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "globals": "^15.13.0",
+    "langchain": "^0.3.10",
     "lil-gui": "^0.19.2",
     "lucide-react": "^0.469.0",
     "react": "^19.0.0",
