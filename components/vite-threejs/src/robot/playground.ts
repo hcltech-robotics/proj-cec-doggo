@@ -1,4 +1,4 @@
-import { getChannelData, getClient } from "../Websocket";
+import { getChannelData, getClient } from "./foxgloveConnection";
 
 window.debugChannelData = () =>
     Object.values(getChannelData()).map((e) => ({

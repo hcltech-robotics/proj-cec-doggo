@@ -1,7 +1,8 @@
 import { Channel, FoxgloveClient } from "@foxglove/ws-protocol";
 import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { parse } from "@foxglove/rosmsg";
-import { subscribe_channels } from "./robot/channelData";
+import { subscribe_channels } from "./channelData";
+import { SceneTransformCb } from "../types";
 
 
 let client: FoxgloveClient | null = null;
@@ -14,7 +15,7 @@ export function getChannelData() {
   return channelData;
 }
 
-async function init_websocket(transform_cb, ws_url = "ws://localhost:8765") {
+async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765") {
   if (client) {
     client.close();
   }

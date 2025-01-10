@@ -31,7 +31,8 @@ import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
 import URDFLoader, { URDFRobot } from "urdf-loader";
-import { init_websocket } from './Websocket'
+import { init_websocket } from './robot/foxgloveConnection'
+import { SceneTransformParam } from './types'
 // import { VRButton } from 'three/examples/jsm/Addons.js'
 
 const CANVAS_ID = 'scene'
@@ -81,8 +82,8 @@ function loadRobot() {
   );
 }
 
-function transform_cb(p) {
-  const { data, timeStamp } = p
+function transform_cb(p: SceneTransformParam) {
+  const { data } = p
   const msgData = data.messageData
   if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData

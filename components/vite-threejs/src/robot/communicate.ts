@@ -1,7 +1,7 @@
 import { MessageWriter } from "@foxglove/rosmsg2-serialization";
 import { parse } from "@foxglove/rosmsg";
 import { Twist } from "../robot/messages";
-import { getClient } from "../Websocket";
+import { getClient } from "./foxgloveConnection";
 import "./playground"
 
 export function sendTwistMessage() {
