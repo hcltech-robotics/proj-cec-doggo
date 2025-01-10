@@ -19,7 +19,7 @@ export function registerAdvertisements(client: FoxgloveClient) {
     const channelsToAdvertise = [
         {
             topic: "/cmd_vel",
-            encoding: "json",
+            encoding: "cdr",
             schemaName: "geometry_msgs/Twist",
         }
     ]
