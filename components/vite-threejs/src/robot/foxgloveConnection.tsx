@@ -3,7 +3,7 @@ import { MessageReader } from "@foxglove/rosmsg2-serialization";
 import { parse } from "@foxglove/rosmsg";
 import { subscribe_channels } from "./channelData";
 import { SceneTransformCb } from "../types";
-
+import { registerAdvertisements } from "./communicate"
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {}
@@ -61,14 +61,19 @@ async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://loc
   client.on("message", (m) => {
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
-    if (["/joint_states", "/tf", "/joint_states", "/odom", "/utlidar/voxel_map_compressed"].some(c=>c == parsedData.channelTopic)) {
+    if (["/joint_states", "/tf", "/joint_states", "/odom", "/utlidar/voxel_map_compressed"].some(c => c == parsedData.channelTopic)) {
       transform_cb({ subscriptionId, timestamp, data: parsedData });
     }
-    if ( parsedData.channelTopic === "/camera/compressed" ) {
+    if (parsedData.channelTopic === "/camera/compressed") {
       console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
     }
   });
+  client.on("open", () => {
+    if (client) {
+      registerAdvertisements(client)
+    }
+  })
 }
 
 export { init_websocket };
