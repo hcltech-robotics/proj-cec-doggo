@@ -74,7 +74,7 @@ const ChatWindow: React.FC = () => {
     const result = await fetchLangChainResponse(messages, message, fileContent);
     const botMessage: Message = {
       id: messages.length + 2,
-      text: result.split(': ')[1],
+      text: result,
       sender: "bot",
     };
     setMessages((prevMessages) => [...prevMessages, botMessage]);

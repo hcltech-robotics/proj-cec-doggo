@@ -1,10 +1,12 @@
-import { OpenAI } from "@langchain/openai";
-import { Message } from "../components/chatWindow";
+import { ChatOpenAI } from "@langchain/openai";
 import {
   SystemMessage,
   HumanMessage,
   AIMessage,
 } from "@langchain/core/messages";
+import { z } from "zod";
+import { tool } from "@langchain/core/tools";
+import { Message } from "../components/chatWindow";
 
 export const fetchLangChainResponse = async (
   chatHistory: Message[],
@@ -18,12 +20,40 @@ export const fetchLangChainResponse = async (
   const apiKey =
     localStorageGUIConfigurations?.folders.Controls.controllers.apiKey;
 
-  const openai = new OpenAI({
+  const llm = new ChatOpenAI({
     apiKey,
   });
 
-  let messages = undefined;
+  const calculatorSchema = z.object({
+    operation: z
+      .enum(["add", "subtract", "multiply", "divide"])
+      .describe("The type of operation to execute."),
+    number1: z.number().describe("The first number to operate on."),
+    number2: z.number().describe("The second number to operate on."),
+  });
 
+  const calculatorTool = tool(
+    async ({ operation, number1, number2 }) => {
+      if (operation === "add") {
+        return `${number1 + number2}`;
+      } else if (operation === "subtract") {
+        return `${number1 - number2}`;
+      } else if (operation === "multiply") {
+        return `${number1 * number2}`;
+      } else if (operation === "divide") {
+        return `${number1 / number2}`;
+      } else {
+        throw new Error("Invalid operation.");
+      }
+    },
+    {
+      name: "calculator",
+      description: "Can perform mathematical operations.",
+      schema: calculatorSchema,
+    }
+  );
+
+  let messages = undefined;
   if (!chatHistory.length) {
     messages = [new HumanMessage(message)];
   } else {
@@ -44,5 +74,18 @@ export const fetchLangChainResponse = async (
 
   messages.unshift(new SystemMessage(initialContext));
 
-  return await openai.invoke(messages);
+  const llmWithTools = llm.bindTools([calculatorTool]);
+  const aiMessage = await llmWithTools.invoke(messages);
+
+  if (aiMessage?.tool_calls && aiMessage.tool_calls.length > 0) {
+    messages.push(aiMessage);
+    for (const toolCall of aiMessage.tool_calls) {
+      const toolMessage = await calculatorTool.invoke(toolCall);
+      messages.push(toolMessage);
+    }
+    const aiResponseWithTools = await llmWithTools.invoke(messages);
+    return aiResponseWithTools.content as string;
+  } else {
+    return aiMessage.content as string;
+  }
 };

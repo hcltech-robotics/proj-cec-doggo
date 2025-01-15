@@ -25,6 +25,7 @@
     background: #eeeeee4f;
     backdrop-filter: blur(10px);
     max-height: 0;
+    opacity: 0;
     transition: all 800ms cubic-bezier(0.075, 0.82, 0.165, 1);
 
     &:before {
@@ -51,6 +52,7 @@
   .message-list.active {
     max-height: 300px;
     padding-bottom: 30px;
+    opacity: 1;
   }
   
   .message {
