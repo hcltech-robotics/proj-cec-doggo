@@ -20,7 +20,8 @@
     "vite": "^6.0.2"
   },
   "dependencies": {
-    "@langchain/openai": "^0.3.16",
+    "@langchain/core": "^0.3.30",
+    "@langchain/openai": "^0.3.17",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",

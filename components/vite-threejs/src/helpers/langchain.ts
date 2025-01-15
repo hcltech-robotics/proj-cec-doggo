@@ -1,8 +1,13 @@
 import { OpenAI } from "@langchain/openai";
-import { Message } from "../components/chatwindow";
+import { Message } from "../components/chatWindow";
+import {
+  SystemMessage,
+  HumanMessage,
+  AIMessage,
+} from "@langchain/core/messages";
 
 export const fetchLangChainResponse = async (
-  prompt: Message[],
+  chatHistory: Message[],
   message: string,
   initialMessage: string
 ) => {
@@ -17,17 +22,27 @@ export const fetchLangChainResponse = async (
     apiKey,
   });
 
-  const messages = prompt
-    .map((message) => {
-      return message.text;
-    })
-    .join();
+  let messages = undefined;
 
-  let combinedPrompt = `${initialContext}\n\n${message}`;
-
-  if (messages.length) {
-    combinedPrompt = `${initialContext}\n\n${messages}\n\n${message}`;
+  if (!chatHistory.length) {
+    messages = [new HumanMessage(message)];
+  } else {
+    messages = chatHistory.map((chat) => {
+      switch (chat.sender) {
+        case "user":
+          return new HumanMessage(chat.text);
+        case "bot":
+          return new AIMessage(chat.text);
+        case "system":
+          return new SystemMessage(chat.text);
+        default:
+          return new HumanMessage(chat.text);
+      }
+    });
+    messages.push(new HumanMessage(message));
   }
 
-  return await openai.generate([combinedPrompt]);
+  messages.unshift(new SystemMessage(initialContext));
+
+  return await openai.invoke(messages);
 };

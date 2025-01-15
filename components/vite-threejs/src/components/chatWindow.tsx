@@ -6,7 +6,7 @@ import "./chatWindow.css";
 export interface Message {
   id: number;
   text: string;
-  sender: "user" | "bot";
+  sender: "user" | "bot" | "system";
 }
 
 const systemMessageFileLocation = "/chat-system-message";
@@ -56,6 +56,7 @@ const ChatWindow: React.FC = () => {
       text: message,
       sender: "user",
     };
+
     setMessages([...messages, newMessage]);
 
     // Simulate bot response
@@ -73,7 +74,7 @@ const ChatWindow: React.FC = () => {
     const result = await fetchLangChainResponse(messages, message, fileContent);
     const botMessage: Message = {
       id: messages.length + 2,
-      text: result.generations[0][0].text,
+      text: result.split(': ')[1],
       sender: "bot",
     };
     setMessages((prevMessages) => [...prevMessages, botMessage]);

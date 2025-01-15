@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { init, animate, transform_cb, registerGUIConnector } from "./scene";
 import { OverlayGUI, CanvasFrame } from "./overlaygui/overlaygui";
-import ChatInput from './overlaygui/chatinput';
-import ChatWindow from "./components/chatwindow";
+import ChatWindow from "./components/chatWindow";
 
 
 class ExternalTools {
