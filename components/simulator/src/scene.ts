@@ -46,7 +46,7 @@ const CANVAS_ID = 'scene'
 let canvas: HTMLElement
 let renderer: WebGLRenderer
 let scene: Scene
-let lidarScene: Scene
+let pointcloudScene: Scene
 let loadingManager: LoadingManager
 let ambientLight: AmbientLight
 let pointLight: PointLight
@@ -55,7 +55,6 @@ let camera: PerspectiveCamera
 let cameraControls: OrbitControls
 let dragControls: DragControls
 let axesHelper: AxesHelper
-let cameraHelper: CameraHelper
 let pointLightHelper: PointLightHelper
 let clock: Clock
 let stats: Stats
@@ -240,7 +239,7 @@ function updatePointCloud(g) {
   // console.log(g);
   if (pointsCloud) {
     pointCloudGeometry.dispose();
-    lidarScene.remove(pointsCloud)
+    pointcloudScene.remove(pointsCloud)
   }
   const positions = parsePointCloud(g);
 
@@ -270,7 +269,7 @@ function updatePointCloud(g) {
 
 
   pointsCloud = new Points(pointCloudGeometry, material);
-  lidarScene.add(pointsCloud);
+  pointcloudScene.add(pointsCloud);
 }
 
 
@@ -426,9 +425,9 @@ function init() {
 
   // ===== Small scene ====
   {
-    lidarScene = new Scene();
+    pointcloudScene = new Scene();
     const element = document.createElement('div');
-    element.className = 'lidar-view';
+    element.className = 'pointcloud-view';
     const sceneElement = document.createElement('div');
     element.appendChild(sceneElement)
     const views = document.getElementById("views")
@@ -436,21 +435,19 @@ function init() {
       views.appendChild(element)
     }
 
-    const lidarCamera = new PerspectiveCamera(50, 250 / 150, 0.1, 10)
-    lidarCamera.zoom = 1
-    lidarCamera.position.set(0, 0, 10)
-    lidarScene.userData.camera = lidarCamera
-    lidarScene.userData.domElement = sceneElement
+    const pointcloudCamera = new PerspectiveCamera(50, 250 / 150, 0.1, 10)
+    pointcloudScene.userData.camera = pointcloudCamera
+    pointcloudScene.userData.domElement = sceneElement
     // NOTE: this is useful for debugging
-    //cameraHelper = new CameraHelper(lidarCamera)
+    //const cameraHelper = new CameraHelper(pointcloudCamera)
     //scene.add(cameraHelper)
 
-    lidarScene.add(new HemisphereLight(0xaaaaaa, 0x444444, 3));
+    pointcloudScene.add(new HemisphereLight(0xaaaaaa, 0x444444, 3));
 
     const light = new DirectionalLight(0xffffff, 1.5);
     light.position.set(1, 1, 1);
-    lidarScene.add(light);
-    lidarScene.background = new Color().setHex(0x112233);
+    pointcloudScene.add(light);
+    pointcloudScene.background = new Color().setHex(0x112233);
   }
 
   // ===== 🪄 HELPERS =====
@@ -545,11 +542,11 @@ function animate() {
 
   if (!renderer.xr.isPresenting) {
     cameraControls.update();
-    const c: PerspectiveCamera = lidarScene.userData.camera
+    const c: PerspectiveCamera = pointcloudScene.userData.camera
     c.copy(scene.userData.camera)
   }
   const needResize = resizeRendererToDisplaySize(renderer)
-  for (let s of [scene, lidarScene]) {
+  for (let s of [scene, pointcloudScene]) {
     if (needResize) {
       const canvas = renderer.domElement
       s.userData.camera.aspect = canvas.clientWidth / canvas.clientHeight
