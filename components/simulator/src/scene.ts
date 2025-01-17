@@ -27,11 +27,13 @@ import {
   PointsMaterial,
   Points,
   Color,
+  DirectionalLight,
+  HemisphereLight,
+  CameraHelper,
 } from 'three'
 import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module'
-import * as animations from './helpers/animations'
 import { toggleFullScreen } from './helpers/fullscreen'
 import { resizeRendererToDisplaySize } from './helpers/responsiveness'
 import URDFLoader, { URDFRobot } from "urdf-loader";
@@ -44,6 +46,7 @@ const CANVAS_ID = 'scene'
 let canvas: HTMLElement
 let renderer: WebGLRenderer
 let scene: Scene
+let lidarScene: Scene
 let loadingManager: LoadingManager
 let ambientLight: AmbientLight
 let pointLight: PointLight
@@ -52,6 +55,7 @@ let camera: PerspectiveCamera
 let cameraControls: OrbitControls
 let dragControls: DragControls
 let axesHelper: AxesHelper
+let cameraHelper: CameraHelper
 let pointLightHelper: PointLightHelper
 let clock: Clock
 let stats: Stats
@@ -62,6 +66,7 @@ let foxglove_config = { url: "ws://localhost:8765" }
 let lidarMesh: Mesh
 let pointsCloud: Points
 let lidarMaterial: Material
+let pointCloudGeometry: BufferGeometry
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
 const animation = { enabled: true, play: true }
@@ -187,7 +192,7 @@ function updateMesh(g) {
   scene.add(lidarMesh);
 }
 
-const parsePointCloud = ({data, point_step, fields, is_bigendian}) => {
+const parsePointCloud = ({ data, point_step, fields, is_bigendian }) => {
   const points = [];
   const intensity = [];
   const fieldsMap = fields.reduce((acc, { name, ...rest }) => {
@@ -197,7 +202,7 @@ const parsePointCloud = ({data, point_step, fields, is_bigendian}) => {
   const uint8ArrayData = new Uint8Array(data);
 
   for (let i = 0; i < data.length; i += point_step) {
-    const x = new DataView(uint8ArrayData.buffer, i + fieldsMap['x'].offset, 4).getFloat32(0, !is_bigendian); // Little-endian
+    const x = new DataView(uint8ArrayData.buffer, i + fieldsMap['x'].offset, 4).getFloat32(0, !is_bigendian);
     const y = new DataView(uint8ArrayData.buffer, i + fieldsMap['y'].offset, 4).getFloat32(0, !is_bigendian);
     const z = new DataView(uint8ArrayData.buffer, i + fieldsMap['z'].offset, 4).getFloat32(0, !is_bigendian);
 
@@ -233,11 +238,16 @@ const parsePointCloud = ({data, point_step, fields, is_bigendian}) => {
 
 function updatePointCloud(g) {
   // console.log(g);
+  if (pointsCloud) {
+    pointCloudGeometry.dispose();
+    lidarScene.remove(pointsCloud)
+  }
   const positions = parsePointCloud(g);
 
-  const geometry = new BufferGeometry();
-  geometry.setAttribute("position", new Float32BufferAttribute(positions.points, 3));
-  geometry.setAttribute("intensity", new Float32BufferAttribute(positions.intensity, 1));
+
+  pointCloudGeometry = new BufferGeometry();
+  pointCloudGeometry.setAttribute("position", new Float32BufferAttribute(positions.points, 3));
+  pointCloudGeometry.setAttribute("intensity", new Float32BufferAttribute(positions.intensity, 1));
   // geometry.rotateX(Math.PI);
 
   const material = new PointsMaterial({
@@ -255,15 +265,12 @@ function updatePointCloud(g) {
     colors.push(color.r, color.g, color.b);
   }
 
-  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  pointCloudGeometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
 
-  if (pointsCloud) {
-    geometry.dispose();
-    scene.remove(pointsCloud)
-  }
 
-  pointsCloud = new Points(geometry, material);
-  scene.add(pointsCloud);
+
+  pointsCloud = new Points(pointCloudGeometry, material);
+  lidarScene.add(pointsCloud);
 }
 
 
@@ -283,6 +290,7 @@ function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
   {
     canvas = document.querySelector(`canvas#${CANVAS_ID}`)!
+
     renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.shadowMap.enabled = true
@@ -295,6 +303,14 @@ function init() {
     // Add an Enter VR button
     // document.body.appendChild(VRButton.createButton(renderer));
     scene = new Scene()
+    const views = document.getElementById("views")!
+    const mainView = document.createElement("div")
+    mainView.className = "main-view"
+    views.appendChild(mainView)
+    const sceneView = document.createElement("div")
+    mainView.appendChild(sceneView)
+    scene.userData.camera = camera
+    scene.userData.domElement = mainView
     loadRobot()
   }
 
@@ -350,17 +366,18 @@ function init() {
   {
     camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
     camera.position.set(-2.13, 5, 2.5)
+    scene.userData.camera = camera
   }
 
   // ===== 🕹️ CONTROLS =====
   {
-    cameraControls = new OrbitControls(camera, canvas)
+    cameraControls = new OrbitControls(scene.userData.camera, canvas)
     cameraControls.target = cube.position.clone()
     cameraControls.enableDamping = true
     cameraControls.autoRotate = false
     cameraControls.update()
 
-    dragControls = new DragControls([cube], camera, renderer.domElement)
+    dragControls = new DragControls([cube], scene.userData.camera, renderer.domElement)
     dragControls.addEventListener('hoveron', (event) => {
       const mesh = event.object as Mesh
       const material = mesh.material as MeshStandardMaterial
@@ -405,6 +422,35 @@ function init() {
     });
 
     init_websocket(transform_cb, foxglove_config.url);
+  }
+
+  // ===== Small scene ====
+  {
+    lidarScene = new Scene();
+    const element = document.createElement('div');
+    element.className = 'lidar-view';
+    const sceneElement = document.createElement('div');
+    element.appendChild(sceneElement)
+    const views = document.getElementById("views")
+    if (views) {
+      views.appendChild(element)
+    }
+
+    const lidarCamera = new PerspectiveCamera(50, 250 / 150, 0.1, 10)
+    lidarCamera.zoom = 1
+    lidarCamera.position.set(0, 0, 10)
+    lidarScene.userData.camera = lidarCamera
+    lidarScene.userData.domElement = sceneElement
+    // NOTE: this is useful for debugging
+    //cameraHelper = new CameraHelper(lidarCamera)
+    //scene.add(cameraHelper)
+
+    lidarScene.add(new HemisphereLight(0xaaaaaa, 0x444444, 3));
+
+    const light = new DirectionalLight(0xffffff, 1.5);
+    light.position.set(1, 1, 1);
+    lidarScene.add(light);
+    lidarScene.background = new Color().setHex(0x112233);
   }
 
   // ===== 🪄 HELPERS =====
@@ -490,22 +536,45 @@ function animate() {
   requestAnimationFrame(animate)
   stats.update()
 
-  if (animation.enabled && animation.play) {
-    animations.rotate(cube, clock, Math.PI / 3)
-    animations.bounce(cube, clock, 1, 0.5, 0.5)
-  }
+  // renderer.setClearColor(0xffffff);
+  renderer.setScissorTest(false);
+  renderer.clear();
 
-  if (resizeRendererToDisplaySize(renderer)) {
-    const canvas = renderer.domElement
-    camera.aspect = canvas.clientWidth / canvas.clientHeight
-    camera.updateProjectionMatrix()
-  }
+  // renderer.setClearColor(0xe0e0e0);
+  renderer.setScissorTest(true);
 
   if (!renderer.xr.isPresenting) {
-    cameraControls.update(); // Update OrbitControls only when not in VR
+    cameraControls.update();
+    const c: PerspectiveCamera = lidarScene.userData.camera
+    c.copy(scene.userData.camera)
+  }
+  const needResize = resizeRendererToDisplaySize(renderer)
+  for (let s of [scene, lidarScene]) {
+    if (needResize) {
+      const canvas = renderer.domElement
+      s.userData.camera.aspect = canvas.clientWidth / canvas.clientHeight
+      s.userData.camera.updateProjectionMatrix()
+    }
+    // get its position relative to the page's viewport
+    const rect = s.userData.domElement.getBoundingClientRect();
+
+    // check if it's offscreen. If so skip it
+    if (rect.bottom < 0 || rect.top > renderer.domElement.clientHeight ||
+      rect.right < 0 || rect.left > renderer.domElement.clientWidth) {
+
+      return; // it's off screen
+    }
+
+    const width = rect.right - rect.left;
+    const height = rect.bottom - rect.top;
+    const left = rect.left;
+    const bottom = renderer.domElement.clientHeight - rect.bottom;
+    renderer.setViewport(left, bottom, width, height);
+    renderer.setScissor(left, bottom, width, height);
+    renderer.render(s, s.userData.camera)
   }
 
-  renderer.render(scene, camera)
+
 }
 
 export {

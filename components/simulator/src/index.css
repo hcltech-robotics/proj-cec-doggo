@@ -18,6 +18,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -46,9 +47,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -59,9 +62,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
@@ -83,12 +88,6 @@ button:focus-visible {
   -webkit-text-size-adjust: 100%;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-}
-
 body,
 html {
   height: 100%;
@@ -100,16 +99,55 @@ canvas {
   outline: none;
 
   background: rgb(34, 193, 195);
-  background: linear-gradient(
-    0deg,
-    rgb(8, 163, 166) 0%,
-    rgba(79, 166, 167, 0.849) 8%,
-    rgba(61, 79, 94, 0.885) 40%,
-    rgb(17, 19, 23)
-  );
+  background: linear-gradient(0deg,
+      rgb(8, 163, 166) 0%,
+      rgba(79, 166, 167, 0.849) 8%,
+      rgba(61, 79, 94, 0.885) 40%,
+      rgb(17, 19, 23));
+}
+
+#scene {
+  height: 100% !important;
+  width: 100% !important;
+  z-index: 1;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+.main-view {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.main-view div {
+  width: 100%;
+  height: 100%;
+}
+
+.lidar-view {
+  position: absolute;
+  --lidar-view-width: 250px;
+  --lidar-view-height: 150px;
+  right: 20px;
+  top: 80px;
+  z-index: 2;
+  width: var(--lidar-view-width);
+  height: var(--lidar-view-height);
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.lidar-view div {
+  width: var(--lidar-view-width);
+  height: var(--lidar-view-height);
 }

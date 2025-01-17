@@ -9,6 +9,7 @@
     justify-content: flex-end;
     align-items: center;
     padding: 10px;
+    z-index: 2;
 }
 
 .custom-gui button {
@@ -96,6 +97,7 @@
     align-items: flex-start;
     padding: 10px;
     transition: all 0.3s ease;
+    z-index: 2;
 }
 
 .canvas {
