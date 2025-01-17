@@ -18,7 +18,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     defaults:
       run:
-        working-directory: components/vite-threejs
+        working-directory: components/simulator
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js ${{ matrix.node-version }}
@@ -32,5 +32,5 @@ jobs:
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v4
       with:
-        publish_dir: ./components/vite-threejs/dist
+        publish_dir: ./components/simulator/dist
         github_token: ${{ secrets.GITHUB_TOKEN }}
