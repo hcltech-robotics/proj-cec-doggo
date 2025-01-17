@@ -61,11 +61,11 @@ async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://loc
   client.on("message", (m) => {
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
-    if (["/joint_states", "/tf", "/joint_states", "/odom", "/utlidar/voxel_map_compressed"].some(c => c == parsedData.channelTopic)) {
+    if ([...subscribe_channels].some(c => c == parsedData.channelTopic)) {
       transform_cb({ subscriptionId, timestamp, data: parsedData });
     }
     if (parsedData.channelTopic === "/camera/compressed") {
-      console.log(parsedData);
+      // console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
     }
   });

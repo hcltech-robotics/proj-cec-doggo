@@ -6,4 +6,5 @@ export const subscribe_channels = new Set([
     "/utlidar/voxel_map_compressed",
     "/gpt_cmd",
     "/cmd_vel",
-  ])    
+    "/pointcloud",
+  ])

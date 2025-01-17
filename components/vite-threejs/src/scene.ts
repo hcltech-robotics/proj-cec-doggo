@@ -23,6 +23,10 @@ import {
   TextureLoader,
   Vector3,
   WebGLRenderer,
+  Float32BufferAttribute,
+  PointsMaterial,
+  Points,
+  Color,
 } from 'three'
 import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -56,6 +60,7 @@ let robot: URDFRobot
 let threeJSWorker: Worker
 let foxglove_config = { url: "ws://localhost:8765" }
 let lidarMesh: Mesh
+let pointsCloud: Points
 let lidarMaterial: Material
 
 Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
@@ -85,6 +90,9 @@ function loadRobot() {
 function transform_cb(p: SceneTransformParam) {
   const { data } = p
   const msgData = data.messageData
+  if (data.channelTopic === '/pointcloud') {
+    updatePointCloud(data.messageData);
+  }
   if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData
     threeJSWorker.postMessage({
@@ -179,6 +187,85 @@ function updateMesh(g) {
   scene.add(lidarMesh);
 }
 
+const parsePointCloud = ({data, point_step, fields, is_bigendian}) => {
+  const points = [];
+  const intensity = [];
+  const fieldsMap = fields.reduce((acc, { name, ...rest }) => {
+    acc[name] = { ...rest };
+    return acc;
+  }, {});
+  const uint8ArrayData = new Uint8Array(data);
+
+  for (let i = 0; i < data.length; i += point_step) {
+    const x = new DataView(uint8ArrayData.buffer, i + fieldsMap['x'].offset, 4).getFloat32(0, !is_bigendian); // Little-endian
+    const y = new DataView(uint8ArrayData.buffer, i + fieldsMap['y'].offset, 4).getFloat32(0, !is_bigendian);
+    const z = new DataView(uint8ArrayData.buffer, i + fieldsMap['z'].offset, 4).getFloat32(0, !is_bigendian);
+
+    // console.log(`Point ${i / point_step}: x=${x}, y=${y}, z=${z}`, data[i], data[i + 1], data[i + 2], data[i + 3]);
+
+    // if (isNaN(x) || isNaN(y) || isNaN(z) || !isFinite(x) || !isFinite(y) || !isFinite(z)) {
+    //   console.log('x', data.buffer, i, 4);
+    //   console.log('y', data.buffer, i + 4, 4);
+    //   console.log('z', data.buffer, i + 8, 4);
+    //   console.log(new DataView(data.buffer, i, 4).getFloat32(0, true));
+    //   console.warn(`Hibás adat a(z) ${i / point_step}. pontnál: x=${x}, y=${y}, z=${z}`);
+    //   console.log(new DataView(data.buffer, i, 4).getFloat32(0, true));
+    //   console.log("Raw data segment:", data.slice(i, i + point_step));
+    //   continue;
+    // }
+
+    // if (data.length % point_step !== 0) {
+    //   console.warn("Adathossz nem osztható a point_step értékkel.");
+    // }
+
+    if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+      points.push(x, y, z);
+      intensity.push(new DataView(uint8ArrayData.buffer, i + fieldsMap['intensity'].offset, 4).getFloat32(0, !is_bigendian));
+    }
+  }
+
+  // console.log(points);
+  return {
+    points: new Float32Array(points),
+    intensity: new Float32Array(intensity),
+  };
+}
+
+function updatePointCloud(g) {
+  // console.log(g);
+  const positions = parsePointCloud(g);
+
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions.points, 3));
+  geometry.setAttribute("intensity", new Float32BufferAttribute(positions.intensity, 1));
+  // geometry.rotateX(Math.PI);
+
+  const material = new PointsMaterial({
+    size: 0.1,
+    vertexColors: true
+  });
+
+  // Convert intensity to colors
+  const colors = [];
+  for (let i = 0; i < positions.intensity.length; i++) {
+    const intensity = positions.intensity[i];
+    // Normalize intensity to 0-1 range if needed
+    const normalizedIntensity = intensity / 255;
+    const color = new Color(normalizedIntensity, normalizedIntensity, normalizedIntensity);
+    colors.push(color.r, color.g, color.b);
+  }
+
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+
+  if (pointsCloud) {
+    geometry.dispose();
+    scene.remove(pointsCloud)
+  }
+
+  pointsCloud = new Points(geometry, material);
+  scene.add(pointsCloud);
+}
+
 
 
 function initWebWorker() {
@@ -188,7 +275,7 @@ function initWebWorker() {
   );
   window._threejsworker = threeJSWorker;
   threeJSWorker.onmessage = (re) => {
-    updateMesh(re.data)
+    // updateMesh(re.data)
   };
 }
 
