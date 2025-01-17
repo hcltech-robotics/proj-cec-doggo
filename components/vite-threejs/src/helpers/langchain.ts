@@ -61,7 +61,7 @@ export const fetchLangChainResponse = async (
       switch (chat.sender) {
         case "user":
           return new HumanMessage(chat.text);
-        case "bot":
+        case "assistant":
           return new AIMessage(chat.text);
         case "system":
           return new SystemMessage(chat.text);

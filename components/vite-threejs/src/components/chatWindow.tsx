@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import ChatInput from "../overlaygui/chatinput";
 import { fetchLangChainResponse } from "../helpers/langchain";
+
 import "./chatWindow.css";
 
 export interface Message {
   id: number;
   text: string;
-  sender: "user" | "bot" | "system";
+  sender: "user" | "assistant" | "system";
 }
 
 const systemMessageFileLocation = "/chat-system-message";
@@ -24,12 +25,12 @@ const ChatWindow: React.FC = () => {
   const [input, setInput] = useState<string>("");
   const [historyActive, setHistoryActive] = useState<boolean>(false);
   const [fileContent, setFileContent] = useState<string>("");
+  const [notificationMessages, setNotificationMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const historyProps = {
     isHistoryActive: historyActive,
-    onHistoryActive: (isHistoryActive: boolean) =>
-      setHistoryActive(isHistoryActive),
+    onHistoryActive: (isHistoryActive: boolean) => setHistoryActive(isHistoryActive),
   };
 
   useEffect(() => {
@@ -58,26 +59,30 @@ const ChatWindow: React.FC = () => {
     };
 
     setMessages([...messages, newMessage]);
+    setNewNotificationMessage(message, "user");
 
-    // Simulate bot response
+    // Simulate assistant response
     /* setTimeout(() => {
-      const botMessage: Message = {
+      const assistantMessage: Message = {
         id: messages.length + 2,
         text: `Echo: ${message}`,
-        sender: "bot",
+        sender: "assistant",
       };
-      setMessages((prevMessages) => [...prevMessages, botMessage]);
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+      setNewNotificationMessage(assistantMessage.text, "assistant");
     }, 1000); */
+
 
     setInput("");
 
     const result = await fetchLangChainResponse(messages, message, fileContent);
-    const botMessage: Message = {
+    const assistantMessage: Message = {
       id: messages.length + 2,
       text: result,
-      sender: "bot",
+      sender: "assistant",
     };
-    setMessages((prevMessages) => [...prevMessages, botMessage]);
+    setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+    setNewNotificationMessage(assistantMessage.text, "assistant");
   };
 
   const scrollToBottom = () => {
@@ -86,9 +91,27 @@ const ChatWindow: React.FC = () => {
     }
   };
 
+  const setNewNotificationMessage = (message: string, sender: "user" | "assistant" | "system") => {
+    let id = new Date().getTime();
+    const newNotificationMessage = { id, text: message, sender };
+
+    setNotificationMessages((prevNotificationMessages: Message[]) => [...prevNotificationMessages, newNotificationMessage as Message]);
+
+    setTimeout(() => {
+      setNotificationMessages((prevNotificationMessages) => prevNotificationMessages.filter((msg) => msg.id !== id));
+    }, 3000);
+  }
+
   return (
     <div className="chat-window-wrapper">
       <div className="chat-window">
+        <div className="notification-messages-container">
+          {!historyActive && notificationMessages.map((message) => (
+            <div key={message.id} className={`notification-message ${message.sender}`}>
+              {message.text}
+            </div>
+          ))}
+        </div>
         <div className={`message-list ${historyActive ? "active" : ""}`}>
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />

@@ -7,14 +7,14 @@
   align-items: end;
   width: 100%;
   pointer-events: none;
-  
+
   .chat-window {
     width: 90%;
     max-width: 800px;
     margin-bottom: 65px;
     pointer-events: all;
   }
-  
+
   .message-list {
     padding: 10px;
     overflow-y: auto;
@@ -48,29 +48,89 @@
       /* max-width: 800px; */
     }
   }
-  
+
   .message-list.active {
     max-height: 300px;
     padding-bottom: 30px;
     opacity: 1;
   }
-  
+
   .message {
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
     position: relative;
   }
-  
+
   .message.user {
     align-self: flex-end;
     background-color: #06ebeb;
     color: black;
   }
-  
-  .message.bot, .message.system {
+
+  .message.assistant,
+  .message.system {
     align-self: flex-start;
     background-color: #a9a9a985;
     color: black;
+  }
+
+  .notification-messages-container {
+    margin: 0 60px 15px 60px;
+    display: flex;
+    flex-direction: column;
+
+    .notification-message {
+      width: 45%;
+      padding: 8px;
+      color: white;
+      text-align: center;
+      border-radius: 1.15rem;
+      position: relative;
+      border-radius: 0.4em;
+
+      &.user {
+        align-self: flex-end;
+        background-color: #06ebeb;
+        color: black;
+
+        &::after {
+          content: "";
+          position: absolute;
+          right: 0;
+          top: 50%;
+          width: 0;
+          height: 0;
+          border: 0.5em solid transparent;
+          border-left-color: #06ebeb;
+          border-right: 0;
+          border-bottom: 0;
+          margin-top: -0.25em;
+          margin-right: -0.5em;
+        }
+      }
+
+      &.assistant,
+      &.system {
+        align-self: flex-start;
+        background-color: #a9a9a985;
+        color: black;
+
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 50%;
+          width: 0;
+          height: 0;
+          border: 0.5em solid transparent;
+          border-right-color: #a9a9a985;
+          border-left: 0;
+          border-bottom: 0;
+          margin-top: -0.25em;
+          margin-left: -0.5em;
+        }
+      }
+    }
   }
 }
