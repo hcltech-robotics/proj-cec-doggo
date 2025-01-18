@@ -21,6 +21,9 @@ function animate(s: SceneManager) {
   }
   const needResize = resizeRendererToDisplaySize(renderer)
   for (let curr of [s.scenes.main, s.scenes.pointcloud]) {
+    if (!s.userSettings.pointCloudScene.enabled && curr === s.scenes.pointcloud) {
+      continue
+    }
     if (needResize) {
       const canvas = renderer.domElement
       curr.userData.camera!.aspect = canvas.clientWidth / canvas.clientHeight

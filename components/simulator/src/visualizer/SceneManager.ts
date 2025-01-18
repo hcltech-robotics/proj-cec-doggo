@@ -25,7 +25,8 @@ class SceneManager {
         this.userSettings = {
             animation: { enabled: true, play: true },
             apiKey: 'defaultapiKey',
-            foxglove_config: { url: "ws://localhost:8765" }
+            foxglove_config: { url: "ws://localhost:8765" },
+            pointCloudScene: { enabled: true }
         };
         this.scenes = {
             main: new MainScene(),

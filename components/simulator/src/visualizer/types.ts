@@ -58,5 +58,6 @@ export interface UserSettings {
     animation: { enabled: boolean, play: boolean }
     apiKey: string
     foxglove_config: { url: string }
+    pointCloudScene: { enabled: boolean }
 }
 

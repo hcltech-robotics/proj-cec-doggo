@@ -29,6 +29,16 @@ function initSettings(s: SceneManager) {
   const cameraFolder = gui.addFolder('Camera')
   cameraFolder.add(s.scenes.main?.userData.cameraControls!, 'autoRotate')
 
+  const pointcloudFolder = gui.addFolder('PointCloudViewer')
+  pointcloudFolder.add(s.userSettings.pointCloudScene, 'enabled').name('turn on/off').onChange((value: boolean) => {
+    const node = document.getElementsByClassName("pointcloud-view")
+    for (let x of node) {
+      if (x) {
+        x.setAttribute("style", `display: ${value ? "block" : "none"}`)
+      }
+    }
+  })
+
   // persist GUI state in local storage on changes
   gui.onFinishChange(() => {
     const guiState = gui.save()
