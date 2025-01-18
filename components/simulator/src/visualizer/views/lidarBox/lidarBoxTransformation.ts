@@ -4,7 +4,7 @@ import { convert, convert32 } from "../../utils";
 
 import { DoubleSide, MeshStandardMaterial, NearestFilter, TextureLoader } from "three";
 
-export function initLidarWebWorker(s: SceneManager) {
+function initLidarWebWorker(s: SceneManager) {
   //Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
   const threeJSWorker = new Worker(
     new URL("/assets/three.worker.js", import.meta.url)
@@ -70,4 +70,4 @@ function updateMesh(s: SceneManager, g: any) {
   s.scenes.main.add(lidarMesh);
 }
 
-export { updateMesh }
+export { initLidarWebWorker }

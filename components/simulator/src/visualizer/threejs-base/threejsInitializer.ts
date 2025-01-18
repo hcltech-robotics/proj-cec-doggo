@@ -1,10 +1,11 @@
 import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, PointLight, PointLightHelper, Vector3, WebGLRenderer } from "three"
-import { MainScene, SceneManager } from "../SceneManager"
+import { SceneManager } from "../SceneManager"
 import { createRobot } from "../robot/robotLoader"
 import { DragControls, OrbitControls } from "three/examples/jsm/Addons.js"
 import { toggleFullScreen } from "../../helpers/fullscreen"
 import { createLidarBox } from "../views/lidarBox/initLidarBox"
 import { initSettings } from "./settings"
+import { MainScene } from "../types"
 
 
 function initThreeJSBase(s: SceneManager) {

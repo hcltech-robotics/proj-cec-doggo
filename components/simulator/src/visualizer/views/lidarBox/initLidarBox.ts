@@ -1,5 +1,6 @@
 import { Color, DirectionalLight, HemisphereLight, PerspectiveCamera } from "three";
-import { PointcloudScene, SceneManager } from "../../SceneManager";
+import { SceneManager } from "../../SceneManager";
+import { PointcloudScene } from "../../types";
 
 function createLidarBox(s:SceneManager) {
   const pointcloudScene = new PointcloudScene();
