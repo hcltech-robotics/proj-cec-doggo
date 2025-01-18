@@ -4,6 +4,7 @@ import { parse } from "@foxglove/rosmsg";
 import { subscribe_channels } from "./channelData";
 import { SceneTransformCb } from "../types";
 import { registerAdvertisements } from "./communicate"
+import { SceneManager } from "../visualizer/SceneManager";
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {}
@@ -15,7 +16,7 @@ export function getChannelData() {
   return channelData;
 }
 
-async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765") {
+async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765", s: SceneManager) {
   if (client) {
     client.close();
   }
@@ -61,12 +62,11 @@ async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://loc
   client.on("message", (m) => {
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
-    if (["/joint_states", "/tf", "/joint_states", "/odom", "/utlidar/voxel_map_compressed"].some(c => c == parsedData.channelTopic)) {
-      transform_cb({ subscriptionId, timestamp, data: parsedData });
-    }
     if (parsedData.channelTopic === "/camera/compressed") {
-      console.log(parsedData);
+      // console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
+    } else if ([...subscribe_channels].some(c => c == parsedData.channelTopic)) {
+      transform_cb({ subscriptionId, timestamp, data: parsedData }, s);
     }
   });
   client.on("open", () => {
@@ -76,4 +76,4 @@ async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://loc
   })
 }
 
-export { init_websocket };
+export { initFoxGloveWebsocket };
