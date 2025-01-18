@@ -15,7 +15,7 @@ export function getChannelData() {
   return channelData;
 }
 
-async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765") {
+async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765") {
   if (client) {
     client.close();
   }
@@ -76,4 +76,4 @@ async function init_websocket(transform_cb: SceneTransformCb, ws_url = "ws://loc
   })
 }
 
-export { init_websocket };
+export { initFoxGloveWebsocket };
