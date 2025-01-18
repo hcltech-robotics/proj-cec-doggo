@@ -2,10 +2,10 @@ import { BufferAttribute, BufferGeometry, Mesh } from "three/webgpu";
 import { SceneManager } from "../../SceneManager";
 import { convert, convert32 } from "../../utils";
 
-import { DoubleSide, MeshStandardMaterial, NearestFilter, Object3D, TextureLoader, Vector3 } from "three";
+import { DoubleSide, MeshStandardMaterial, NearestFilter, TextureLoader } from "three";
 
 export function initLidarWebWorker(s: SceneManager) {
-  Object3D.DEFAULT_UP = new Vector3(0, 0, 0)
+  //Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
   const threeJSWorker = new Worker(
     new URL("/assets/three.worker.js", import.meta.url)
   );
@@ -13,7 +13,7 @@ export function initLidarWebWorker(s: SceneManager) {
   threeJSWorker.onmessage = (re) => {
     updateMesh(s, re.data)
   };
-  s.saveInScene("main", "lidarWorker", threeJSWorker)
+  s.scenes.main.userData.lidarWebWorker = threeJSWorker;
 }
 
 const textureLoader = new TextureLoader();
@@ -38,7 +38,7 @@ const lidarMaterial = new MeshStandardMaterial({
 
 let lidarMesh: Mesh | null = null;
 
-function updateMesh(s: SceneManager, g) {
+function updateMesh(s: SceneManager, g: any) {
   const geometryData = g.geometryData
   const origin = g.origin;
   const resolution = g.resolution;
@@ -60,14 +60,14 @@ function updateMesh(s: SceneManager, g) {
   if (lidarMesh) {
     lidarMesh.geometry.dispose();
     //lidarMesh.material.dispose();
-    s.removeFromScene("main", lidarMesh);
+    s.scenes.main.remove(lidarMesh);
   }
 
   lidarMesh = new Mesh(geometry, lidarMaterial);
   const res = resolution || 0.1;
   lidarMesh.scale.set(res, res, res);
   lidarMesh.position.set(origin[0] || 0, origin[1] || 0, origin[2] || 0);
-  s.addToScene("main", lidarMesh);
+  s.scenes.main.add(lidarMesh);
 }
 
 export { updateMesh }

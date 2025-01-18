@@ -4,6 +4,7 @@ import { parse } from "@foxglove/rosmsg";
 import { subscribe_channels } from "./channelData";
 import { SceneTransformCb } from "../types";
 import { registerAdvertisements } from "./communicate"
+import { SceneManager } from "../visualizer/SceneManager";
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {}
@@ -15,7 +16,7 @@ export function getChannelData() {
   return channelData;
 }
 
-async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765") {
+async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "ws://localhost:8765", s: SceneManager) {
   if (client) {
     client.close();
   }
@@ -62,7 +63,7 @@ async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "w
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
     if ([...subscribe_channels].some(c => c == parsedData.channelTopic)) {
-      transform_cb({ subscriptionId, timestamp, data: parsedData });
+      transform_cb({ subscriptionId, timestamp, data: parsedData }, s);
     }
     if (parsedData.channelTopic === "/camera/compressed") {
       // console.log(parsedData);

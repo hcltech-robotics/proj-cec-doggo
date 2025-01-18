@@ -3,11 +3,6 @@ import { SceneManager } from "../SceneManager";
 import URDFLoader, { URDFRobot } from "urdf-loader";
 
 
-// ===== 👨🏻‍💼 LOADING MANAGER =====
-{
-
-}
-
 function createRobot(s: SceneManager) {
   const manager = new LoadingManager()
   manager.onStart = () => {
@@ -32,7 +27,8 @@ function createRobot(s: SceneManager) {
     "./go2.urdf",
     (r: URDFRobot) => {
       r.translateZ(0.45)
-      s.addToScene("main", r)
+      s.scenes.main.userData.robot = r
+      s.scenes.main.add(r)
     }
   );
 }

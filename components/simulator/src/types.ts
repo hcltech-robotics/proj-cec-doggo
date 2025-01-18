@@ -1,3 +1,5 @@
+import { SceneManager } from "./visualizer/SceneManager"
+
 export type GuiCallback = (n: number) => void
 
 export type SceneTransformParam = {
@@ -5,4 +7,4 @@ export type SceneTransformParam = {
         channelTopic: string, messageData: any, channelSchemaName: string,
     }
 }
-export type SceneTransformCb = ({ timestamp }: SceneTransformParam) => void
+export type SceneTransformCb = ({ timestamp }: SceneTransformParam, s:SceneManager) => void

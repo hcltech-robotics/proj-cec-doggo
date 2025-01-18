@@ -1,7 +1,7 @@
-function convert(objData) {
+function convert(objData: Iterable<number>) {
     return Uint8Array.from(objData);
 }
-function convert32(objData) {
+function convert32(objData: Iterable<number>) {
     return Uint32Array.from(objData);
 }
 

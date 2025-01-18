@@ -1,109 +1,107 @@
-import GUI from 'lil-gui'
 import {
     AmbientLight,
     AxesHelper,
-    BoxGeometry,
-    BufferAttribute,
-    BufferGeometry,
     Clock,
-    DoubleSide,
     GridHelper,
-    LoadingManager,
     Material,
-    Mesh,
-    MeshStandardMaterial,
-    NearestFilter,
-    Object3D,
-    PCFSoftShadowMap,
     PerspectiveCamera,
     PointLight,
     PointLightHelper,
     Points,
-    Quaternion,
     Scene,
-    TextureLoader,
-    Vector3,
     WebGLRenderer,
 } from 'three'
-import { DragControls } from 'three/examples/jsm/controls/DragControls'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import Stats from 'three/examples/jsm/libs/stats.module'
-import * as animations from '../helpers/animations'
-import { toggleFullScreen } from '../helpers/fullscreen'
-import { resizeRendererToDisplaySize } from '../helpers/responsiveness'
-import URDFLoader, { URDFRobot } from "urdf-loader";
 import { initFoxGloveWebsocket } from '../robot/foxgloveConnection'
-import { SceneTransformParam } from '../types'
 import { initThreeJSBase } from './threejs-base/threejsInitializer'
-import { initLidarWebWorker } from './views/lidarBox/lidarBoxLoader'
+import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
+import { DragControls, OrbitControls } from 'three/examples/jsm/Addons.js'
+import { URDFRobot } from 'urdf-loader'
+import { animate } from './renderloop'
+import Stats from 'three/examples/jsm/libs/stats.module.js'
+
+interface MainSceneUserData {
+    camera: PerspectiveCamera | null
+    lidarWebWorker: Worker | null
+    ambientLight: AmbientLight | null
+    pointLight: PointLight | null
+    lidarMaterial: Material | null
+    gridHelper: GridHelper | null
+    cameraControls: OrbitControls | null
+    dragControls: DragControls | null
+    axesHelper: AxesHelper | null
+    pointLightHelper: PointLightHelper | null
+    pointsCloud: Points | null
+    robot: URDFRobot | null
+    domElement: HTMLElement | null
+}
+
+export class MainScene extends Scene {
+    userData: MainSceneUserData
+    constructor() {
+        super()
+        this.userData = { lidarWebWorker: null, camera: null, ambientLight: null, pointLight: null, lidarMaterial: null, cameraControls: null, dragControls: null, axesHelper: null, pointLightHelper: null, pointsCloud: null, robot: null, domElement: null, gridHelper: null }
+    }
+}
+
+interface PointcloudSceneUserData {
+    camera: PerspectiveCamera | null
+    domElement: HTMLElement | null
+}
+
+export class PointcloudScene extends Scene {
+    userData: PointcloudSceneUserData
+    constructor() {
+        super()
+        this.userData = { camera: null, domElement: null }
+    }
+}
+
+interface Scenes {
+    main: MainScene,
+    pointcloud: PointcloudScene
+}
+
+interface UserSettings {
+    animation: { enabled: boolean, play: boolean }
+    apiKey: string
+    foxglove_config: { url: string }
+}
+
+const CANVAS_ID = 'scene'
 
 class SceneManager {
     canvas: HTMLElement
-    renderer: WebGLRenderer
-    sceneMain: Scene
-    scenePointcloud: Scene
-    loadingManager: LoadingManager
-    ambientLight: AmbientLight
-    pointLight: PointLight
-    cube: Mesh
-    camera: PerspectiveCamera
-    cameraControls: OrbitControls
-    dragControls: DragControls
-    axesHelper: AxesHelper
-    pointLightHelper: PointLightHelper
+    renderer: WebGLRenderer | null
     clock: Clock
     stats: Stats
-    pointsCloud: Points
-    lidarMaterial: Material
-    
-    userSettings: any
+    scenes: Scenes
+
+    userSettings: UserSettings
     constructor() {
-        this.sceneMain = new Scene();
         this.userSettings = {
             animation: { enabled: true, play: true },
             apiKey: 'defaultapiKey',
             foxglove_config: { url: "ws://localhost:8765" }
         };
+        this.scenes = {
+            main: new MainScene(),
+            pointcloud: new PointcloudScene(),
+        }
+        this.canvas = document.querySelector<HTMLElement>(`canvas#${CANVAS_ID}`)!
+        this.renderer = null
+        this.clock = new Clock()
+        this.stats = new Stats()
     }
 
     init() {
         initThreeJSBase(this)
-        initFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url);
+        initFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this);
         initLidarWebWorker(this)
     }
 
     animate() {
-
-    }
-
-    addToScene(name: "main" | "pointcloud", obj: Object3D) {
-        if (name === "main") {
-            this.sceneMain.add(obj)
-        } else if (name === "pointcloud") {
-            this.scenePointcloud.add(obj)
-        } else {
-            console.error("Invalid scene name: %s", name)
-        }
-    }
-    removeFromScene(name: "main" | "pointcloud", obj: Object3D) {
-        if (name === "main") {
-            this.sceneMain.remove(obj)
-        } else if (name === "pointcloud") {
-            this.scenePointcloud.remove(obj)
-        } else {
-            console.error("Invalid scene name: %s", name)
-        }
-    }
-
-    saveInScene(name: "main" | "pointcloud", objName: string, obj: Object3D | HTMLElement | Worker) {
-        if (name === "main") {
-            this.sceneMain.userData[objName] = obj
-        } else if (name === "pointcloud") {
-            this.scenePointcloud.userData[objName] = obj
-        } else {
-            console.error("Invalid scene name: %s", name)
-        }
+        animate(this)
     }
 }
 

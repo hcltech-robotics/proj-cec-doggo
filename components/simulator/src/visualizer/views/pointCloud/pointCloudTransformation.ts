@@ -14,7 +14,7 @@ const parsePointCloud = ({ data, point_step, fields, is_bigendian }: PointCloudD
     const fieldsMap = fields.reduce((acc, { name, ...rest }) => {
         acc[name] = { ...rest };
         return acc;
-    }, {});
+    }, {} as { [key: string]: any });
     const uint8ArrayData = new Uint8Array(data);
 
     for (let i = 0; i < data.length; i += point_step) {
@@ -55,11 +55,11 @@ const parsePointCloud = ({ data, point_step, fields, is_bigendian }: PointCloudD
 let pointsCloud: Points | null = null
 let pointCloudGeometry: BufferGeometry | null = null
 
-function updatePointCloud(s:SceneManager, g) {
+function updatePointCloud(s: SceneManager, g: any) {
     // console.log(g);
     if (pointsCloud) {
-        if (pointCloudGeometry) {pointCloudGeometry.dispose()}
-        s.removeFromScene("pointcloud", pointsCloud)
+        if (pointCloudGeometry) { pointCloudGeometry.dispose() }
+        s.scenes.pointcloud.remove(pointsCloud)
     }
     const positions = parsePointCloud(g);
 
@@ -87,7 +87,7 @@ function updatePointCloud(s:SceneManager, g) {
     pointCloudGeometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
 
     pointsCloud = new Points(pointCloudGeometry, material);
-    s.addToScene("pointcloud", pointsCloud);
+    s.scenes.pointcloud.add(pointsCloud);
 }
 
 export { updatePointCloud }

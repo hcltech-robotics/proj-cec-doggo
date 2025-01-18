@@ -1,84 +1,71 @@
-import { AmbientLight, AxesHelper, DoubleSide, GridHelper, Mesh, MeshStandardMaterial, PCFSoftShadowMap, PerspectiveCamera, PointLight, PointLightHelper, Scene, WebGLRenderer } from "three"
-import { SceneManager } from "../SceneManager"
+import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, PointLight, PointLightHelper, Vector3, WebGLRenderer } from "three"
+import { MainScene, SceneManager } from "../SceneManager"
 import { createRobot } from "../robot/robotLoader"
 import { DragControls, OrbitControls } from "three/examples/jsm/Addons.js"
 import { toggleFullScreen } from "../../helpers/fullscreen"
-
-const CANVAS_ID = 'scene'
-
-
-function initThreeJSBase(sceneManager: SceneManager) {
-  createCanvas(sceneManager)
-  const { pointLight } = createLights(sceneManager)
-  createHelpers(sceneManager, pointLight)
-  createRobot(sceneManager)
-
-  createCameraControls(sceneManager)
-
-  // Full screen
-  window.addEventListener('dblclick', (event) => {
-    if (event.target === canvas) {
-      toggleFullScreen(canvas)
-    }
-  })
-
-  const lidarMaterial = new MeshStandardMaterial({
-    map: texture,
-    side: DoubleSide,  // Render both sides of the geometry
-    transparent: false,  // Disable transparency
-  });
-}
+import { createLidarBox } from "../views/lidarBox/initLidarBox"
+import { initSettings } from "./settings"
 
 
+function initThreeJSBase(s: SceneManager) {
+  Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
+  createCanvas(s)
+  createLights(s)
+  createHelpers(s)
+  createRobot(s)
+  createCameraControls(s)
+  createDomModifications(s)
 
-// ===== 📈 STATS & CLOCK =====
-{
-  clock = new Clock()
-  stats = new Stats()
-  document.body.appendChild(stats.dom)
+  createLidarBox(s)
+
+  initSettings(s)
+
+  console.log("READY1?", s.scenes.main.userData)
+  console.log("READY2?", s.scenes.pointcloud.userData)
 }
 
 function createCanvas(s: SceneManager) {
-    const canvas = document.querySelector(`canvas#${CANVAS_ID}`)!
+  const canvas = s.canvas
+  s.canvas = canvas
+  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = PCFSoftShadowMap
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.shadowMap.enabled = true
-    renderer.shadowMap.type = PCFSoftShadowMap
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.xr.enabled = true; // Enable WebXR
+  document.body.appendChild(renderer.domElement);
+  s.renderer = renderer
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.xr.enabled = true; // Enable WebXR
-    document.body.appendChild(renderer.domElement);
-
-    // Add an Enter VR button
-    // document.body.appendChild(VRButton.createButton(renderer));
-    const scene = new Scene()
-    s.sceneMain = scene
-    const views = document.getElementById("views")!
-    const mainView = document.createElement("div")
-    mainView.className = "main-view"
-    views.appendChild(mainView)
-    const sceneView = document.createElement("div")
-    mainView.appendChild(sceneView)
-    s.saveInScene("main", "domElement", mainView)
+  // Add an Enter VR button
+  // document.body.appendChild(VRButton.createButton(renderer));
+  const scene = new MainScene()
+  s.scenes.main = scene
+  const views = document.getElementById("views")!
+  const mainView = document.createElement("div")
+  mainView.className = "main-view"
+  views.appendChild(mainView)
+  const sceneView = document.createElement("div")
+  mainView.appendChild(sceneView)
+  scene.userData.domElement = mainView
 
 }
 
-function createHelpers(s: SceneManager, pointLight: PointLight) {
-  // ===== 🪄 HELPERS =====
+function createHelpers(s: SceneManager) {
   const axesHelper = new AxesHelper(4)
   axesHelper.visible = false
-  s.addToScene("main", axesHelper)
 
-  const pointLightHelper = new PointLightHelper(pointLight, undefined, 'orange')
+  s.scenes.main.userData.axesHelper = axesHelper
+  s.scenes.main.add(axesHelper)
+  const pointLightHelper = new PointLightHelper(s.scenes.main.userData.pointLight!, undefined, 'orange')
   pointLightHelper.visible = false
-  s.addToScene("main", pointLightHelper)
-
+  s.scenes.main.userData.pointLightHelper = pointLightHelper
+  s.scenes.main.add(pointLightHelper)
   const gridHelper = new GridHelper(50, 20, 'teal', 'darkgray')
   gridHelper.position.y = -0.01
   gridHelper.rotateX(Math.PI / 2);
-  s.addToScene("main", gridHelper)
-
+  s.scenes.main.userData.gridHelper = gridHelper
+  s.scenes.main.add(gridHelper)
 }
 
 function createLights(s: SceneManager) {
@@ -91,24 +78,27 @@ function createLights(s: SceneManager) {
   pointLight.shadow.camera.far = 4000
   pointLight.shadow.mapSize.width = 2048
   pointLight.shadow.mapSize.height = 2048
-  s.addToScene("main", ambientLight)
-  s.addToScene("main", pointLight)
+  s.scenes.main.add(ambientLight)
+  s.scenes.main.userData.ambientLight = ambientLight
+  s.scenes.main.add(pointLight)
+  s.scenes.main.userData.pointLight = pointLight
 
   return { pointLight, ambientLight }
 }
 
 function createCameraControls(s: SceneManager) {
   const canvas = s.canvas
-  const renderer = s.renderer
-  const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100)
+  const renderer = s.renderer!
+  const camera = new PerspectiveCamera(50, s.canvas.clientWidth / s.canvas.clientHeight, 0.1, 100)
   camera.position.set(-2.13, 5, 2.5)
-  s.saveInScene("main", "camera", camera)
-
+  s.scenes.main.userData.camera = camera
+  
   const cameraControls = new OrbitControls(camera, canvas)
   //cameraControls.target = cube.position.clone()
   cameraControls.enableDamping = true
   cameraControls.autoRotate = false
   cameraControls.update()
+  s.scenes.main.userData.cameraControls = cameraControls
 
   const dragControls = new DragControls([], camera, renderer.domElement)
   dragControls.addEventListener('hoveron', (event) => {
@@ -125,14 +115,14 @@ function createCameraControls(s: SceneManager) {
     const mesh = event.object as Mesh
     const material = mesh.material as MeshStandardMaterial
     cameraControls.enabled = false
-    userSettings.animation.play = false
+    s.userSettings.animation.play = false
     material.emissive.set('black')
     material.opacity = 0.7
     material.needsUpdate = true
   })
   dragControls.addEventListener('dragend', (event) => {
     cameraControls.enabled = true
-    userSettings.animation.play = true
+    s.userSettings.animation.play = true
     const mesh = event.object as Mesh
     const material = mesh.material as MeshStandardMaterial
     material.emissive.set('black')
@@ -140,6 +130,17 @@ function createCameraControls(s: SceneManager) {
     material.needsUpdate = true
   })
   dragControls.enabled = false
+}
+
+function createDomModifications(s: SceneManager) {
+  // Full screen
+  window.addEventListener('dblclick', (event) => {
+    if (s.canvas && event.target === s.canvas) {
+      toggleFullScreen(s.canvas)
+    }
+  })
+
+  document.body.appendChild(s.stats.dom)
 }
 
 export { initThreeJSBase }
