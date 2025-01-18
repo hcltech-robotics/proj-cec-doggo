@@ -94,7 +94,6 @@ function createCameraControls(s: SceneManager) {
   s.scenes.main.userData.camera = camera
   
   const cameraControls = new OrbitControls(camera, canvas)
-  //cameraControls.target = cube.position.clone()
   cameraControls.enableDamping = true
   cameraControls.autoRotate = false
   cameraControls.update()

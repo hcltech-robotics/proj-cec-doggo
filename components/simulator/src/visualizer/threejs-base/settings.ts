@@ -24,6 +24,7 @@ function initSettings(s: SceneManager) {
   const helpersFolder = gui.addFolder('Helpers')
   helpersFolder.add(s.scenes.main?.userData.axesHelper!, 'visible').name('axes')
   helpersFolder.add(s.scenes.main?.userData.pointLightHelper!, 'visible').name('pointLight')
+  helpersFolder.add(s.scenes.main?.userData.gridHelper!, 'visible').name('gridHelper')
 
   const cameraFolder = gui.addFolder('Camera')
   cameraFolder.add(s.scenes.main?.userData.cameraControls!, 'autoRotate')
