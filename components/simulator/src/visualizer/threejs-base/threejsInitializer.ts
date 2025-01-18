@@ -6,6 +6,7 @@ import { toggleFullScreen } from "../../helpers/fullscreen"
 import { createLidarBox } from "../views/lidarBox/initLidarBox"
 import { initSettings } from "./settings"
 import { MainScene } from "../types"
+import { createCustomGUITransforms } from "../transformations/customGuiTransforms"
 
 
 function initThreeJSBase(s: SceneManager) {
@@ -16,6 +17,7 @@ function initThreeJSBase(s: SceneManager) {
   createRobot(s)
   createCameraControls(s)
   createDomModifications(s)
+  createCustomGUITransforms(s)
 
   createLidarBox(s)
 
@@ -93,7 +95,7 @@ function createCameraControls(s: SceneManager) {
   const camera = new PerspectiveCamera(50, s.canvas.clientWidth / s.canvas.clientHeight, 0.1, 100)
   camera.position.set(-2.13, 5, 2.5)
   s.scenes.main.userData.camera = camera
-  
+
   const cameraControls = new OrbitControls(camera, canvas)
   cameraControls.enableDamping = true
   cameraControls.autoRotate = false

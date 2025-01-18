@@ -62,12 +62,11 @@ async function initFoxGloveWebsocket(transform_cb: SceneTransformCb, ws_url = "w
   client.on("message", (m) => {
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
-    if ([...subscribe_channels].some(c => c == parsedData.channelTopic)) {
-      transform_cb({ subscriptionId, timestamp, data: parsedData }, s);
-    }
     if (parsedData.channelTopic === "/camera/compressed") {
       // console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
+    } else if ([...subscribe_channels].some(c => c == parsedData.channelTopic)) {
+      transform_cb({ subscriptionId, timestamp, data: parsedData }, s);
     }
   });
   client.on("open", () => {
