@@ -2,11 +2,13 @@ import { createRobot } from "../robot/robotLoader"
 import { SceneManager } from "../SceneManager"
 import { initSettings } from "../settings"
 import { createCustomGUITransforms } from "../transformations/customGuiTransforms"
-import { createLidarBox } from "./lidarBox/initLidarBox"
-import { createCameraControls, createCanvas, createDomModifications, createHelpers, createLights } from "./main/initializers"
+import { createPointCloudScene } from "./pointCloud/initPointCloud"
+import { createCameraControls, createCanvas, createDomModifications, createHelpers, createLights, createMainScene } from "./main/initializers"
 
 function initThreeJSBase(s: SceneManager) {
     createCanvas(s)
+    createMainScene(s)
+    createPointCloudScene(s)
     createLights(s)
     createHelpers(s)
     createRobot(s)
@@ -14,7 +16,6 @@ function initThreeJSBase(s: SceneManager) {
     createDomModifications(s)
     createCustomGUITransforms(s)
   
-    createLidarBox(s)
     initSettings(s)
   
     // console.log("READY1?", s.scenes.main.userData)

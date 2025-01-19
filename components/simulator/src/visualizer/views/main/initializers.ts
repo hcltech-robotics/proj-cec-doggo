@@ -22,6 +22,9 @@ function createCanvas(s: SceneManager) {
 
   // Add an Enter VR button
   // document.body.appendChild(VRButton.createButton(renderer));
+}
+
+function createMainScene(s: SceneManager) {
   const scene = new MainScene()
   s.scenes.main = scene
   const views = document.getElementById("views")!
@@ -31,7 +34,6 @@ function createCanvas(s: SceneManager) {
   const sceneView = document.createElement("div")
   mainView.appendChild(sceneView)
   scene.userData.domElement = mainView
-
 }
 
 function createHelpers(s: SceneManager) {
@@ -125,4 +127,4 @@ function createDomModifications(s: SceneManager) {
   document.body.appendChild(s.stats.dom)
 }
 
-export { createCanvas, createHelpers, createLights, createCameraControls, createDomModifications }
+export { createCanvas, createMainScene, createHelpers, createLights, createCameraControls, createDomModifications }

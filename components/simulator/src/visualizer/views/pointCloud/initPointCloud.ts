@@ -8,7 +8,7 @@ const pointCloudSceneSize = {
   height: 150,
 }
 
-function createLidarBox(s:SceneManager) {
+function createPointCloudScene(s:SceneManager) {
   const pointcloudScene = new PointcloudScene();
   s.scenes.pointcloud = pointcloudScene
   const element = document.createElement('div');
@@ -40,4 +40,4 @@ function createLidarBox(s:SceneManager) {
   // createMockLidarData(s)
 }
 
-export { createLidarBox }
+export { createPointCloudScene }
