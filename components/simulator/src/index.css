@@ -136,8 +136,11 @@ h1 {
 
 .pointcloud-view {
   position: absolute;
-  --pointcloud-view-width: 250px; /* NOTE: these numbers are used as aspect ratio calculation in the scene.ts as well */
-  --pointcloud-view-height: 150px;
+  /*
+  NOTE: these numbers are set later in js
+  --pointcloud-view-width: 0px; 
+  --pointcloud-view-height: 0px;
+  */
   right: 20px;
   top: 80px;
   z-index: 2;

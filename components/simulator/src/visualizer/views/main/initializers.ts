@@ -1,33 +1,13 @@
 import { AmbientLight, AxesHelper, GridHelper, Mesh, MeshStandardMaterial, Object3D, PCFSoftShadowMap, PerspectiveCamera, PointLight, PointLightHelper, Vector3, WebGLRenderer } from "three"
-import { SceneManager } from "../SceneManager"
-import { createRobot } from "../robot/robotLoader"
+import { SceneManager } from "../../SceneManager"
 import { DragControls, OrbitControls } from "three/examples/jsm/Addons.js"
-import { toggleFullScreen } from "../../helpers/fullscreen"
-import { createLidarBox } from "../views/lidarBox/initLidarBox"
-import { initSettings } from "./settings"
-import { MainScene } from "../types"
-import { createCustomGUITransforms } from "../transformations/customGuiTransforms"
+import { toggleFullScreen } from "../../../helpers/fullscreen"
+import { MainScene } from "../../types"
 
-
-function initThreeJSBase(s: SceneManager) {
-  Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
-  createCanvas(s)
-  createLights(s)
-  createHelpers(s)
-  createRobot(s)
-  createCameraControls(s)
-  createDomModifications(s)
-  createCustomGUITransforms(s)
-
-  createLidarBox(s)
-
-  initSettings(s)
-
-  console.log("READY1?", s.scenes.main.userData)
-  console.log("READY2?", s.scenes.pointcloud.userData)
-}
 
 function createCanvas(s: SceneManager) {
+  Object3D.DEFAULT_UP = new Vector3(0, 0, 1)
+
   const canvas = s.canvas
   s.canvas = canvas
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
@@ -145,4 +125,4 @@ function createDomModifications(s: SceneManager) {
   document.body.appendChild(s.stats.dom)
 }
 
-export { initThreeJSBase }
+export { createCanvas, createHelpers, createLights, createCameraControls, createDomModifications }

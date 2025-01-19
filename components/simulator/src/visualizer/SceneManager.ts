@@ -3,7 +3,7 @@ import {
     WebGLRenderer,
 } from 'three'
 import { initFoxGloveWebsocket } from '../robot/foxgloveConnection'
-import { initThreeJSBase } from './threejs-base/threejsInitializer'
+import { initThreeJSBase } from './views/initThreeJs'
 import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'

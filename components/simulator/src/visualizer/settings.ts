@@ -1,7 +1,7 @@
 import GUI from "lil-gui";
-import { SceneManager } from "../SceneManager";
-import { initFoxGloveWebsocket } from "../../robot/foxgloveConnection";
-import { transform_cb } from "../transformations/ros2transforms";
+import { SceneManager } from "./SceneManager";
+import { initFoxGloveWebsocket } from "../robot/foxgloveConnection";
+import { transform_cb } from "./transformations/ros2transforms";
 
 
 function initSettings(s: SceneManager) {
