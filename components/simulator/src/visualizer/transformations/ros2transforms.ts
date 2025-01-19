@@ -9,8 +9,7 @@ function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const msgData = data.messageData
   if (data.channelTopic === '/pointcloud') {
     updatePointCloud(s, data.messageData);
-  }
-  if (data.channelTopic === "/utlidar/voxel_map_compressed") {
+  } else if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData
     s.scenes.main.userData.lidarWebWorker?.postMessage({
       resolution: vertexBinaryData.resolution,
@@ -18,8 +17,7 @@ function transform_cb(p: SceneTransformParam, s: SceneManager) {
       width: vertexBinaryData.width,
       data: vertexBinaryData.data,
     });
-  }
-  else if (data.channelTopic === "/joint_states") {
+  } else if (data.channelTopic === "/joint_states") {
     for (let i = 0; i < msgData.name.length; i++) {
       const n = msgData.name[i]
       const v = msgData.position[i]
