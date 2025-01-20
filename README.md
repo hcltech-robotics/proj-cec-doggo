@@ -16,7 +16,7 @@ ros2 bag play -s mcap .
 # terminal3
 foxglove-studio
 # terminal4
-cd components/vite-threejs
+cd components/simulator
 npm run dev
 ```
 
