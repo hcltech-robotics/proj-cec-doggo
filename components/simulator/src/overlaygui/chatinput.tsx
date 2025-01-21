@@ -20,7 +20,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [message, setMessage] = useState<string>("");
   const [isActiveSpeechRecognition, setIsActiveSpeechRecognition] =
     useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,21 +33,27 @@ const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <div className="chat-input-container">
       <form onSubmit={handleSubmit} className="chat-input-wrapper">
-        <input
-          type="text"
+        <textarea
           className="chat-input"
           placeholder="Type a message to control the robot..."
           value={message}
+          ref={textareaRef}
           onChange={(e) => setMessage(e.target.value)}
-          ref={inputRef}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey && "form" in e.target) {
+              e.preventDefault();
+              (e.target.form as HTMLFormElement).requestSubmit();
+            }
+          }}
         />
+
         <button
           type="button"
           className={`chat-button ${
             isActiveSpeechRecognition ? "active-speech-recognition" : ""
           }`}
           onClick={() =>
-            handleOnVoice(setMessage, setIsActiveSpeechRecognition, inputRef)
+            handleOnVoice(setMessage, setIsActiveSpeechRecognition, textareaRef)
           }
           aria-label="Voice input"
         >

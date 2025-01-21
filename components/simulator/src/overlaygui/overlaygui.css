@@ -30,12 +30,6 @@
 
 /* Chat input styles */
 .chat-input-container {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 800px;
     pointer-events: all;
     z-index: 1000; /* Ensure it's above the 3D view */
 }
@@ -46,7 +40,7 @@
     border: 1px solid black;
     padding: 10px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 10px;
     backdrop-filter: blur(10px);
 }
@@ -59,6 +53,9 @@
     font-size: 16px;
     color: black;
     outline: none;
+    font-family: inherit;
+    max-height: 30vh;
+    field-sizing: content;
 }
 
 .chat-input::placeholder {

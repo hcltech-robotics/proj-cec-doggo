@@ -107,9 +107,7 @@ const ChatWindow: React.FC = () => {
       <div className="chat-window">
         <div className="notification-messages-container">
           {!historyActive && notificationMessages.map((message) => (
-            <div key={message.id} className={`notification-message ${message.sender}`}>
-              {message.text}
-            </div>
+            <ChatMessage key={message.id} message={message} />
           ))}
         </div>
         <div className={`message-list ${historyActive ? "active" : ""}`}>

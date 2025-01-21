@@ -11,13 +11,16 @@
   .chat-window {
     width: 90%;
     max-width: 800px;
-    margin-bottom: 65px;
+    margin-bottom: 30px;
     pointer-events: all;
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
   }
 
   .message-list {
-    padding: 10px;
+    padding: 10px 15px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -27,12 +30,13 @@
     backdrop-filter: blur(10px);
     max-height: 0;
     opacity: 0;
+    padding-bottom: 20px;
+    margin-bottom: -20px;
     transition: all 800ms cubic-bezier(0.075, 0.82, 0.165, 1);
   }
 
   .message-list.active {
-    max-height: 300px;
-    padding-bottom: 30px;
+    max-height: 40vh;
     opacity: 1;
   }
 
@@ -42,12 +46,30 @@
     border-radius: 5px;
     position: relative;
     max-width: 85%;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 0;
+      height: 0;
+      border: 0.5em solid transparent;
+      margin-top: -0.25em;
+    }
   }
 
   .message.user {
     align-self: flex-end;
     background-color: #06ebeb;
     color: black;
+
+    &::after {
+      border-left-color: #06ebeb;
+      right: 0;
+      top: 50%;
+      border-right: 0;
+      border-bottom: 0;
+      margin-right: -0.5em;
+    }
   }
 
   .message.assistant,
@@ -55,6 +77,16 @@
     align-self: flex-start;
     background-color: #a9a9a985;
     color: black;
+
+    &::after {
+      border-left-color: #a9a9a985;
+      left: 0;
+      top: 50%;
+      border-right-color: #a9a9a985;
+      border-left: 0;
+      border-bottom: 0;
+      margin-left: -0.5em;
+    }
   }
 
   .notification-messages-container {
@@ -62,57 +94,12 @@
     display: flex;
     flex-direction: column;
 
-    .notification-message {
+    .message {
       width: 45%;
       padding: 8px;
-      color: white;
+      color: black;
       text-align: center;
-      border-radius: 1.15rem;
-      position: relative;
       border-radius: 0.4em;
-
-      &.user {
-        align-self: flex-end;
-        background-color: #06ebeb;
-        color: black;
-
-        &::after {
-          content: "";
-          position: absolute;
-          right: 0;
-          top: 50%;
-          width: 0;
-          height: 0;
-          border: 0.5em solid transparent;
-          border-left-color: #06ebeb;
-          border-right: 0;
-          border-bottom: 0;
-          margin-top: -0.25em;
-          margin-right: -0.5em;
-        }
-      }
-
-      &.assistant,
-      &.system {
-        align-self: flex-start;
-        background-color: #a9a9a985;
-        color: black;
-
-        &::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 50%;
-          width: 0;
-          height: 0;
-          border: 0.5em solid transparent;
-          border-right-color: #a9a9a985;
-          border-left: 0;
-          border-bottom: 0;
-          margin-top: -0.25em;
-          margin-left: -0.5em;
-        }
-      }
     }
   }
 }

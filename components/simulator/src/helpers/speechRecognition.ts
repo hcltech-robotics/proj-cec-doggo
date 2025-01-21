@@ -6,7 +6,7 @@ import {
 export const handleOnVoice = (
   setMessage: React.Dispatch<React.SetStateAction<string>>,
   setIsActiveSpeechRecognition: React.Dispatch<React.SetStateAction<boolean>>,
-  inputRef: React.RefObject<HTMLInputElement | null>
+  inputRef: React.RefObject<HTMLTextAreaElement | null>
 ): void => {
   if ("SpeechRecognition" in window || "webkitSpeechRecognition" in window) {
     const SpeechRecognition =
