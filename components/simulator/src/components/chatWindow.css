@@ -28,26 +28,6 @@
     max-height: 0;
     opacity: 0;
     transition: all 800ms cubic-bezier(0.075, 0.82, 0.165, 1);
-
-    &:before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      right: 0;
-      top: 1px;
-      height: 50%;
-      pointer-events: none;
-      border-radius: 25px 25px 0 0;
-      background-image: linear-gradient(
-        to bottom,
-        rgb(150 191 192),
-        rgba(255, 255, 255, 0)
-      );
-      z-index: 1;
-      width: 100%;
-      /* max-width: 800px; */
-    }
   }
 
   .message-list.active {
@@ -61,6 +41,7 @@
     padding: 10px;
     border-radius: 5px;
     position: relative;
+    max-width: 85%;
   }
 
   .message.user {
