@@ -77,7 +77,7 @@ export const fetchLangChainResponse = async (
   const llmWithTools = llm.bindTools([calculatorTool]);
   const aiMessage = await llmWithTools.invoke(messages);
 
-  /* if (aiMessage?.tool_calls && aiMessage.tool_calls.length > 0) {
+  if (aiMessage?.tool_calls && aiMessage.tool_calls.length > 0) {
     messages.push(aiMessage);
     for (const toolCall of aiMessage.tool_calls) {
       const toolMessage = await calculatorTool.invoke(toolCall);
@@ -87,5 +87,5 @@ export const fetchLangChainResponse = async (
     return aiResponseWithTools.content as string;
   } else {
     return aiMessage.content as string;
-  } */
+  }
 };
