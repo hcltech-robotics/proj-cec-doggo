@@ -12,6 +12,17 @@ export interface Message {
 
 const systemMessageFileLocation = "/chat-system-message";
 
+const getDisplayDuration = (messageLength: number) => {
+  const baseTime = 2000;
+  const maxTime = 8000;
+  const lengthFactor = 50;
+  const extraTime = Math.min(
+    Math.ceil(messageLength / lengthFactor) * 1000,
+    maxTime
+  );
+  return baseTime + extraTime;
+};
+
 const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   return (
     <div className={`message ${message.sender}`}>
@@ -25,12 +36,15 @@ const ChatWindow: React.FC = () => {
   const [input, setInput] = useState<string>("");
   const [historyActive, setHistoryActive] = useState<boolean>(false);
   const [fileContent, setFileContent] = useState<string>("");
-  const [notificationMessages, setNotificationMessages] = useState<Message[]>([]);
+  const [notificationMessages, setNotificationMessages] = useState<Message[]>(
+    []
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const historyProps = {
     isHistoryActive: historyActive,
-    onHistoryActive: (isHistoryActive: boolean) => setHistoryActive(isHistoryActive),
+    onHistoryActive: (isHistoryActive: boolean) =>
+      setHistoryActive(isHistoryActive),
   };
 
   useEffect(() => {
@@ -72,7 +86,6 @@ const ChatWindow: React.FC = () => {
       setNewNotificationMessage(assistantMessage.text, "assistant");
     }, 1000); */
 
-
     setInput("");
 
     const result = await fetchLangChainResponse(messages, message, fileContent);
@@ -91,24 +104,34 @@ const ChatWindow: React.FC = () => {
     }
   };
 
-  const setNewNotificationMessage = (message: string, sender: "user" | "assistant" | "system") => {
-    let id = new Date().getTime();
+  const setNewNotificationMessage = (
+    message: string,
+    sender: "user" | "assistant" | "system"
+  ) => {
+    const id = new Date().getTime();
     const newNotificationMessage = { id, text: message, sender };
+    const duration = getDisplayDuration(message.length);
 
-    setNotificationMessages((prevNotificationMessages: Message[]) => [...prevNotificationMessages, newNotificationMessage as Message]);
+    setNotificationMessages((prevNotificationMessages: Message[]) => [
+      ...prevNotificationMessages,
+      newNotificationMessage as Message,
+    ]);
 
     setTimeout(() => {
-      setNotificationMessages((prevNotificationMessages) => prevNotificationMessages.filter((msg) => msg.id !== id));
-    }, 3000);
-  }
+      setNotificationMessages((prevNotificationMessages) =>
+        prevNotificationMessages.filter((msg) => msg.id !== id && msg.id > id)
+      );
+    }, duration);
+  };
 
   return (
     <div className="chat-window-wrapper">
       <div className="chat-window">
         <div className="notification-messages-container">
-          {!historyActive && notificationMessages.map((message) => (
-            <ChatMessage key={message.id} message={message} />
-          ))}
+          {!historyActive &&
+            notificationMessages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
         </div>
         <div className={`message-list ${historyActive ? "active" : ""}`}>
           {messages.map((message) => (

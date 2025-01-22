@@ -34,16 +34,17 @@ export const fetchLangChainResponse = async (
 
   const calculatorTool = tool(
     async ({ operation, number1, number2 }) => {
-      if (operation === "add") {
-        return `${number1 + number2}`;
-      } else if (operation === "subtract") {
-        return `${number1 - number2}`;
-      } else if (operation === "multiply") {
-        return `${number1 * number2}`;
-      } else if (operation === "divide") {
-        return `${number1 / number2}`;
-      } else {
-        throw new Error("Invalid operation.");
+      switch (operation) {
+        case "add":
+          return `${number1 + number2}`;
+        case "subtract":
+          return `${number1 - number2}`;
+        case "multiply":
+          return `${number1 * number2}`;
+        case "divide":
+          return `${number1 / number2}`;
+        default:
+          throw new Error("Invalid operation.");
       }
     },
     {
@@ -53,11 +54,11 @@ export const fetchLangChainResponse = async (
     }
   );
 
-  let messages = undefined;
+  const messages = [];
   if (!chatHistory.length) {
-    messages = [new HumanMessage(message)];
+    messages.push(new HumanMessage(message));
   } else {
-    messages = chatHistory.map((chat) => {
+    /* messages = chatHistory.map((chat) => {
       switch (chat.sender) {
         case "user":
           return new HumanMessage(chat.text);
@@ -67,6 +68,23 @@ export const fetchLangChainResponse = async (
           return new SystemMessage(chat.text);
         default:
           return new HumanMessage(chat.text);
+      }
+    }); */
+
+    chatHistory.forEach((chat) => {
+      switch (chat.sender) {
+        case "user":
+          messages.push(new HumanMessage(chat.text));
+          break;
+        case "assistant":
+          messages.push(new AIMessage(chat.text));
+          break;
+        case "system":
+          messages.push(new SystemMessage(chat.text));
+          break;
+        default:
+          messages.push(new HumanMessage(chat.text));
+          break;
       }
     });
     messages.push(new HumanMessage(message));
