@@ -5,7 +5,7 @@ import { transform_cb } from "./transformations/ros2transforms";
 
 
 function initSettings(s: SceneManager) {
-  const gui = new GUI({ title: '🐞 Debug GUI', width: 300 })
+  const gui = new GUI({ title: '⚙️ Configuration', width: 300 })
   const foxglove = gui.addFolder('Foxglove')
   foxglove.add(s.userSettings.foxglove_config, 'url').onFinishChange(() => {
     initFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSceneManager } from "./visualizer";
 import { OverlayGUI, CanvasFrame } from "./overlaygui/overlaygui";
-import ChatInput from './overlaygui/chatinput';
+import ChatWindow from "./components/chatWindow";
 import { GuiCallback } from "./types";
 
 
@@ -40,7 +40,7 @@ const App = () => {
     <div>
       <OverlayGUI data={data} show={true} />
       <CanvasFrame />
-      <ChatInput />
+      <ChatWindow />
     </div>
   );
 };
