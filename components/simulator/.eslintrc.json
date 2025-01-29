@@ -12,7 +12,7 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json"
+          "./tsconfig.json"
         ],
         "createDefaultProgram": true
       },
@@ -25,6 +25,14 @@
         "plugin:react-hooks/recommended",
         "plugin:prettier/recommended"
       ],
+      "settings": {
+        "react": {
+          "version": "detect"
+        },
+        "import/resolver": {
+          "typescript": {}
+        }
+      },
       "plugins": [
         "react",
         "react-hooks",
