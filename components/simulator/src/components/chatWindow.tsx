@@ -28,7 +28,6 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
 
 const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState<string>("");
   const [historyActive, setHistoryActive] = useState<boolean>(false);
   const [notificationMessages, setNotificationMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -52,10 +51,7 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
     setMessages([...messages, newMessage]);
     setNewNotificationMessage(message, "user");
 
-    setInput("");
-
     const result = await ai.invoke(message);
-
     const assistantMessage: Message = {
       id: messages.length + 2,
       text: result,
