@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && pwd && ls .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint:styles": "stylelint --config=./.stylelintrc.json **/*.css",
+    "prettier:check": "prettier --config .prettierrc --check .",
+    "lint:ts": "eslint . --ext .ts,.tsx",
+    "lint": "npm run lint:ts && npm run lint:styles && npm run prettier:check",
+    "lint:fix": "npm run lint:ts -- --fix && npm run lint:styles -- --fix && prettier --config .prettierrc --write ."
   },
   "devDependencies": {
     "@foxglove/cdr": "^3.3.0",
@@ -15,6 +20,17 @@
     "@foxglove/ws-protocol": "^0.7.4",
     "@types/three": "^0.170.0",
     "@types/ws": "^8.5.13",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "lint-staged": "^15.4.3",
+    "prettier": "3.4.2",
+    "stylelint": "^16.14.0",
+    "stylelint-config-standard": "^37.0.0",
     "typescript": "^5.7.2",
     "urdf-loader": "^0.12.3",
     "vite": "^6.0.2"

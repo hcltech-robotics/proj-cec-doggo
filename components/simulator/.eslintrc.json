@@ -1,0 +1,131 @@
+{
+  "root": true,
+  "overrides": [
+    {
+      "env": {
+        "browser": true,
+        "es2021": true
+      },
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "parserOptions": {
+        "project": [
+          "./tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "settings": {
+        "react": {
+          "version": "detect"
+        },
+        "import/resolver": {
+          "typescript": {}
+        }
+      },
+      "plugins": [
+        "react",
+        "react-hooks",
+        "@typescript-eslint"
+      ],
+      "rules": {
+        "indent": [
+          "off"
+        ],
+        "function-paren-newline": "off",
+        "import/no-extraneous-dependencies": [
+          "off"
+        ],
+        "@typescript-eslint/no-extraneous-class": [
+          "error",
+          {
+            "allowEmpty": true,
+            "allowStaticOnly": true
+          }
+        ],
+        "@typescript-eslint/no-misused-promises": [
+          "error",
+          {
+            "checksVoidReturn": false
+          }
+        ],
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "import/no-cycle": [
+          "error",
+          {
+            "maxDepth": 2
+          }
+        ],
+        "import/no-default-export": "error",
+        "eol-last": [
+          "error",
+          "always"
+        ],
+        "func-style": [
+          "error",
+          "declaration",
+          {
+            "allowArrowFunctions": true
+          }
+        ],
+        "no-console": [
+          "error",
+          {
+            "allow": [
+              "warn",
+              "error"
+            ]
+          }
+        ],
+        "max-len": [
+          "error",
+          {
+            "code": 140,
+            "ignorePattern": "^import .*"
+          }
+        ],
+        "no-unused-vars": [
+          "error",
+          {
+            "args": "after-used"
+          }
+        ],
+        "prefer-template": "error",
+        "prefer-arrow-callback": "error",
+        "space-before-function-paren": "off",
+        "valid-typeof": [
+          "error",
+          {
+            "requireStringLiterals": false
+          }
+        ],
+        "react/jsx-indent": [
+          "error",
+          2
+        ],
+        "react/jsx-no-target-blank": "error",
+        "react/jsx-curly-spacing": [
+          "error",
+          {
+            "when": "never",
+            "children": true
+          }
+        ],
+        "react/jsx-pascal-case": "error",
+        "react/jsx-uses-vars": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
+      }
+    }
+  ]
+}
