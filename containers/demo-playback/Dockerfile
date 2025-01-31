@@ -39,7 +39,7 @@ if [ -n "$(ls -A /data/mcap)" ]; then\n\
     ros2 bag play --loop /data/mcap/*.mcap  &\n\
 fi\n\
 \n\
-ros2 run go2_tts tts_node --ros-args -p elevenlabs_api_key:='$ELEVENLABS_KEY' -p local_playback:=True &\n\
+ros2 run go2_tts tts_node --ros-args -p elevenlabs_api_key:=$ELEVENLABS_KEY -p local_playback:=True &\n\
 # Start Foxglove Bridge\n\
 ros2 launch foxglove_bridge foxglove_bridge_launch.xml send_buffer_limit:=100000000\n'\
 > /entrypoint.sh && chmod +x /entrypoint.sh
