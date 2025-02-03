@@ -16,6 +16,9 @@
     margin: 5px;
     color: black;
     pointer-events: all;
+    padding: 0;
+    height: 50px;
+    width: 50px;
 }
 
 .custom-gui .control {
@@ -26,6 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: row-reverse;
 }
 
 /* Chat input styles */
@@ -89,15 +93,26 @@
 
 @keyframes ripple {
     0% {
-        box-shadow: 0 0 0 0px transparent, 0 0 0 0px #ffffff75,
-        0 0 0 0px transparent, 0 0 0 0px #ffffff75, 0 0 0 0px transparent,
-        0 0 0 0px #ffffff75, 0 0 0 0px transparent, 0 0 0 0px #ffffff75;
+        box-shadow:
+            0 0 0 0 transparent,
+            0 0 0 0 #ffffff75,
+            0 0 0 0 transparent,
+            0 0 0 0 #ffffff75,
+            0 0 0 0 transparent,
+            0 0 0 0 #ffffff75,
+            0 0 0 0 transparent,
+            0 0 0 0 #ffffff75;
     }
     100% {
-        box-shadow: 0 0 0 5px transparent, 0 0 0 7px rgba(255, 255, 255, 0),
-        0 0 0 20px transparent, 0 0 0 22px rgba(255, 255, 255, 0),
-        0 0 0 40px transparent, 0 0 0 42px rgba(255, 255, 255, 0),
-        0 0 0 65px transparent, 0 0 0 67px rgba(255, 255, 255, 0);
+        box-shadow:
+            0 0 0 5px transparent,
+            0 0 0 7px rgba(255, 255, 255, 0),
+            0 0 0 20px transparent,
+            0 0 0 22px rgba(255, 255, 255, 0),
+            0 0 0 40px transparent,
+            0 0 0 42px rgba(255, 255, 255, 0),
+            0 0 0 65px transparent,
+            0 0 0 67px rgba(255, 255, 255, 0);
     }
 }
 
@@ -145,4 +160,95 @@
     width: 800px;
     height: 450px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.brand-logo {
+    position: fixed;
+    bottom: 30px;
+    left: 40px;
+    z-index: 2;
+    opacity: 0.5;
+    pointer-events: none;
+    width: 120px;
+    height: 50px;
+}
+
+.collapsible {
+    background-color: #777;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    height: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+.content {
+    padding: 0;
+    max-width: 0;
+    max-height: 0;
+    overflow: hidden;
+    /* transition: all 0.8s ease-out; */
+    transition: max-height 0.45s ease-out, max-width 0.4s ease-in;
+}
+
+.show {
+    padding: 0 18px;
+    max-width: 200px;
+    max-height: 450px;
+    transition: padding 0.2s ease-in, max-width 0.2s ease-out, max-height 0.6s ease-in;
+    
+}
+
+.dn {
+    display: none;
+}
+
+.controller-container {
+    width: 200px;
+    border-right: 1px solid black;
+
+    .movement-controls {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        justify-items: center;
+    }
+
+    .up-button {
+        grid-area: 1 / 2 / 2 / 3;
+    }
+
+    .left-button {
+        grid-area: 2 / 1 / 3 / 2;
+    }
+
+    .right-button {
+        grid-area: 2 / 3 / 3 / 4;
+    }
+
+    .down-button {
+        grid-area: 3 / 2 / 4 / 3;
+    }
+
+    button {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        color: white;
+
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    .other-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }

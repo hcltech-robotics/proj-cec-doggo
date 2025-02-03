@@ -1,31 +1,79 @@
-import { sendTwistMessage } from "../robot/communicate";
-import "./overlaygui.css";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from 'react';
+import { sendTwistMessage } from '../robot/communicate';
 
+import './overlaygui.css';
 
 interface OverlayGUIProps {
-  data?: number
-  show?: boolean
+  data?: number;
+  show?: boolean;
 }
 function OverlayGUI(props: OverlayGUIProps) {
+  const controlleraRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, SetSidebarOpen] = useState<boolean>(false);
   if (!props?.show) {
     return null;
   }
 
   const handleClick = () => {
-    const event = new CustomEvent("hackathonGuiEvent", {
-      detail: { message: "Hello from react...", asd: "bsd" },
+    const event = new CustomEvent('hackathonGuiEvent', {
+      detail: { message: 'Hello from react...', asd: 'bsd' },
       bubbles: true,
       cancelable: true,
     });
     document.dispatchEvent(event);
     sendTwistMessage();
+    controlleraRef.current?.classList.toggle('show');
+    SetSidebarOpen(!sidebarOpen);
   };
+
+  const handleMovement = (move: string) => {
+    window.send_message(move);
+  };
+
   return (
     <div className="custom-gui">
       <div className="control">
         {/* {value} */}
         <button onClick={handleClick}>🎮</button>
+        <div className="controller-container content" ref={controlleraRef}>
+          <div className="controller">
+            <div className="movement-controls">
+              <button className="up-button" onClick={() => handleMovement('up')}>
+                ⬆
+              </button>
+              <button className="left-button" onClick={() => handleMovement('left')}>
+                ⬅
+              </button>
+              <button className="right-button" onClick={() => handleMovement('right')}>
+                ➡
+              </button>
+              <button className="down-button" onClick={() => handleMovement('down')}>
+                ⬇
+              </button>
+            </div>
+            <div className="other-actions">
+              <button>↗↗</button>
+              <button>↖↖</button>
+              <button>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/active/icon_model_stand_white" fill="white"></use>
+                </svg>
+              </button>
+              <button>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/active/icon_active_sitDown_white" fill="white"></use>
+                </svg>
+              </button>
+              <button>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/active/icon_model_pose_white" fill="white"></use>
+                </svg>
+              </button>
+              <button>👓</button>
+              <button>📷</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -103,18 +151,14 @@ function CanvasFrame() {
   return (
     <>
       <div className={`canvas-container ${isZoomed ? 'zoomed' : ''}`}>
-        <canvas
-          ref={canvasRef}
-          width="320"
-          height="180"
-          className="canvas"
-          onClick={toggleZoom}
-        />
+        <canvas ref={canvasRef} width="320" height="180" className="canvas" onClick={toggleZoom} />
       </div>
 
-      {isZoomed && (
-        <div className="overlay" onClick={toggleZoom} />
-      )}
+      {isZoomed && <div className="overlay" onClick={toggleZoom} />}
+
+      <svg className="brand-logo" aria-hidden="true">
+        <use xlinkHref="#HCLTech-logo" fill="white"></use>
+      </svg>
     </>
   );
 }

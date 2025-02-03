@@ -141,8 +141,8 @@ h1 {
   --pointcloud-view-width: 0px; 
   --pointcloud-view-height: 0px;
   */
-  right: 20px;
-  top: 80px;
+  right: 50px;
+  top: 50px;
   z-index: 2;
   width: var(--pointcloud-view-width);
   height: var(--pointcloud-view-height);

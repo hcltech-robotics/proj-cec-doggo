@@ -36,7 +36,7 @@
   }
 
   .message-list.active {
-    max-height: 40vh;
+    max-height: 50vh;
     opacity: 1;
   }
 
