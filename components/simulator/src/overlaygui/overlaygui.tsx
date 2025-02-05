@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import Joystick from 'rc-joystick';
+import Joystick, { IJoystickChangeValue } from 'rc-joystick';
 
 import { sendTwistMessage } from '../robot/communicate';
 
@@ -32,7 +32,7 @@ function OverlayGUI(props: OverlayGUIProps) {
     window.send_message(move);
   };
   
-  const handleJoystic = (move: any) => {
+  const handleJoystic = (move: IJoystickChangeValue) => {
     console.log('joystic: ', move);
   };
 
