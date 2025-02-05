@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
+import Joystick from 'rc-joystick';
+
 import { sendTwistMessage } from '../robot/communicate';
 
 import './overlaygui.css';
@@ -29,6 +31,10 @@ function OverlayGUI(props: OverlayGUIProps) {
   const handleMovement = (move: string) => {
     window.send_message(move);
   };
+  
+  const handleJoystic = (move: any) => {
+    console.log('joystic: ', move);
+  };
 
   return (
     <div className="custom-gui">
@@ -37,7 +43,8 @@ function OverlayGUI(props: OverlayGUIProps) {
         <button onClick={handleClick}>🎮</button>
         <div className="controller-container content" ref={controlleraRef}>
           <div className="controller">
-            <div className="movement-controls">
+            <Joystick className="joystick-wrapper" controllerClassName="joystick-controller" onChange={handleJoystic} />
+            <div id="arrow-controller" className="movement-controls">
               <button className="up-button" onClick={() => handleMovement('up')}>
                 ⬆
               </button>
