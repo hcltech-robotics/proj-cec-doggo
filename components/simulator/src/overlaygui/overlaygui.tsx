@@ -32,7 +32,7 @@ function OverlayGUI(props: OverlayGUIProps) {
     window.send_message(move);
   };
   
-  const handleJoystic = (move: IJoystickChangeValue) => {
+  const handleJoystick = (move: IJoystickChangeValue) => {
     console.log('joystic: ', move);
   };
 
@@ -43,7 +43,7 @@ function OverlayGUI(props: OverlayGUIProps) {
         <button onClick={handleClick}>🎮</button>
         <div className="controller-container content" ref={controlleraRef}>
           <div className="controller">
-            <Joystick className="joystick-wrapper" controllerClassName="joystick-controller" onChange={handleJoystic} />
+            <Joystick className="joystick-wrapper" controllerClassName="joystick-controller" onChange={handleJoystick} />
             <div id="arrow-controller" className="movement-controls">
               <button className="up-button" onClick={() => handleMovement('up')}>
                 ⬆
