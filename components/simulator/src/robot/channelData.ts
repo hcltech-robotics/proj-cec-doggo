@@ -7,4 +7,5 @@ export const subscribe_channels = new Set([
     "/gpt_cmd",
     "/cmd_vel",
     "/pointcloud",
+    "/camera/depth/color/points",
   ])
