@@ -135,8 +135,8 @@ h1 {
   --pointcloud-view-width: 0px;
   --pointcloud-view-height: 0px;
   */
-  right: 20px;
-  top: 80px;
+  right: 50px;
+  top: 50px;
   z-index: 2;
   width: var(--pointcloud-view-width);
   height: var(--pointcloud-view-height);
@@ -147,4 +147,43 @@ h1 {
 .pointcloud-view div {
   width: var(--pointcloud-view-width);
   height: var(--pointcloud-view-height);
+}
+
+.brand-logo {
+  position: fixed;
+  bottom: 30px;
+  left: 40px;
+  z-index: 2;
+  opacity: 0.5;
+  pointer-events: none;
+  width: 120px;
+  height: 50px;
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  height: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.content {
+  padding: 0;
+  max-width: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: padding 0.3s ease-in, max-height 0.45s ease-out, max-width 0.6s ease-in;
+}
+
+.show {
+  padding: 0 18px;
+  max-width: 800px;
+  max-height: 450px;
+  transition: padding 0.2s ease-in, max-width 0.2s ease-out, max-height 0.6s ease-in;
 }

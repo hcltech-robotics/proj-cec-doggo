@@ -16,6 +16,9 @@
     margin: 5px;
     color: black;
     pointer-events: all;
+    padding: 0;
+    height: 50px;
+    width: 50px;
 }
 
 .custom-gui .control {
@@ -26,6 +29,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: row-reverse;
 }
 
 /* Chat input styles */
@@ -145,4 +149,34 @@
     width: 800px;
     height: 450px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.actions-container {
+    border-right: 1px solid black;
+
+    button {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        color: white;
+
+        svg {
+            width: 30px;
+            height: 30px;
+        }
+    }
+
+    .actions-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .button-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin: 0 10px;
+        align-items: center;
+        font-size: 12px;
+    }
 }
