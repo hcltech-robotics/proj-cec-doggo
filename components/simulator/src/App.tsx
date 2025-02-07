@@ -64,7 +64,7 @@ const App = () => {
 
   return (
     <div>
-      <OverlayGUI data={data} show={true} />
+      <OverlayGUI ai={ai} data={data} show={true} />
       <CanvasFrame />
       <ChatWindow ai={ai} />
       <JoyController />

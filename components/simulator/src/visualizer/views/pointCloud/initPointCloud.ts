@@ -4,8 +4,8 @@ import { PointcloudScene } from "../../types";
 // import { createMockLidarData } from "./mockData";
 
 const pointCloudSceneSize = {
-  width: 250,
-  height: 150,
+  width: 320,
+  height: 180,
 }
 
 function createPointCloudScene(s:SceneManager) {
