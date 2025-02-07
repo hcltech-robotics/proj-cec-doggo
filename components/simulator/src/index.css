@@ -93,23 +93,17 @@ html {
   height: 100%;
 }
 
-canvas {
+canvas#scene {
   height: 100%;
   width: 100%;
   outline: none;
 
-  background: rgb(34, 193, 195);
-  background: linear-gradient(0deg,
-      rgb(8, 163, 166) 0%,
-      rgba(79, 166, 167, 0.849) 8%,
-      rgba(61, 79, 94, 0.885) 40%,
-      rgb(17, 19, 23));
-}
-
-#scene {
   height: 100% !important;
   width: 100% !important;
   z-index: 1;
+
+  background: rgb(34, 193, 195);
+  background: linear-gradient(0deg, rgb(8, 163, 166) 0%, rgba(79, 166, 167, 0.849) 8%, rgba(61, 79, 94, 0.885) 40%, rgb(17, 19, 23));
 }
 
 h1 {
@@ -138,7 +132,7 @@ h1 {
   position: absolute;
   /*
   NOTE: these numbers are set later in js
-  --pointcloud-view-width: 0px; 
+  --pointcloud-view-width: 0px;
   --pointcloud-view-height: 0px;
   */
   right: 20px;
