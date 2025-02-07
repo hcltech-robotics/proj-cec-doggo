@@ -324,9 +324,13 @@ export class InteractWithAI {
         break;
       }
       case 'stand_hind': {
+        // TODO: Implement stand_hind action
+        console.warn('stand_hind action is not implemented');
         break;
       }
       case 'hand_stand': {
+        // TODO: Implement hand_stand action
+        console.warn('hand_stand action is not implemented');
         break;
       }
       case 'sit': {
