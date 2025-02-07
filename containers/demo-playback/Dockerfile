@@ -1,6 +1,8 @@
 # Use ROS2 Humble as base image
 FROM ros:humble
 
+ENV ELEVENLABS_KEY=""
+
 # Install foxglove bridge
 RUN apt-get update && apt-get install -y \
     ros-humble-foxglove-bridge \
@@ -34,9 +36,10 @@ source /ros2_ws/install/setup.sh\n\
 # Start ros2 bag play in background\n\
 if [ -n "$(ls -A /data/mcap)" ]; then\n\
     echo "Starting rosbag play..."\n\
-    ros2 bag play --loop /data/mcap/*  &\n\
+    ros2 bag play --loop /data/mcap/*.mcap  &\n\
 fi\n\
 \n\
+ros2 run go2_tts tts_node --ros-args -p elevenlabs_api_key:=$ELEVENLABS_KEY -p local_playback:=True &\n\
 # Start Foxglove Bridge\n\
 ros2 launch foxglove_bridge foxglove_bridge_launch.xml send_buffer_limit:=100000000\n'\
 > /entrypoint.sh && chmod +x /entrypoint.sh

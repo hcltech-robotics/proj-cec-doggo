@@ -30,12 +30,6 @@
 
 /* Chat input styles */
 .chat-input-container {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
-    max-width: 800px;
     pointer-events: all;
     z-index: 1000; /* Ensure it's above the 3D view */
 }
@@ -46,7 +40,7 @@
     border: 1px solid black;
     padding: 10px 20px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 10px;
     backdrop-filter: blur(10px);
 }
@@ -59,6 +53,9 @@
     font-size: 16px;
     color: black;
     outline: none;
+    font-family: inherit;
+    max-height: 30vh;
+    field-sizing: content;
 }
 
 .chat-input::placeholder {
@@ -78,12 +75,30 @@
 }
 
 .chat-button:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .chat-button svg {
     width: 24px;
     height: 24px;
+}
+
+.chat-button.active-speech-recognition {
+    animation: ripple 1000ms infinite;
+}
+
+@keyframes ripple {
+    0% {
+        box-shadow: 0 0 0 0px transparent, 0 0 0 0px #ffffff75,
+        0 0 0 0px transparent, 0 0 0 0px #ffffff75, 0 0 0 0px transparent,
+        0 0 0 0px #ffffff75, 0 0 0 0px transparent, 0 0 0 0px #ffffff75;
+    }
+    100% {
+        box-shadow: 0 0 0 5px transparent, 0 0 0 7px rgba(255, 255, 255, 0),
+        0 0 0 20px transparent, 0 0 0 22px rgba(255, 255, 255, 0),
+        0 0 0 40px transparent, 0 0 0 42px rgba(255, 255, 255, 0),
+        0 0 0 65px transparent, 0 0 0 67px rgba(255, 255, 255, 0);
+    }
 }
 
 /* Rest of your existing CSS */
