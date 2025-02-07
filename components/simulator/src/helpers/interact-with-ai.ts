@@ -114,7 +114,7 @@ const sportCommand = (cmd: number) => {
   const channelId = client.advertise({
     topic: "/rt/api/sport/request",
     encoding: "json",
-    schemaName: "msg/RequestHeader",
+    schemaName: "-TBD-",
   });
 
   const message = new Uint8Array(

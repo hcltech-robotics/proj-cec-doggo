@@ -1,0 +1,22 @@
+.corner-div {
+  position: fixed;
+  z-index: 900;
+  width: 200px;
+  height: 200px;
+  color: #fff; /* Text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 20px; /* Example font size */
+}
+
+.bottom-left {
+  bottom: 100px;
+  left: 60px;
+}
+
+.bottom-right {
+  bottom: 100px;
+  right: 60px;
+}
