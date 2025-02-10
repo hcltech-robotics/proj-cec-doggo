@@ -8,7 +8,7 @@ import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { MainScene, PointcloudScene, Scenes, UserSettings } from './types'
+import { ControllerMode, MainScene, PointcloudScene, Scenes, UserSettings } from './types'
 
 
 const CANVAS_ID = 'scene'
@@ -19,6 +19,7 @@ class SceneManager {
     clock: Clock
     stats: Stats
     scenes: Scenes
+    controllerMode: ControllerMode
 
     userSettings: UserSettings
     constructor() {
@@ -36,6 +37,7 @@ class SceneManager {
         this.renderer = null
         this.clock = new Clock()
         this.stats = new Stats()
+        this.controllerMode = { controller: 0 }
     }
 
     init() {

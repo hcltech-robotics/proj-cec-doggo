@@ -39,6 +39,18 @@ function initSettings(s: SceneManager) {
     }
   })
 
+  const controllerModeFolder = gui.addFolder('ControllerMode')
+  controllerModeFolder.add(s.controllerMode, 'controller', { Joystick: 0, Arrows: 1 } ).onChange((mode: number) => {
+    const joystickNode = document.getElementsByClassName("joystick-wrapper")
+    const arrowControllerNode = document.getElementById("arrow-controller")
+    arrowControllerNode?.setAttribute("style", `display: ${mode === 1 ? "grid" : "none"}`)
+    for (let x of joystickNode) {
+      if (x) {
+        x.setAttribute("style", `display: ${mode === 0 ? "block" : "none"}`)
+      }
+    }
+  });
+
   // persist GUI state in local storage on changes
   gui.onFinishChange(() => {
     const guiState = gui.save()

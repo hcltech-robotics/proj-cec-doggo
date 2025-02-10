@@ -61,3 +61,6 @@ export interface UserSettings {
     pointCloudScene: { enabled: boolean }
 }
 
+export interface ControllerMode {
+    controller: number
+}
