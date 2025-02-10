@@ -1,22 +1,30 @@
-.corner-div {
-  position: fixed;
+.joy1 {
+  position: absolute;
+  bottom: 50px;
+  left: 50px;
   z-index: 900;
-  width: 200px;
-  height: 200px;
-  color: #fff; /* Text color */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-  font-size: 20px; /* Example font size */
 }
 
-.bottom-left {
-  bottom: 100px;
-  left: 60px;
+.joy2 {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  z-index: 900;
 }
 
-.bottom-right {
-  bottom: 100px;
-  right: 60px;
+.joystick-wrapper {
+  background-color: transparent;
+  border: 1px solid #000;
+  box-shadow: 0 0 5px #262626 inset;
+  pointer-events: all;
+  margin: 50px auto;
+  height: 150px;
+  width: 150px;
+
+  .joystick-controller {
+    opacity: 0.7;
+    background: linear-gradient(to bottom, #000, #292929);
+    box-shadow: 0 0 16px #323232;
+    border-color: #000;
+  }
 }

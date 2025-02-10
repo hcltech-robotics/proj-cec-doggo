@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ChatWindow from './components/chatWindow';
 import { InteractWithAI } from './helpers/interact-with-ai';
-import { JoyController, joySetup } from './joystick/joy-controller';
+import { JoyController, JoysToRobot, JoystickHandler } from './joystick/joy-controller';
 import { CanvasFrame, OverlayGUI } from './overlaygui/overlaygui';
 import { GuiCallback } from './types';
 import { getSceneManager } from './visualizer';
@@ -31,11 +31,11 @@ tools.init();
 
 const systemMessageFileLocation = '/chat-system-message';
 
-const App = () => {
-  useEffect(() => {
-    joySetup();
-  }, []);
+const joy1 = new JoystickHandler();
+const joy2 = new JoystickHandler();
+const robotControl = new JoysToRobot(joy1, joy2);
 
+const App = () => {
   const [data, setState] = useState(0);
   useEffect(() => {
     tools.subscribeUI((n) => setState(n));
@@ -67,7 +67,8 @@ const App = () => {
       <OverlayGUI ai={ai} data={data} show={true} />
       <CanvasFrame />
       <ChatWindow ai={ai} />
-      <JoyController />
+      <JoyController joy={joy1} class="joy1" />
+      <JoyController joy={joy2} class="joy2" />
     </div>
   );
 };
