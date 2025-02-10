@@ -25,21 +25,31 @@ export class JoysToRobot {
   }
 
   public checkJoysState = () => {
-    if (this.linearJoy && this.angularJoy && (this.linearJoy.moving || this.angularJoy.moving)) {
+    if (!this.linearJoy || !this.angularJoy) {
+      console.error('Joystick handlers are not initialized');
+      return;
+    }
+
+    const topics = ['/turtle1/cmd_vel', '/cmd_vel'];
+    const isMoving = this.linearJoy.moving || this.angularJoy.moving;
+
+    if (isMoving) {
       const msg: TwistMessage = {
         linear: { x: this.linearJoy.x, y: this.linearJoy.y, z: 0 },
         angular: { x: 0, y: 0, z: this.angularJoy.y },
       };
-      this.sendTwist(msg);
-      this.sendTwist(msg, '/cmd_vel');
+      topics.forEach((topic) => this.sendTwist(msg, topic));
     }
 
-    if (this.prevState && !(this.linearJoy.moving || this.angularJoy.moving)) {
-      this.sendTwist({ angular: { x: 0, y: 0, z: 0 }, linear: { x: 0, y: 0, z: 0 } });
-      this.sendTwist({ angular: { x: 0, y: 0, z: 0 }, linear: { x: 0, y: 0, z: 0 } }, '/cmd_vel');
+    if (this.prevState && !isMoving) {
+      const stopMsg: TwistMessage = {
+        angular: { x: 0, y: 0, z: 0 },
+        linear: { x: 0, y: 0, z: 0 },
+      };
+      topics.forEach((topic) => this.sendTwist(stopMsg, topic));
     }
 
-    this.prevState = this.linearJoy.moving || this.angularJoy.moving;
+    this.prevState = isMoving;
   };
 
   public sendTwist = (twistMessage: TwistMessage, topic: string = '/turtle1/cmd_vel') => {
