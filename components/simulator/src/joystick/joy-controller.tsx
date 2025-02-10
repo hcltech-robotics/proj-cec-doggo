@@ -15,6 +15,7 @@ export interface TwistMessage {
 
 export class JoysToRobot {
   private prevState: boolean = false;
+  private channels: Record<string, any> = {};
 
   constructor(
     public linearJoy: JoystickHandler,
@@ -47,14 +48,17 @@ export class JoysToRobot {
       console.error('Foxglove client is not available');
       return;
     }
-    const channelId = client.advertise({
-      topic: topic,
-      encoding: 'json',
-      schemaName: 'geometry_msgs/msg/Twist',
-    });
+
+    if (!this.channels[topic]) {
+      this.channels[topic] = client.advertise({
+        topic: topic,
+        encoding: 'json',
+        schemaName: 'geometry_msgs/msg/Twist',
+      });
+    }
 
     const message = new Uint8Array(new TextEncoder().encode(JSON.stringify(twistMessage)));
-    client.sendMessage(channelId, message);
+    client.sendMessage(this.channels[topic], message);
   };
 }
 
