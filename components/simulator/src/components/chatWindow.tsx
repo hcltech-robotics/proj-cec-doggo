@@ -8,6 +8,7 @@ export interface Message {
   id: number;
   text: string;
   sender: "user" | "assistant" | "system";
+  image: string | null;
 }
 
 const getDisplayDuration = (messageLength: number) => {
@@ -21,6 +22,9 @@ const getDisplayDuration = (messageLength: number) => {
 const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   return (
     <div className={`message ${message.sender}`}>
+      {message.image && (
+        <img src={message.image} alt="Attached image" />
+      )}
       <span>{message.text}</span>
     </div>
   );
@@ -46,19 +50,23 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
       id: messages.length + 1,
       text: message,
       sender: "user",
+      image: null,
     };
 
     setMessages([...messages, newMessage]);
     setNewNotificationMessage(message, "user");
 
-    const result = await ai.invoke(message);
-    const assistantMessage: Message = {
-      id: messages.length + 2,
-      text: result,
-      sender: "assistant",
-    };
-    setMessages((prevMessages) => [...prevMessages, assistantMessage]);
-    setNewNotificationMessage(assistantMessage.text, "assistant");
+    const results = await ai.invoke(message);
+    results.forEach(result => {
+      const assistantMessage: Message = {
+        id: messages.length + 2,
+        text: result.text,
+        image: result.image,
+        sender: "assistant",
+      };
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+      setNewNotificationMessage(assistantMessage.text, "assistant");
+    });
   };
 
   const scrollToBottom = () => {

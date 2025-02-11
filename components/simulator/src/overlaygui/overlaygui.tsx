@@ -35,7 +35,9 @@ function OverlayGUI(props: OverlayGUIProps) {
   return (
     <div className="custom-gui">
       <div className="control">
-        <button onClick={handleClick}>🎮</button>
+        <button className='actions-menu' onClick={handleClick}>
+          <svg aria-hidden="true"><use xlinkHref="#icon/actions_menu" fill="currentColor"></use></svg>
+        </button>
         <div className="actions-container content" ref={actionsRef}>
           <div className="actions-list">
             <div className="button-wrapper">
