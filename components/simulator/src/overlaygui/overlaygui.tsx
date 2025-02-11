@@ -44,6 +44,7 @@ function OverlayGUI(props: OverlayGUIProps) {
                   <use xlinkHref="#icon/stretch_white" fill="white"></use>
                 </svg>
               </button>
+              <span>Stand out</span>
             </div>
             <div className="button-wrapper">
               <button onClick={() => handleFunction('hand_stand')}>
