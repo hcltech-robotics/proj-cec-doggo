@@ -7,11 +7,16 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@react-three/drei": "^10.0.0-rc.2",
+    "@react-three/fiber": "^9.0.0-rc.7",
+    "@react-three/postprocessing": "^3.0.0-rc.2",
+    "@types/three": "^0.173.0",
     "@vitejs/plugin-react": "^4.3.4",
     "jest": "^29.7.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "three": "^0.173.0"
+    "three": "^0.173.0",
+    "urdf-loader": "^0.12.4"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",

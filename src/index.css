@@ -1,0 +1,10 @@
+body {
+  background-color: #222;
+  color: #ccc;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  height: 100vh;
+}
