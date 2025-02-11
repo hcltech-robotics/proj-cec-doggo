@@ -7,6 +7,10 @@
     "dev": "vite"
   },
   "dependencies": {
+    "@foxglove/cdr": "^3.3.0",
+    "@foxglove/rosmsg": "^5.0.4",
+    "@foxglove/rosmsg2-serialization": "^3.0.2",
+    "@foxglove/ws-protocol": "^0.7.5",
     "@react-three/drei": "^10.0.0-rc.2",
     "@react-three/fiber": "^9.0.0-rc.7",
     "@react-three/postprocessing": "^3.0.0-rc.2",

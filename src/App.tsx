@@ -1,18 +1,9 @@
-import { Grid, OrbitControls } from '@react-three/drei';
-import { Canvas, useLoader } from '@react-three/fiber';
-import URDFLoader from 'urdf-loader';
+import { Grid, OrbitControls, Stats } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { Go2Robot } from './component/go2-robot';
+import { RobotCommunication } from './service/robot-communication.service';
 
-const Go2Robot = (props: { joints?: Record<string, number> }) => {
-  const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf');
-
-  if (props.joints) {
-    Object.keys(props.joints).forEach((joint) => {
-      robotMesh.joints[joint].setJointValue(props.joints![joint]);
-    });
-  }
-
-  return <primitive object={robotMesh} />;
-};
+const connection = new RobotCommunication('ws://10.1.1.145:8765');
 
 const App = () => {
   return (
@@ -20,18 +11,19 @@ const App = () => {
       <Canvas>
         <ambientLight intensity={Math.PI / 2} />
         <Grid
-          renderOrder={-1}
-          position={[0, -1.85, 0]}
           infiniteGrid
-          cellSize={0.6}
+          renderOrder={-1}
+          position={[0, -0.45, 0]}
+          cellSize={0.45}
           cellThickness={0.6}
-          sectionSize={3.3}
-          sectionThickness={1.5}
-          sectionColor={'purple'}
-          fadeDistance={30}
+          sectionSize={0.45 * 8}
+          sectionThickness={2}
+          sectionColor={'teal'}
+          fadeDistance={50}
         />
-        <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={Math.PI / 3} maxPolarAngle={Math.PI / 2} />
-        <Go2Robot />
+        <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2} />
+        <Go2Robot connection={connection} />
+        <Stats />
       </Canvas>
     </>
   );
