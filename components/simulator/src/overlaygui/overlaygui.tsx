@@ -1,8 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
-import { sendTwistMessage } from '../robot/communicate';
 
 import './overlaygui.css';
-import { handleAction, InteractWithAI } from '../helpers/interact-with-ai';
+import { InteractWithAI } from '../helpers/interact-with-ai';
 
 interface OverlayGUIProps {
   ai: InteractWithAI;
@@ -17,13 +16,6 @@ function OverlayGUI(props: OverlayGUIProps) {
   }
 
   const handleClick = () => {
-    const event = new CustomEvent('hackathonGuiEvent', {
-      detail: { message: 'Hello from react...', asd: 'bsd' },
-      bubbles: true,
-      cancelable: true,
-    });
-    document.dispatchEvent(event);
-    sendTwistMessage();
     actionsRef.current?.classList.toggle('show');
     SetSidebarOpen(!sidebarOpen);
   };
