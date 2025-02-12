@@ -14,26 +14,24 @@ const App = () => {
           <mesh castShadow>
             <Go2Robot connection={connection} />
           </mesh>
-          <mesh receiveShadow position={[0.0, 0.0, 0.0]}>
+          <mesh receiveShadow position={[0.0, 0.0, 0.04]}>
             <planeGeometry args={[10, 10]} isBufferGeometry />
             <meshLambertMaterial />
           </mesh>
         </group>
 
         <Environment background preset="sunset" blur={0.5} />
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.4} />
 
-        <pointLight
+        <directionalLight
           castShadow
-          position={[2, 1, 2]}
+          position={[2, 4, 2]}
           rotation={[0.0, -0.5, 0.5, 'XYZ']}
-          color={0xeeeeff}
-          intensity={30}
-          shadow-radius={100}
-          shadow-mapSize-width={512}
-          shadow-mapSize-height={512}
-          shadow-camera-near={0.5}
-          shadow-camera-far={500}
+          color={0xddddcc}
+          intensity={2}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          shadow-bias={0.2}
         />
 
         <Grid

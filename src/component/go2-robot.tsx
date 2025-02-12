@@ -38,6 +38,8 @@ const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
 export const Go2Robot = (props: { connection: RobotCommunication }) => {
   const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf') as URDFRobot;
 
+  robotMesh.traverse((c) => (c.castShadow = true));
+
   useFrame(() => {
     updateJoints(props.connection, robotMesh);
     updatePosition(props.connection, robotMesh);
