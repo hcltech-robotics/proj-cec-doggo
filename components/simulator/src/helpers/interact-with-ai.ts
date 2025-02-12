@@ -133,6 +133,22 @@ const sportCommand = (cmd: number) => {
   client.sendMessage(channelId, message);
 };
 
+const sendVoice = (text: string) => {
+  const client = getClient();
+  if (!client) {
+    console.error('Foxglove client is not available');
+    return;
+  }
+  const channelId = client.advertise({
+    topic: '/tts',
+    encoding: 'json',
+    schemaName: 'go2_tts_msgs/msg/TTSRequest',
+  });
+
+  const message = new Uint8Array(new TextEncoder().encode(JSON.stringify({ text, voice_name: 'XrExE9yKIg1WjnnlVkGX' })));
+  client.sendMessage(channelId, message);
+};
+
 export class InteractWithAI {
   private llm: ChatOpenAI;
   private llmWithTools: Runnable;
@@ -322,12 +338,14 @@ export class InteractWithAI {
           } else {
             response.push({ text: comment.content, image: toolResult.image });
           }
+          sendVoice(comment.content);
         } else {
           response.push({ text: `*Missing tool: ${call.name}`, image: null });
         }
       }
       return response;
     } else {
+      sendVoice(aiMessage.content);
       return [{ text: aiMessage.content as string, image: null }];
     }
   }
