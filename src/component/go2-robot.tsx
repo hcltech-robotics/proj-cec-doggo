@@ -44,9 +44,5 @@ export const Go2Robot = (props: { connection: RobotCommunication }) => {
     updateRotation(props.connection, robotMesh);
   });
 
-  return (
-    <mesh castShadow>
-      <primitive object={robotMesh} />
-    </mesh>
-  );
+  return <primitive object={robotMesh} />;
 };
