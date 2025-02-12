@@ -141,7 +141,13 @@ export class InteractWithAI {
   private imageData = '';
 
   private async analyzeImage(): Promise<MessageWithImage> {
-    this.imageData = document.getElementById('camera').toDataURL('image/png');
+    const cameraCanvas = document.getElementById('camera') as HTMLCanvasElement;
+    if (!cameraCanvas) {
+      console.error('Camera canvas not found.');
+      return { text: 'Camera canvas not found.', image: null };
+    }
+    this.imageData = cameraCanvas.toDataURL('image/png');
+
     const chat = new ChatOpenAI({
       apiKey: this.apiKey,
       model: 'gpt-4o-mini',
@@ -157,8 +163,10 @@ export class InteractWithAI {
       }),
     ];
 
-    const response = await chat.invoke(messages);
-    return { text: response.content as string, image: this.imageData };
+    const result = await chat.invoke(messages);
+    const response = { text: result.content as string, image: this.imageData };
+    this.imageData = '';
+    return response;
   }
 
   private tools: Record<string, Tool> = {
@@ -309,8 +317,11 @@ export class InteractWithAI {
 
           const comment = await this.llmWithTools.invoke(this.messages);
 
-          response.push({ text: comment.content, image: toolResult.image });
-          this.imageData = '';
+          if (call.name !== 'image_analyze') {
+            response.push({ text: comment.content, image: null });
+          } else {
+            response.push({ text: comment.content, image: toolResult.image });
+          }
         } else {
           response.push({ text: `*Missing tool: ${call.name}`, image: null });
         }
