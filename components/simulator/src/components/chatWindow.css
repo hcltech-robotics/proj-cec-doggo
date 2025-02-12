@@ -36,7 +36,7 @@
   }
 
   .message-list.active {
-    max-height: 50vh;
+    max-height: 60vh;
     opacity: 1;
   }
 
@@ -46,6 +46,11 @@
     border-radius: 5px;
     position: relative;
     max-width: 85%;
+
+    img {
+      max-width: 35vw;
+      display: block;
+    }
 
     &::after {
       content: "";

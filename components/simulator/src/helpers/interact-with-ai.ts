@@ -4,6 +4,11 @@ import { Tool, tool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
 import { getClient } from '../robot/foxgloveConnection';
 
+export interface MessageWithImage {
+  text: string;
+  image: string | null;
+}
+
 export const SPORT_CMD = {
   1001: 'Damp',
   1002: 'BalanceStand',
@@ -133,9 +138,16 @@ export class InteractWithAI {
   private llmWithTools: Runnable;
   private messages: BaseMessage[] = [];
   private apiKey = '';
+  private imageData = '';
 
-  private async analyzeImage(): Promise<string> {
-    const imageData = document.getElementById('camera').toDataURL('image/png');
+  private async analyzeImage(): Promise<MessageWithImage> {
+    const cameraCanvas = document.getElementById('camera') as HTMLCanvasElement;
+    if (!cameraCanvas) {
+      console.error('Camera canvas not found.');
+      return { text: 'Camera canvas not found.', image: null };
+    }
+    this.imageData = cameraCanvas.toDataURL('image/png');
+
     const chat = new ChatOpenAI({
       apiKey: this.apiKey,
       model: 'gpt-4o-mini',
@@ -146,13 +158,15 @@ export class InteractWithAI {
       new HumanMessage({
         content: [
           { type: 'text', text: "What's in this image?" },
-          { image_url: { url: imageData, detail: 'low' }, type: 'image_url' },
+          { image_url: { url: this.imageData, detail: 'low' }, type: 'image_url' },
         ],
       }),
     ];
 
-    const response = await chat.invoke(messages);
-    return response.content as string;
+    const result = await chat.invoke(messages);
+    const response = { text: result.content as string, image: this.imageData };
+    this.imageData = '';
+    return response;
   }
 
   private tools: Record<string, Tool> = {
@@ -279,14 +293,14 @@ export class InteractWithAI {
     this.messages.push(new SystemMessage(this.initialContext));
   }
 
-  public async invoke(message: string): Promise<string> {
+  public async invoke(message: string): Promise<MessageWithImage[]> {
     this.messages.push(new HumanMessage(message));
 
     const aiMessage = await this.llmWithTools.invoke(this.messages);
     this.messages.push(aiMessage);
 
     if (aiMessage?.tool_calls && aiMessage.tool_calls.length > 0) {
-      const response: string[] = [];
+      const response: MessageWithImage[] = [];
 
       for (const call of aiMessage.tool_calls) {
         if (Object.keys(this.tools).includes(call.name)) {
@@ -294,22 +308,27 @@ export class InteractWithAI {
 
           console.log(aiMessage, toolResult);
 
-          this.messages.push(new ToolMessage({ content: toolResult, tool_call_id: call.id! }));
+          this.messages.push(new ToolMessage({ content: toolResult.text, tool_call_id: call.id! }));
           // response.push(toolResult);
 
-          this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
+          if (call.name !== 'image_analyze') {
+            this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
+          }
 
           const comment = await this.llmWithTools.invoke(this.messages);
 
-          response.push(comment.content);
+          if (call.name !== 'image_analyze') {
+            response.push({ text: comment.content, image: null });
+          } else {
+            response.push({ text: comment.content, image: toolResult.image });
+          }
         } else {
-          response.push(`*Missing tool: ${call.name}`);
+          response.push({ text: `*Missing tool: ${call.name}`, image: null });
         }
       }
-
-      return response.join('; ');
+      return response;
     } else {
-      return aiMessage.content as string;
+      return [{ text: aiMessage.content as string, image: null }];
     }
   }
 
