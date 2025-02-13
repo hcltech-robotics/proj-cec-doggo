@@ -1,8 +1,8 @@
 import { parse } from '@foxglove/rosmsg';
 import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
-import { interestingTopics } from '../model/channels.model';
-import { EnrichedChannel } from '../model/foxglove.model';
+import { interestingTopics } from '../model/Go2RobotTopics';
+import { EnrichedChannel } from '../model/FoxgloveBasics';
 
 export class RobotCommunication {
   private client: FoxgloveClient;

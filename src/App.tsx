@@ -1,36 +1,32 @@
 import { Environment, Grid, OrbitControls, Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing';
-import { LevaInputs, useControls } from 'leva';
-import { Go2Robot } from './component/go2-robot';
-import { RobotCommunication } from './service/robot-communication.service';
+import { useState } from 'react';
+import { ControlPanel } from './component/ControlPanel';
+import { Go2Robot } from './component/Go2Robot';
+import { RobotCommunication } from './service/RobotCommunicationService';
 
 const connection = new RobotCommunication('ws://10.1.1.145:8765');
 
 const App = () => {
-  const [config] = useControls(() => {
-    return {
-      robotShadow: { label: 'Robot cast shadow', type: LevaInputs.BOOLEAN, value: true },
-    };
-  });
+  let [config, setConfig] = useState({ graphStats: true, grid: true, robotShadow: true });
 
   return (
     <>
+      <ControlPanel configChange={setConfig} />
+
       <Canvas shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 65 }}>
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
           <Go2Robot connection={connection} castShadow={config.robotShadow} />
         </group>
-
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
           <mesh receiveShadow position={[0.0, 0.0, 0.04]}>
             <planeGeometry args={[10, 10]} isBufferGeometry />
             <shadowMaterial />
           </mesh>
         </group>
-
         <Environment background preset="sunset" blur={0.5} />
         <ambientLight intensity={0.4} />
-
         <directionalLight
           castShadow
           position={[2, 4, 2]}
@@ -41,24 +37,28 @@ const App = () => {
           shadow-mapSize-height={2048}
           shadow-bias={0.2}
         />
-
-        <Grid
-          infiniteGrid
-          renderOrder={-1}
-          position={[0.0, 0.005, 0.0]}
-          cellSize={0.45}
-          cellThickness={0.6}
-          sectionSize={0.45 * 8}
-          sectionThickness={2}
-          sectionColor={'teal'}
-          fadeDistance={50}
-        />
+        {config.grid ? (
+          <Grid
+            infiniteGrid
+            renderOrder={-1}
+            position={[0.0, 0.005, 0.0]}
+            cellSize={0.45}
+            cellThickness={0.6}
+            sectionSize={0.45 * 8}
+            sectionThickness={2}
+            sectionColor={'teal'}
+            fadeDistance={50}
+          />
+        ) : (
+          ''
+        )}
+        x
         <EffectComposer>
           <Bloom luminanceThreshold={2} mipmapBlur />
           <ToneMapping />
         </EffectComposer>
         <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={Math.PI / 6} maxPolarAngle={Math.PI / 2} />
-        <Stats />
+        {config.graphStats ? <Stats /> : ''}
       </Canvas>
     </>
   );

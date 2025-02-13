@@ -1,10 +1,10 @@
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useEffect } from 'react';
-import { JointState, Odometry, Transform } from 'src/model/unitree-go2.model';
-import { RobotCommunication } from 'src/service/robot-communication.service';
+import { JointState, Odometry, Transform } from 'src/model/Go2RobotInterfaces';
+import { RobotCommunication } from 'src/service/RobotCommunicationService';
 import { Vector3, Vector4 } from 'three';
 import URDFLoader, { URDFRobot } from 'urdf-loader';
-import { TOPIC_JOINT_STATES, TOPIC_ODOM, TOPIC_TRANSFORM } from '../model/channels.model';
+import { TOPIC_JOINT_STATES, TOPIC_ODOM, TOPIC_TRANSFORM } from '../model/Go2RobotTopics';
 
 const initialJointState = {
   FL_hip_joint: 0.02,
