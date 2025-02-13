@@ -10,7 +10,6 @@
     align-items: center;
     padding: 10px;
     z-index: 2;
-    margin-top: 0;
 }
 
 .custom-gui button {
@@ -19,7 +18,7 @@
     pointer-events: all;
     padding: 0;
     height: 50px;
-    width: 50px;
+    min-width: 50px;
 }
 
 .custom-gui .control {
@@ -28,7 +27,7 @@
     border: 1px solid black;
     padding: 10px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     flex-direction: row-reverse;
     backdrop-filter: blur(1px);
