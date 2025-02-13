@@ -85,5 +85,9 @@ export const Go2Robot = (props: { connection: RobotCommunication; castShadow: bo
     updateRotation(props.connection, robotMesh);
   });
 
-  return <primitive object={robotMesh} />;
+  return (
+    <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
+      <primitive object={robotMesh} />
+    </group>
+  );
 };

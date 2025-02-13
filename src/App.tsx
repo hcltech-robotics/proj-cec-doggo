@@ -14,11 +14,8 @@ const App = () => {
   return (
     <>
       <ControlPanel configChange={setConfig} />
-
       <Canvas shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 65 }}>
-        <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
-          <Go2Robot connection={connection} castShadow={config.robotShadow} />
-        </group>
+        <Go2Robot connection={connection} castShadow={config.robotShadow} />
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
           <mesh receiveShadow position={[0.0, 0.0, 0.04]}>
             <planeGeometry args={[10, 10]} isBufferGeometry />
