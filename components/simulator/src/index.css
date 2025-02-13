@@ -175,12 +175,11 @@ h1 {
   max-width: 0;
   max-height: 0;
   overflow: hidden;
-  transition: padding 0.3s ease-in, max-height 0.45s ease-out, max-width 0.6s ease-in;
+  transition: padding 0.3s ease-in, max-height 0.25s ease-out, max-width 0.65s ease-in;
 }
 
 .show {
   padding: 0 18px;
-  padding-top: 20px;
   max-width: 800px;
   max-height: 450px;
   transition: padding 0.2s ease-in, max-width 0.2s ease-out, max-height 0.6s ease-in;

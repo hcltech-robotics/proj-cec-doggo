@@ -72,6 +72,38 @@ function OverlayGUI(props: OverlayGUIProps) {
               </button>
               <span>Dance</span>
             </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('jump')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/jump_forward" fill="white"></use>
+                </svg>
+              </button>
+              <span>Jump forward</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('stand_down')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/pounce" fill="white"></use>
+                </svg>
+              </button>
+              <span>Stand down</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('finger_heart')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/show_heart" fill="white"></use>
+                </svg>
+              </button>
+              <span>Finger heart</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('hello')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/greet" fill="white"></use>
+                </svg>
+              </button>
+              <span>Hello</span>
+            </div>
           </div>
         </div>
       </div>
