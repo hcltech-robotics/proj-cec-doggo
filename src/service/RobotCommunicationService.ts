@@ -1,19 +1,19 @@
 import { parse } from '@foxglove/rosmsg';
 import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
-import { interestingTopics } from '../model/Go2RobotTopics';
 import { EnrichedChannel } from '../model/FoxgloveBasics';
+import { interestingTopics, topicList, TopicListName, TypedChannels } from '../model/Go2RobotTopics';
 
 export class RobotCommunication {
   private client: FoxgloveClient;
-  public channels: Record<number, EnrichedChannel> = {};
-  public channelByName: Record<string, EnrichedChannel> = {};
+  public channels: Record<number, EnrichedChannel<any>> = {};
+  public channelByName: TypedChannels = {} as TypedChannels;
 
   public onOpen = () => {};
 
   public onAdvertise = (topics: Channel[]) => {
     topics.forEach((topic) => {
-      if (interestingTopics.includes(topic.topic)) {
+      if (interestingTopics.includes(topic.topic as TopicListName)) {
         const subscriptionId = this.client.subscribe(topic.id);
         const definition = parse(topic.schema, { ros2: true });
         const reader = new MessageReader(definition);
@@ -22,7 +22,7 @@ export class RobotCommunication {
           lastMessage: {},
           decoder: (msg: DataView) => reader.readMessage(msg),
         };
-        this.channelByName[topic.topic] = this.channels[subscriptionId];
+        this.channelByName[topic.topic as TopicListName] = this.channels[subscriptionId];
       }
     });
   };
@@ -41,6 +41,8 @@ export class RobotCommunication {
     if (data) {
       this.channels[message.subscriptionId]!.lastMessage = data;
     }
+
+    console.log(this.channelByName[topicList.TOPIC_LIDAR].lastMessage.data);
   };
 
   constructor(private address: string = 'ws://localhost:8765') {

@@ -1,6 +1,6 @@
 import { Channel } from '@foxglove/ws-protocol';
 
-export interface EnrichedChannel extends Channel {
-  decoder: (msg: DataView) => {};
-  lastMessage: any;
+export interface EnrichedChannel<T> extends Channel {
+  decoder: (msg: DataView) => T;
+  lastMessage: T;
 }

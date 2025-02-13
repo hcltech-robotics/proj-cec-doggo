@@ -1,5 +1,26 @@
 import { Vector3, Vector4 } from 'three';
 
+export const initialJointState = {
+  FL_hip_joint: 0.02,
+  FR_hip_joint: 0.07,
+  RL_hip_joint: 0.02,
+  RR_hip_joint: 0.12,
+  FL_thigh_joint: 0.75,
+  FR_thigh_joint: 0.75,
+  RL_thigh_joint: 0.75,
+  RR_thigh_joint: 0.75,
+  FL_calf_joint: -1.55,
+  FR_calf_joint: -1.55,
+  RL_calf_joint: -1.55,
+  RR_calf_joint: -1.55,
+};
+
+export const initialPosition = {
+  x: 0,
+  y: 0,
+  z: 0.375,
+};
+
 export interface TwistMessage {
   linear: Vector3;
   angular: Vector3;
@@ -35,4 +56,14 @@ export interface Transform {
     child_frame_id: string;
     transform: { translation: Vector3; rotation: Vector4 };
   }[];
+}
+
+export interface LidarFrame {
+  data: Uint8Array;
+  frame_id: string;
+  origin: Float64Array;
+  resolution: number;
+  src_size: BigInt;
+  stamp: number;
+  width: Int16Array;
 }

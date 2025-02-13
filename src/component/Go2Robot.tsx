@@ -1,31 +1,10 @@
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useEffect } from 'react';
-import { JointState, Odometry, Transform } from 'src/model/Go2RobotInterfaces';
 import { RobotCommunication } from 'src/service/RobotCommunicationService';
 import { Vector3, Vector4 } from 'three';
 import URDFLoader, { URDFRobot } from 'urdf-loader';
-import { TOPIC_JOINT_STATES, TOPIC_ODOM, TOPIC_TRANSFORM } from '../model/Go2RobotTopics';
-
-const initialJointState = {
-  FL_hip_joint: 0.02,
-  FR_hip_joint: 0.07,
-  RL_hip_joint: 0.02,
-  RR_hip_joint: 0.12,
-  FL_thigh_joint: 0.75,
-  FR_thigh_joint: 0.75,
-  RL_thigh_joint: 0.75,
-  RR_thigh_joint: 0.75,
-  FL_calf_joint: -1.55,
-  FR_calf_joint: -1.55,
-  RL_calf_joint: -1.55,
-  RR_calf_joint: -1.55,
-};
-
-const initialPosition = {
-  x: 0,
-  y: 0,
-  z: 0.375,
-};
+import { initialJointState, initialPosition } from '../model/Go2RobotInterfaces';
+import { topicList } from '../model/Go2RobotTopics';
 
 const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
   Object.keys(joints).forEach((joint) => {
@@ -34,7 +13,7 @@ const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
 };
 
 const updateJoints = (connection: RobotCommunication, mesh: URDFRobot) => {
-  const jointState = connection.channelByName[TOPIC_JOINT_STATES]?.lastMessage as JointState;
+  const jointState = connection.channelByName[topicList.TOPIC_JOINT_STATES].lastMessage;
   if (jointState && jointState.name) {
     const joints = jointState.name.reduce((acc, joint, idx) => {
       acc[joint] = jointState.position[idx]!;
@@ -50,7 +29,7 @@ const setPosition = (position: Vector3, mesh: URDFRobot) => {
 };
 
 const updatePosition = (connection: RobotCommunication, mesh: URDFRobot) => {
-  const odom = connection.channelByName[TOPIC_ODOM]?.lastMessage as Odometry;
+  const odom = connection.channelByName[topicList.TOPIC_ODOM]?.lastMessage;
   if (odom && odom.pose) {
     setPosition(odom.pose.pose.position, mesh);
   }
@@ -61,7 +40,7 @@ const setRotation = (rotation: Vector4, mesh: URDFRobot) => {
 };
 
 const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
-  const transform = connection.channelByName[TOPIC_TRANSFORM]?.lastMessage as Transform;
+  const transform = connection.channelByName[topicList.TOPIC_TRANSFORM]?.lastMessage;
   if (transform.transforms) {
     const base = transform.transforms.find((t) => t.child_frame_id === 'base_link');
     if (base) {
