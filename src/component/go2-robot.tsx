@@ -31,8 +31,6 @@ const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
   Object.keys(joints).forEach((joint) => {
     mesh.joints[joint]!.setJointValue(joints[joint]!);
   });
-
-  console.log({ setJoints: joints });
 };
 
 const updateJoints = (connection: RobotCommunication, mesh: URDFRobot) => {
@@ -49,7 +47,6 @@ const updateJoints = (connection: RobotCommunication, mesh: URDFRobot) => {
 
 const setPosition = (position: Vector3, mesh: URDFRobot) => {
   mesh.position.copy(position);
-  console.log({ setPosition: position });
 };
 
 const updatePosition = (connection: RobotCommunication, mesh: URDFRobot) => {
@@ -61,7 +58,6 @@ const updatePosition = (connection: RobotCommunication, mesh: URDFRobot) => {
 
 const setRotation = (rotation: Vector4, mesh: URDFRobot) => {
   mesh.quaternion.copy(rotation);
-  console.log({ setRotation: rotation });
 };
 
 const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
@@ -74,14 +70,14 @@ const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
   }
 };
 
-export const Go2Robot = (props: { connection: RobotCommunication }) => {
+export const Go2Robot = (props: { connection: RobotCommunication; castShadow: boolean }) => {
   const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf') as URDFRobot;
 
   useEffect(() => {
-    robotMesh.traverse((c) => (c.castShadow = true));
+    robotMesh.traverse((c) => (c.castShadow = props.castShadow));
     setJoints(initialJointState, robotMesh);
     setPosition(new Vector3(...Object.values(initialPosition)), robotMesh);
-  }, []);
+  }, [props.castShadow]);
 
   useFrame(() => {
     updateJoints(props.connection, robotMesh);

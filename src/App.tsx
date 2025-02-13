@@ -1,17 +1,24 @@
 import { Environment, Grid, OrbitControls, Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing';
+import { LevaInputs, useControls } from 'leva';
 import { Go2Robot } from './component/go2-robot';
 import { RobotCommunication } from './service/robot-communication.service';
 
 const connection = new RobotCommunication('ws://10.1.1.145:8765');
 
 const App = () => {
+  const [config] = useControls(() => {
+    return {
+      robotShadow: { label: 'Robot cast shadow', type: LevaInputs.BOOLEAN, value: true },
+    };
+  });
+
   return (
     <>
       <Canvas shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 65 }}>
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
-          <Go2Robot connection={connection} />
+          <Go2Robot connection={connection} castShadow={config.robotShadow} />
         </group>
 
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
