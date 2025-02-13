@@ -11,12 +11,13 @@ const App = () => {
     <>
       <Canvas shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 65 }}>
         <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
-          <mesh castShadow>
-            <Go2Robot connection={connection} />
-          </mesh>
+          <Go2Robot connection={connection} />
+        </group>
+
+        <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
           <mesh receiveShadow position={[0.0, 0.0, 0.04]}>
             <planeGeometry args={[10, 10]} isBufferGeometry />
-            <meshLambertMaterial />
+            <shadowMaterial />
           </mesh>
         </group>
 
@@ -37,7 +38,7 @@ const App = () => {
         <Grid
           infiniteGrid
           renderOrder={-1}
-          position={[0.0, -0.005, 0.0]}
+          position={[0.0, 0.005, 0.0]}
           cellSize={0.45}
           cellThickness={0.6}
           sectionSize={0.45 * 8}
