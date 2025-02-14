@@ -1,5 +1,5 @@
 import { EnrichedChannel } from './FoxgloveBasics';
-import { JointState, LidarFrame, Odometry, Transform } from './Go2RobotInterfaces';
+import { JointState, LidarData, Odometry, Transform } from './Go2RobotInterfaces';
 
 export const topicList = {
   TOPIC_JOINT_STATES: '/joint_states',
@@ -16,5 +16,5 @@ export interface TypedChannels {
   [topicList.TOPIC_JOINT_STATES]: EnrichedChannel<JointState>;
   [topicList.TOPIC_ODOM]: EnrichedChannel<Odometry>;
   [topicList.TOPIC_TRANSFORM]: EnrichedChannel<Transform>;
-  [topicList.TOPIC_LIDAR]: EnrichedChannel<LidarFrame>;
+  [topicList.TOPIC_LIDAR]: EnrichedChannel<LidarData>;
 }

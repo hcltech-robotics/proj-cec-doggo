@@ -67,3 +67,15 @@ export interface LidarFrame {
   stamp: number;
   width: Int16Array;
 }
+
+export interface LidarData {
+  geometryData: {
+    point_count: number;
+    face_count: number;
+    positions: Uint8Array;
+    uvs: Uint8Array;
+    indices: Uint32Array;
+  };
+  resolution: number;
+  origin: Float64Array;
+}

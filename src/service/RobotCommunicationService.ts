@@ -3,8 +3,10 @@ import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
 import { EnrichedChannel } from '../model/FoxgloveBasics';
 import { interestingTopics, topicList, TopicListName, TypedChannels } from '../model/Go2RobotTopics';
+import { LidarData } from 'src/model/Go2RobotInterfaces';
 
 export class RobotCommunication {
+  public voxelWorker: Worker;
   private client: FoxgloveClient;
   public channels: Record<number, EnrichedChannel<any>> = {};
   public channelByName: TypedChannels = {} as TypedChannels;
@@ -39,10 +41,21 @@ export class RobotCommunication {
     const data = this.decode(message);
 
     if (data) {
-      this.channels[message.subscriptionId]!.lastMessage = data;
+      if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_LIDAR) {
+        this.voxelWorker.postMessage({
+          resolution: data.resolution,
+          origin: data.origin,
+          width: data.width,
+          data: data.data,
+        });
+      } else {
+        this.channels[message.subscriptionId]!.lastMessage = data;
+      }
     }
+  };
 
-    console.log(this.channelByName[topicList.TOPIC_LIDAR].lastMessage.data);
+  public voxelParser = ({ data }: { data: LidarData }) => {
+    this.channelByName[topicList.TOPIC_LIDAR].lastMessage = data;
   };
 
   constructor(private address: string = 'ws://localhost:8765') {
@@ -53,5 +66,8 @@ export class RobotCommunication {
     this.client.on('open', this.onOpen);
     this.client.on('advertise', this.onAdvertise);
     this.client.on('message', this.onMessage);
+
+    this.voxelWorker = new Worker(new URL('/assets/voxel-worker.js', import.meta.url));
+    this.voxelWorker.onmessage = this.voxelParser;
   }
 }
