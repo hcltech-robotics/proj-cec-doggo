@@ -15,7 +15,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
         </mesh>
       </group>
       <Environment background preset="sunset" blur={0.5} />
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.5} />
       <directionalLight
         castShadow
         position={[2, 4, 2]}
@@ -41,7 +41,6 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
       ) : (
         ''
       )}
-      x
       <EffectComposer>
         <Bloom luminanceThreshold={2} mipmapBlur />
         <ToneMapping />
