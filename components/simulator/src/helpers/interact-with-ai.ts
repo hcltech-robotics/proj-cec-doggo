@@ -46,6 +46,15 @@ export const SPORT_CMD = {
   1034: 'GetState',
   1035: 'EconomicGait',
   1036: 'FingerHeart',
+  1301: 'Handstand',
+  1302: 'CrossStep',
+  1303: 'OnesidedStep',
+  1304: 'Bound',
+  1305: 'MoonWalk',
+  1039: 'StandOut',
+  1045: 'FreeWalk',
+  1050: 'Standup',
+  1051: 'CrossWalk',
 };
 
 export const ROBOT_CMD = {
@@ -85,6 +94,15 @@ export const ROBOT_CMD = {
   GetState: 1034,
   EconomicGait: 1035,
   FingerHeart: 1036,
+  Handstand: 1301,
+  CrossStep: 1302,
+  OnesidedStep: 1303,
+  Bound: 1304,
+  MoonWalk: 1305,
+  StandOut: 1039,
+  FreeWalk: 1045,
+  Standup: 1050,
+  CrossWalk: 1051,
 };
 
 const moveCommand = (distance: number, angle: number = 0) => {
@@ -247,6 +265,7 @@ export class InteractWithAI {
     ),
     hand_stand: tool(
       () => {
+        sportCommand(ROBOT_CMD.Handstand);
         return `** Sending "stand (front legs)" thru WS://`;
       },
       {
@@ -366,12 +385,27 @@ export class InteractWithAI {
         break;
       }
       case 'hand_stand': {
-        // TODO: Implement hand_stand action
-        console.warn('hand_stand action is not implemented');
+        sportCommand(ROBOT_CMD.Handstand);
         break;
       }
       case 'sit': {
         sportCommand(ROBOT_CMD.Sit);
+        break;
+      }
+      case 'hello': {
+        sportCommand(ROBOT_CMD.Hello);
+        break;
+      }
+      case 'finger_heart': {
+        sportCommand(ROBOT_CMD.FingerHeart);
+        break;
+      }
+      case 'stand_down': {
+        sportCommand(ROBOT_CMD.StandDown);
+        break;
+      }
+      case 'jump': {
+        sportCommand(ROBOT_CMD.FrontJump);
         break;
       }
     }

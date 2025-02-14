@@ -1,8 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
-import { sendTwistMessage } from '../robot/communicate';
 
 import './overlaygui.css';
-import { handleAction, InteractWithAI } from '../helpers/interact-with-ai';
+import { InteractWithAI } from '../helpers/interact-with-ai';
 
 interface OverlayGUIProps {
   ai: InteractWithAI;
@@ -17,13 +16,6 @@ function OverlayGUI(props: OverlayGUIProps) {
   }
 
   const handleClick = () => {
-    const event = new CustomEvent('hackathonGuiEvent', {
-      detail: { message: 'Hello from react...', asd: 'bsd' },
-      bubbles: true,
-      cancelable: true,
-    });
-    document.dispatchEvent(event);
-    sendTwistMessage();
     actionsRef.current?.classList.toggle('show');
     SetSidebarOpen(!sidebarOpen);
   };
@@ -79,6 +71,38 @@ function OverlayGUI(props: OverlayGUIProps) {
                 </svg>
               </button>
               <span>Dance</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('jump')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/jump_forward" fill="white"></use>
+                </svg>
+              </button>
+              <span>Jump forward</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('stand_down')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/pounce" fill="white"></use>
+                </svg>
+              </button>
+              <span>Stand down</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('finger_heart')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/show_heart" fill="white"></use>
+                </svg>
+              </button>
+              <span>Finger heart</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('hello')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/greet" fill="white"></use>
+                </svg>
+              </button>
+              <span>Hello</span>
             </div>
           </div>
         </div>
