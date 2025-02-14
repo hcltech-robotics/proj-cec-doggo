@@ -32,14 +32,14 @@ function OverlayGUI(props: OverlayGUIProps) {
         </button>
         <div className="actions-container content" ref={actionsRef}>
           <div className="actions-list">
-            <div className="button-wrapper">
+            {/* <div className="button-wrapper">
               <button onClick={() => handleFunction('stand_hind')}>
                 <svg aria-hidden="true">
                   <use xlinkHref="#icon/stretch_white" fill="white"></use>
                 </svg>
               </button>
               <span>Stand out</span>
-            </div>
+            </div> */}
             <div className="button-wrapper">
               <button onClick={() => handleFunction('hand_stand')}>
                 <svg aria-hidden="true">

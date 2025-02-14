@@ -112,7 +112,7 @@ const moveCommand = (distance: number, angle: number = 0) => {
     return;
   }
   const channelId = client.advertise({
-    topic: '/turtle1/cmd_vel',
+    topic: '/cmd_vel',
     encoding: 'json',
     schemaName: 'geometry_msgs/msg/Twist',
   });
@@ -126,28 +126,18 @@ const moveCommand = (distance: number, angle: number = 0) => {
 };
 
 const sportCommand = (cmd: number) => {
-  const uniqID = (new Date().valueOf() % 2147483648) + Math.floor(Math.random() * 1e3);
-  const commandId = cmd;
-
   const client = getClient();
   if (!client) {
     console.error('Foxglove client is not available');
     return;
   }
   const channelId = client.advertise({
-    topic: '/rt/api/sport/request',
+    topic: '/webrtc_req',
     encoding: 'json',
-    schemaName: '-TBD-',
+    schemaName: 'unitree_go/msg/WebRtcReq',
   });
 
-  const message = new Uint8Array(
-    new TextEncoder().encode(
-      JSON.stringify({
-        header: { identity: { id: uniqID, api_id: commandId } },
-        parameter: JSON.stringify(commandId),
-      }),
-    ),
-  );
+  const message = new Uint8Array(new TextEncoder().encode(JSON.stringify({ api_id: cmd, topic: 'rt/api/sport/request' })));
   client.sendMessage(channelId, message);
 };
 
