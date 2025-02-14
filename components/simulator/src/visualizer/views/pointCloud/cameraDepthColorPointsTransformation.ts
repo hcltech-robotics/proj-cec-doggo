@@ -3,8 +3,8 @@ import { PointCloudData } from './pointCloudTypes';
 import { getFieldsMap } from './utils';
 import { SceneManager } from '../../SceneManager';
 
-let pointsCloud: Points | null = null
-let pointCloudGeometry: BufferGeometry | null = null
+let cameraDepth: Points | null = null
+let cameraDepthGeometry: BufferGeometry | null = null
 
 const parseCameraDepthColorPoints = ({
   data,
@@ -38,7 +38,6 @@ const parseCameraDepthColorPoints = ({
     }
   }
 
-  // console.log('points', points);
   return new Float32Array(points);
 };
 
@@ -63,27 +62,27 @@ const parseCameraDepthColors = ({
 };
 
 function updateCameraDepthColors(s: SceneManager, g: any) {
-    if (pointsCloud) {
-        if (pointCloudGeometry) { pointCloudGeometry.dispose() }
-        s.scenes.pointcloud.remove(pointsCloud)
+    if (cameraDepth) {
+        if (cameraDepthGeometry) { cameraDepthGeometry.dispose() }
+        s.scenes.cameraDepth.remove(cameraDepth)
     }
     const points = parseCameraDepthColorPoints(g);
     const colors = parseCameraDepthColors(g);
 
-    pointCloudGeometry = new BufferGeometry();
-    pointCloudGeometry.setAttribute("position", new Float32BufferAttribute(points, 3));
-    pointCloudGeometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
-    pointCloudGeometry.rotateX(Math.PI / 2);
-    pointCloudGeometry.rotateY(Math.PI);
-    pointCloudGeometry.rotateZ(Math.PI / 2);
+    cameraDepthGeometry = new BufferGeometry();
+    cameraDepthGeometry.setAttribute("position", new Float32BufferAttribute(points, 3));
+    cameraDepthGeometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    cameraDepthGeometry.rotateX(Math.PI / 2);
+    cameraDepthGeometry.rotateY(Math.PI);
 
     const material = new PointsMaterial({
         size: 0.001,
         vertexColors: true,
     });
 
-    pointsCloud = new Points(pointCloudGeometry, material);
-    s.scenes.pointcloud.add(pointsCloud);
+    cameraDepth = new Points(cameraDepthGeometry, material);
+    s.scenes.cameraDepth.add(cameraDepth);
+    // (s.scenes.cameraDepth.userData.domElement?.parentNode as HTMLElement).classList.remove('hidden');
 }
 
 export { updateCameraDepthColors }

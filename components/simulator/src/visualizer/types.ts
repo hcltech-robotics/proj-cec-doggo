@@ -49,9 +49,23 @@ export class PointcloudScene extends Scene {
     }
 }
 
+interface CameraDepthSceneUserData {
+  camera: PerspectiveCamera | null
+  domElement: HTMLElement | null
+}
+
+export class CameraDepthScene extends Scene {
+  userData: CameraDepthSceneUserData
+  constructor() {
+      super()
+      this.userData = { camera: null, domElement: null }
+  }
+}
+
 export interface Scenes {
     main: MainScene,
-    pointcloud: PointcloudScene
+    pointcloud: PointcloudScene,
+    cameraDepth: CameraDepthScene,
 }
 
 export interface UserSettings {
@@ -59,5 +73,6 @@ export interface UserSettings {
     apiKey: string
     foxglove_config: { url: string }
     pointCloudScene: { enabled: boolean }
+    cameraDepthScene: { enabled: boolean }
 }
 

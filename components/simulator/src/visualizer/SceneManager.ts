@@ -8,7 +8,7 @@ import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { MainScene, PointcloudScene, Scenes, UserSettings } from './types'
+import { CameraDepthScene, MainScene, PointcloudScene, Scenes, UserSettings } from './types'
 
 
 const CANVAS_ID = 'scene'
@@ -26,11 +26,13 @@ class SceneManager {
             animation: { enabled: true, play: true },
             apiKey: 'defaultapiKey',
             foxglove_config: { url: "ws://localhost:8765" },
-            pointCloudScene: { enabled: true }
+            pointCloudScene: { enabled: true },
+            cameraDepthScene: { enabled: true }
         };
         this.scenes = {
             main: new MainScene(),
             pointcloud: new PointcloudScene(),
+            cameraDepth: new CameraDepthScene(),
         }
         this.canvas = document.querySelector<HTMLElement>(`canvas#${CANVAS_ID}`)!
         this.renderer = null

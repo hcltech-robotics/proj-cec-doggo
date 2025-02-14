@@ -40,9 +40,11 @@ function updatePointCloud(s: SceneManager, g: any) {
     pointCloudGeometry = new BufferGeometry();
     pointCloudGeometry.setAttribute("position", new Float32BufferAttribute(positions.points, 3));
     pointCloudGeometry.setAttribute("intensity", new Float32BufferAttribute(positions.intensity, 1));
+    pointCloudGeometry.rotateX(Math.PI);
+    pointCloudGeometry.rotateZ(Math.PI / 2);
 
     const material = new PointsMaterial({
-        size: 0.1,
+        size: 0.01,
         vertexColors: true
     });
 
@@ -60,6 +62,7 @@ function updatePointCloud(s: SceneManager, g: any) {
 
     pointsCloud = new Points(pointCloudGeometry, material);
     s.scenes.pointcloud.add(pointsCloud);
+    // (s.scenes.pointcloud.userData.domElement?.parentNode as HTMLElement).classList.remove('hidden');
 }
 
 export { updatePointCloud }

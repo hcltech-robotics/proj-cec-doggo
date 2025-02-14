@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "three";
+// import { PerspectiveCamera } from "three";
 import { SceneManager } from "./SceneManager";
 import { resizeRendererToDisplaySize } from "../helpers/responsiveness";
 
@@ -16,13 +16,16 @@ function animate(s: SceneManager) {
 
   if (!renderer.xr.isPresenting) {
     s.scenes.main.userData.cameraControls?.update();
-    const c: PerspectiveCamera = s.scenes.pointcloud.userData.camera!
-    c.copy(s.scenes.main.userData.camera!)
+    // const c: PerspectiveCamera = s.scenes.pointcloud.userData.camera!
+    // c.copy(s.scenes.main.userData.camera!)
   }
   const needResize = resizeRendererToDisplaySize(renderer)
-  for (let curr of [s.scenes.main, s.scenes.pointcloud]) {
-    if (!s.userSettings.pointCloudScene.enabled && curr === s.scenes.pointcloud) {
-      continue
+  for (let curr of [s.scenes.main, s.scenes.pointcloud, s.scenes.cameraDepth]) {
+    if (
+      (!s.userSettings.pointCloudScene.enabled && curr === s.scenes.pointcloud) ||
+      (!s.userSettings.cameraDepthScene.enabled && curr === s.scenes.cameraDepth)
+    ) {
+      continue;
     }
     if (needResize) {
       const canvas = renderer.domElement
