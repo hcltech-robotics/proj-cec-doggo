@@ -45,7 +45,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
         <Bloom luminanceThreshold={2} mipmapBlur />
         <ToneMapping />
       </EffectComposer>
-      <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={Math.PI / 6} maxPolarAngle={Math.PI / 2} />
+      <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
       {props.config.graphStats ? <Stats /> : ''}
     </Canvas>
   );
