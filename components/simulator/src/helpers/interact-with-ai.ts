@@ -362,7 +362,7 @@ export class InteractWithAI {
   public handleAction = (action: string): void => {
     switch (action) {
       case 'standby_pose': {
-        sportCommand(ROBOT_CMD.BalanceStand);
+        sportCommand(ROBOT_CMD.RecoveryStand);
         break;
       }
       case 'dance': {
