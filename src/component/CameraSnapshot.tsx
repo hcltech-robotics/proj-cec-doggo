@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { LegacyRef, MutableRefObject, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { RobotCommunication } from 'src/service/RobotCommunicationService';
 import { topicList } from '../model/Go2RobotTopics';
 
 import './CameraSnapshot.css';
+
+const TARGET_FPS = 30;
 
 const useObjectURL = (initialObject: null | File | Blob | MediaSource) => {
   const [objectURL, setObjectURL] = useState<null | string>(null);
@@ -31,10 +33,13 @@ const useObjectURL = (initialObject: null | File | Blob | MediaSource) => {
 };
 
 export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
-  const TARGET_FPS = 30;
   const { objectURL, setObject } = useObjectURL(null);
+
   const [timer, setTimer] = useState<NodeJS.Timeout>();
   const [stamp, setStamp] = useState<string>('');
+  const [zoom, setZoom] = useState<boolean>(false);
+
+  const wrapper = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     clearInterval(timer);
@@ -57,5 +62,18 @@ export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
     }
   }, [stamp]);
 
-  return <div className="camera">{objectURL ? <img src={objectURL} /> : <img src="/assets/spinner.svg" />}</div>;
+  const changeZoom = () => {
+    setZoom(true);
+  };
+
+  // if (wrapper.current) {
+  //   wrapper.current.style.left = `${(document.body.clientWidth - wrapper.current!.offsetWidth) / 2}px`;
+  //   wrapper.current.style.top = `${(document.body.clientHeight - wrapper.current!.offsetHeight) / 2}px`;
+  // }
+
+  return (
+    <div className="camera" ref={wrapper} onClick={changeZoom}>
+      {objectURL ? <img src={objectURL} /> : <img src="/assets/spinner.svg" />}
+    </div>
+  );
 };
