@@ -133,39 +133,6 @@ h1 {
   height: 100%;
 }
 
-.views {
-  &::after {
-    display: none;
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: #000;
-    opacity: .5;
-    z-index: 2000;
-  }
-
-  /* &.zoom::after {
-    display: block;
-  } */
-
-  &.zoom {
-    .pointcloud-view {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      inset: 0;
-      z-index: 2000;
-    }
-
-    .pointcloud-view-scene {
-      width: 50%;
-      height: 50%;
-    }
-  }
-}
-
 .pointcloud-view {
   /*
   NOTE: these numbers are set later in js
@@ -177,23 +144,11 @@ h1 {
   border: 1px solid black;
   border-radius: 5px;
   transition: all .3s ease;
-
-  /* &.zoom {
-    display: grid;
-
-    .pointcloud-view-scene {
-      width: 50%;
-      height: 50%;
-    }
-  } */
 }
 
 .pointcloud-view-scene {
   width: var(--pointcloud-view-width);
   height: var(--pointcloud-view-height);
-  transition: all .3s ease;
-  /* grid-column: 1;
-  grid-row: 1; */
 }
 
 .camera-depth-view {
@@ -207,9 +162,25 @@ h1 {
 .camera-depth-view-scene {
   width: var(--camera-depth-view-width);
   height: var(--camera-depth-view-height);
-  transition: all .3s ease;
-  /* grid-column: 1;
-  grid-row: 1; */
+}
+
+.pointcloud-view,
+.camera-depth-view {
+  &.zoom {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 50%;
+    z-index: 999999;
+    transform: translate(-50%, -50%);
+
+    .pointcloud-view-scene,
+    .camera-depth-view-scene {
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
 .side-views {

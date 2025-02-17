@@ -27,7 +27,7 @@ class SceneManager {
             apiKey: 'defaultapiKey',
             foxglove_config: { url: "ws://localhost:8765" },
             pointCloudScene: { enabled: true },
-            cameraDepthScene: { enabled: false }
+            cameraDepthScene: { enabled: true }
         };
         this.scenes = {
             main: new MainScene(),

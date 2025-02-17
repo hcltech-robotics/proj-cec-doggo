@@ -8,10 +8,17 @@ const cameraDepthSceneSize = {
   height: 180,
 };
 
-const createCameraControls = (camera: Camera, canvas: HTMLElement) => {
+const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement) => {
   const cameraControls = new OrbitControls(camera, canvas);
   cameraControls.enableDamping = true;
   cameraControls.update();
+
+  canvas.addEventListener('mouseleave', () => {
+    camera.position.set(0, 1, 0);
+    camera.updateProjectionMatrix();
+    cameraControls.target.set(0, 0, 0);
+    cameraControls.update();
+  });
 };
 
 const createGridHelper = (scene: CameraDepthScene) => {
@@ -35,19 +42,13 @@ function createCameraDepthScene(s: SceneManager) {
   element.style.setProperty('--camera-depth-view-height', `${cameraDepthSceneSize.height}px`);
   const sceneElement = document.createElement('div');
   sceneElement.className = 'camera-depth-view-scene';
-  // const backdropElement = document.createElement('div');
-  // backdropElement.className = 'camera-depth-view-backdrop';
   element.appendChild(sceneElement);
-  // element.addEventListener('dblclick', (event: MouseEvent) => {
-  //   const target = event.currentTarget as Element;
-  //   const viewsWrapper = target.parentElement;
-  //   viewsWrapper?.classList.toggle('zoom');
-  //   // target.append(backdropElement);
-  //   // target.insertBefore(target, backdropElement)
-  //   // element
-  //   // element.style.setProperty('--camera-depth-view-width', `${cameraDepthSceneSize.width * 2}px`);
-  //   // element.style.setProperty('--camera-depth-view-height', `${cameraDepthSceneSize.height * 2}px`);
-  // });
+
+  element.addEventListener('dblclick', (event: MouseEvent) => {
+    const target = event.currentTarget as Element;
+    target?.classList.toggle('zoom');
+  });
+
   const sideViews = document.getElementById('side-views');
   if (sideViews) {
     sideViews.appendChild(element);
