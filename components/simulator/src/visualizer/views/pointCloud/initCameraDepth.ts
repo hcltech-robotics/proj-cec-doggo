@@ -4,8 +4,8 @@ import { CameraDepthScene } from '../../types';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const cameraDepthSceneSize = {
-  width: 250,
-  height: 150,
+  width: 320,
+  height: 180,
 };
 
 const createCameraControls = (camera: Camera, canvas: HTMLElement) => {
