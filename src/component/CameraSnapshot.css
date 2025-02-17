@@ -6,6 +6,9 @@
   width: calc(16px * var(--zoom));
   height: calc(9px * var(--zoom));
   transition: all 250ms;
+  background-color: var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg);
+  box-shadow: var(--leva-shadows-level1);
 }
 
 .camera img {

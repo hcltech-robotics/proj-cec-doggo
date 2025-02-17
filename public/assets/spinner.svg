@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <style>
+      :root {
+        --base-x: 185px;
+        --base-y: 195px;
+        --anim-speed: 3s;
+      }
+      .starschema {
+        transform-origin: center;
+        stroke: #2cb0f4;
+      }
+      .c {
+        fill: white;
+        stroke-width: 10;
+      }
+      .c1 { animation: m1 var(--anim-speed) ease-in-out forwards infinite; }
+      .c2 { animation: m2 var(--anim-speed) ease-in-out forwards infinite; }
+      .c3 { animation: m3 var(--anim-speed) ease-in-out forwards infinite; }
+      .c4 { animation: m4 var(--anim-speed) ease-in-out forwards infinite; }
+      .c5 { animation: m5 var(--anim-speed) ease-in-out forwards infinite; }
+      @keyframes m1 {  0% { transform: translate(0, 0); } 25%, 85% { transform: translate(calc(325px - var(--base-x)), calc(135px - var(--base-y))); } }
+      @keyframes m2 {  5% { transform: translate(0, 0); } 30%, 85% { transform: translate(calc(225px - var(--base-x)), calc( 75px - var(--base-y))); } }
+      @keyframes m3 { 10% { transform: translate(0, 0); } 35%, 85% { transform: translate(calc( 90px - var(--base-x)), calc(125px - var(--base-y))); } }
+      @keyframes m4 { 15% { transform: translate(0, 0); } 40%, 85% { transform: translate(calc( 80px - var(--base-x)), calc(250px - var(--base-y))); } }
+      @keyframes m5 { 20% { transform: translate(0, 0); } 45%, 85% { transform: translate(calc(245px - var(--base-x)), calc(325px - var(--base-y))); } }
+      .l { stroke-width: 10px; }
+      .l1 { animation: s1 var(--anim-speed) ease-in-out forwards infinite; }
+      .l2 { animation: s2 var(--anim-speed) ease-in-out forwards infinite; }
+      .l3 { animation: s3 var(--anim-speed) ease-in-out forwards infinite; }
+      .l4 { animation: s4 var(--anim-speed) ease-in-out forwards infinite; }
+      .l5 { animation: s5 var(--anim-speed) ease-in-out forwards infinite; }
+      @keyframes s1 {
+        8% { stroke-dasharray: 0 35 0 500; }
+        25%, 87% { stroke-dasharray: 0 35 85 500; }
+      }
+      @keyframes s2 {
+        13% { stroke-dasharray: 0 35 0 500; }
+        30%, 87% { stroke-dasharray: 0 35 60 500; }
+      }
+      @keyframes s3 {
+        18% { stroke-dasharray: 0 35 0 500; }
+        35%, 87% { stroke-dasharray: 0 35 45 500; }
+      }
+      @keyframes s4 {
+        23% { stroke-dasharray: 0 35 0 500; }
+        40%, 87% { stroke-dasharray: 0 35 50 500; }
+      }
+      @keyframes s5 {
+        28% { stroke-dasharray: 0 35 0 500; }
+        45%, 87% { stroke-dasharray: 0 35 78 500; }
+      }
+      .b {
+        transform-origin: 185px 195px;
+      }
+      .b1 { animation: r1 var(--anim-speed) ease-in-out forwards infinite; }
+      .b2 { animation: r2 var(--anim-speed) ease-in-out forwards infinite; }
+      .b3 { animation: r3 var(--anim-speed) ease-in-out forwards infinite; }
+      .b4 { animation: r4 var(--anim-speed) ease-in-out forwards infinite; }
+      .b5 { animation: r5 var(--anim-speed) ease-in-out forwards infinite; }
+      @keyframes r1 { 55% { transform: rotateZ(0deg); } 100% { transform: rotateZ(-270deg); } }
+      @keyframes r2 { 60% { transform: rotateZ(0deg); } 100% { transform: rotateZ(-230deg); } }
+      @keyframes r3 { 69% { transform: rotateZ(0deg); } 100% { transform: rotateZ(-170deg); } }
+      @keyframes r4 { 78% { transform: rotateZ(0deg); } 100% { transform: rotateZ(-120deg); } }
+      @keyframes r5 { 95% { transform: rotateZ(0deg); } 100% { transform: rotateZ(-0deg); } }
+    </style>
+  </defs>
+  <g class="starschema">
+    <g>
+      <g class="b b1">
+        <line class="l l1" x1="185" y1="195" x2="325" y2="135" stroke-dasharray="0 35 0 500"/>
+        <circle class="c c1" cx="185" cy="195" r="35" />
+      </g>
+
+      <g class="b b2">
+        <line class="l l2" x1="185" y1="195" x2="225" y2=" 75" stroke-dasharray="0 35 0 500"/>
+        <circle class="c c2" cx="185" cy="195" r="35" />
+      </g>
+
+      <g class="b b3">
+        <line class="l l3" x1="185" y1="195" x2=" 90" y2="125" stroke-dasharray="0 35 0 500"/>
+        <circle class="c c3" cx="185" cy="195" r="35" />
+      </g>
+
+      <g class="b b4">
+        <line class="l l4" x1="185" y1="195" x2=" 80" y2="250" stroke-dasharray="0 35 0 500"/>
+        <circle class="c c4" cx="185" cy="195" r="35" />
+      </g>
+
+      <g class="b b5">
+        <line class="l l5" x1="185" y1="195" x2="245" y2="325" stroke-dasharray="0 35 0 500"/>
+        <circle class="c c5" cx="185" cy="195" r="35" />
+      </g>
+
+      <circle class="c main" cx="185" cy="195" r="35" />
+    </g>
+  </g>
+</svg>

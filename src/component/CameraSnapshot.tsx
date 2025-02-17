@@ -57,5 +57,5 @@ export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
     }
   }, [stamp]);
 
-  return <div className="camera">{objectURL ? <img src={objectURL} /> : ''}</div>;
+  return <div className="camera">{objectURL ? <img src={objectURL} /> : <img src="/assets/spinner.svg" />}</div>;
 };
