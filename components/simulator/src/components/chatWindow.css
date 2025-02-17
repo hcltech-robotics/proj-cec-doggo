@@ -66,6 +66,7 @@
     align-self: flex-end;
     background-color: #06ebeb;
     color: black;
+    text-align: right;
 
     &::after {
       border-left-color: #06ebeb;
@@ -100,10 +101,8 @@
     flex-direction: column;
 
     .message {
-      width: 45%;
       padding: 8px;
       color: black;
-      text-align: center;
       border-radius: 0.4em;
     }
   }
