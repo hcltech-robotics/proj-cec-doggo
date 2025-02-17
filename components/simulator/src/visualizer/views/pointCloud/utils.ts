@@ -8,5 +8,3 @@ export const getFieldsMap = (
     return acc;
   }, {} as FieldsMap);
 };
-
-export const rad = (radius: number = 0) => (Math.PI / 180) * radius;
