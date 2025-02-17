@@ -5,8 +5,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import { createMockLidarData } from "./mockData";
 
 const pointCloudSceneSize = {
-  width: 250,
-  height: 150,
+  width: 320,
+  height: 180,
 }
 
 const createCameraControls = (camera: Camera, canvas: HTMLElement) => {

@@ -1,31 +1,111 @@
-import { sendTwistMessage } from "../robot/communicate";
-import "./overlaygui.css";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from 'react';
 
+import './overlaygui.css';
+import { InteractWithAI } from '../helpers/interact-with-ai';
 
 interface OverlayGUIProps {
-  data?: number
-  show?: boolean
+  ai: InteractWithAI;
+  data?: number;
+  show?: boolean;
 }
 function OverlayGUI(props: OverlayGUIProps) {
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, SetSidebarOpen] = useState<boolean>(false);
   if (!props?.show) {
     return null;
   }
 
   const handleClick = () => {
-    const event = new CustomEvent("hackathonGuiEvent", {
-      detail: { message: "Hello from react...", asd: "bsd" },
-      bubbles: true,
-      cancelable: true,
-    });
-    document.dispatchEvent(event);
-    sendTwistMessage();
+    actionsRef.current?.classList.toggle('show');
+    SetSidebarOpen(!sidebarOpen);
   };
+
+  const handleFunction = (action: string) => {
+    props.ai.handleAction(action);
+  };
+
   return (
     <div className="custom-gui">
       <div className="control">
-        {/* {value} */}
-        <button onClick={handleClick}>🎮</button>
+        <button className='actions-menu' onClick={handleClick}>
+          <svg aria-hidden="true"><use xlinkHref="#icon/actions_menu" fill="currentColor"></use></svg>
+        </button>
+        <div className="actions-container content" ref={actionsRef}>
+          <div className="actions-list">
+            {/* <div className="button-wrapper">
+              <button onClick={() => handleFunction('stand_hind')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/stretch_white" fill="white"></use>
+                </svg>
+              </button>
+              <span>Stand out</span>
+            </div> */}
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('hand_stand')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/hand_stand_white" fill="white"></use>
+                </svg>
+              </button>
+              <span>Hand stand</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('standby_pose')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/stand_white" fill="white"></use>
+                </svg>
+              </button>
+              <span>Stand up</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('sit')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/sitDown_white" fill="white"></use>
+                </svg>
+              </button>
+              <span>Sit down</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('dance')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/dance_white" fill="white"></use>
+                </svg>
+              </button>
+              <span>Dance</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('jump')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/jump_forward" fill="white"></use>
+                </svg>
+              </button>
+              <span>Jump forward</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('stand_down')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/pounce" fill="white"></use>
+                </svg>
+              </button>
+              <span>Stand down</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('finger_heart')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/show_heart" fill="white"></use>
+                </svg>
+              </button>
+              <span>Finger heart</span>
+            </div>
+            <div className="button-wrapper">
+              <button onClick={() => handleFunction('hello')}>
+                <svg aria-hidden="true">
+                  <use xlinkHref="#icon/greet" fill="white"></use>
+                </svg>
+              </button>
+              <span>Hello</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -103,18 +183,14 @@ function CanvasFrame() {
   return (
     <>
       <div className={`canvas-container ${isZoomed ? 'zoomed' : ''}`}>
-        <canvas
-          ref={canvasRef}
-          width="320"
-          height="180"
-          className="canvas"
-          onClick={toggleZoom}
-        />
+        <canvas id="camera" ref={canvasRef} width="320" height="180" className="canvas" onClick={toggleZoom} />
       </div>
 
-      {isZoomed && (
-        <div className="overlay" onClick={toggleZoom} />
-      )}
+      {isZoomed && <div className="overlay" onClick={toggleZoom} />}
+
+      <svg className="brand-logo" aria-hidden="true">
+        <use xlinkHref="#HCLTech-logo" fill="white"></use>
+      </svg>
     </>
   );
 }

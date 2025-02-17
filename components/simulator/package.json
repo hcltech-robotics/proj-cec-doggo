@@ -45,6 +45,7 @@
     "langchain": "^0.3.10",
     "lil-gui": "^0.19.2",
     "lucide-react": "^0.469.0",
+    "rc-joystick": "^1.0.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.171.0",

@@ -37,6 +37,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  user-select: none;
 }
 
 h1 {
@@ -74,10 +75,6 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
-
-  button {
-    background-color: #f9f9f9;
-  }
 }
 
 :root {
@@ -101,23 +98,17 @@ html {
   height: 100%;
 }
 
-canvas {
+canvas#scene {
   height: 100%;
   width: 100%;
   outline: none;
 
-  background: rgb(34, 193, 195);
-  background: linear-gradient(0deg,
-      rgb(8, 163, 166) 0%,
-      rgba(79, 166, 167, 0.849) 8%,
-      rgba(61, 79, 94, 0.885) 40%,
-      rgb(17, 19, 23));
-}
-
-#scene {
   height: 100% !important;
   width: 100% !important;
   z-index: 1;
+
+  background: rgb(34, 193, 195);
+  background: linear-gradient(0deg, rgb(8, 163, 166) 0%, rgba(79, 166, 167, 0.849) 8%, rgba(61, 79, 94, 0.885) 40%, rgb(17, 19, 23));
 }
 
 h1 {
@@ -226,7 +217,46 @@ h1 {
   flex-direction: column;
   gap: 24px;
   position: absolute;
-  right: 20px;
-  top: 80px;
+  right: 50px;
+  top: 50px;
   z-index: 2;
+}
+
+.brand-logo {
+  position: fixed;
+  bottom: 30px;
+  left: 40px;
+  z-index: 2;
+  opacity: 0.5;
+  pointer-events: none;
+  width: 120px;
+  height: 50px;
+}
+
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  height: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+.content {
+  padding: 0;
+  max-width: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: padding 0.3s ease-in, max-height 0.25s ease-out, max-width 0.65s ease-in;
+}
+
+.show {
+  padding: 0 18px;
+  max-width: 800px;
+  max-height: 450px;
+  transition: padding 0.2s ease-in, max-width 0.2s ease-out, max-height 0.6s ease-in;
 }
