@@ -3,8 +3,8 @@ import { SceneManager } from "../SceneManager"
 import { initSettings } from "../settings"
 import { createCustomGUITransforms } from "../transformations/customGuiTransforms"
 import { createPointCloudScene } from "./pointCloud/initPointCloud"
-import { createCameraControls, createCanvas, createDomModifications, createHelpers, createLights, createMainScene } from "./main/initializers"
 import { createCameraDepthScene } from './pointCloud/initCameraDepth'
+import { createCameraControls, createCanvas, createDomModifications, createHelpers, createLights, createMainScene } from "./main/initializers"
 
 function initThreeJSBase(s: SceneManager) {
     createCanvas(s)
