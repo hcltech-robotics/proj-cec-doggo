@@ -4,16 +4,19 @@
   top: 50px;
   left: 50px;
 
-  /* left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%); */
-
   aspect-ratio: 16/9;
   transition: all 250ms;
   background-color: var(--leva-colors-elevation1);
   border-radius: var(--leva-radii-lg);
   box-shadow: var(--leva-shadows-level1);
   cursor: pointer;
+}
+
+.camera.zoomed {
+  width: 90vw;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .camera img {

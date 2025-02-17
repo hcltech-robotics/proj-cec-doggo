@@ -63,16 +63,11 @@ export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
   }, [stamp]);
 
   const changeZoom = () => {
-    setZoom(true);
+    setZoom(!zoom);
   };
 
-  // if (wrapper.current) {
-  //   wrapper.current.style.left = `${(document.body.clientWidth - wrapper.current!.offsetWidth) / 2}px`;
-  //   wrapper.current.style.top = `${(document.body.clientHeight - wrapper.current!.offsetHeight) / 2}px`;
-  // }
-
   return (
-    <div className="camera" ref={wrapper} onClick={changeZoom}>
+    <div className={`camera ${zoom ? 'zoomed' : ''}`} ref={wrapper} onClick={changeZoom}>
       {objectURL ? <img src={objectURL} /> : <img src="/assets/spinner.svg" />}
     </div>
   );
