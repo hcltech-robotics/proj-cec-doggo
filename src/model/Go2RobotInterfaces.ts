@@ -79,3 +79,9 @@ export interface LidarData {
   resolution: number;
   origin: Float64Array;
 }
+
+export interface CompressedImageData {
+  data: Uint8Array;
+  format: string;
+  header: { stamp: { sec: number; nanosec: number }; frame_id: string };
+}

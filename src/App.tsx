@@ -4,6 +4,7 @@ import { Go2Robot } from './component/Go2Robot';
 import { MainScene } from './component/MainScene';
 import { VoxelCloud } from './component/VoxelCloud';
 import { RobotCommunication } from './service/RobotCommunicationService';
+import { CameraSnapshot } from './component/CameraSnapshot';
 
 const connection = new RobotCommunication('ws://10.1.1.145:8765');
 
@@ -17,6 +18,7 @@ const App = () => {
         <Go2Robot connection={connection} castShadow={config.robotShadow} />
         <VoxelCloud connection={connection} />
       </MainScene>
+      <CameraSnapshot connection={connection} />
     </>
   );
 };
