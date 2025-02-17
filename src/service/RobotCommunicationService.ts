@@ -3,7 +3,7 @@ import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
 import { EnrichedChannel } from '../model/FoxgloveBasics';
 import { interestingTopics, topicList, TopicListName, TypedChannels } from '../model/Go2RobotTopics';
-import { LidarData } from 'src/model/Go2RobotInterfaces';
+import { LidarData, Transform } from 'src/model/Go2RobotInterfaces';
 
 export class RobotCommunication {
   public voxelWorker: Worker;
@@ -49,7 +49,17 @@ export class RobotCommunication {
           data: data.data,
         });
       } else {
-        this.channels[message.subscriptionId]!.lastMessage = data;
+        if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_TRANSFORM) {
+          const transform = data as Transform;
+          if (transform.transforms) {
+            const base = transform.transforms.find((t) => t.child_frame_id === 'base_link');
+            if (base) {
+              this.channels[message.subscriptionId]!.lastMessage = data;
+            }
+          }
+        } else {
+          this.channels[message.subscriptionId]!.lastMessage = data;
+        }
       }
     }
   };
