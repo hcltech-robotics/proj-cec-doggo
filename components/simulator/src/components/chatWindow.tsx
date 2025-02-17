@@ -54,7 +54,7 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
     };
 
     setMessages([...messages, newMessage]);
-    setNewNotificationMessage(message, "user");
+    setNewNotificationMessage(newMessage);
 
     const results = await ai.invoke(message);
     results.forEach(result => {
@@ -65,7 +65,7 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
         sender: "assistant",
       };
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
-      setNewNotificationMessage(assistantMessage.text, "assistant");
+      setNewNotificationMessage(assistantMessage);
     });
   };
 
@@ -75,10 +75,10 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
     }
   };
 
-  const setNewNotificationMessage = (message: string, sender: "user" | "assistant" | "system") => {
+  const setNewNotificationMessage = (message: Message) => {
     const id = new Date().getTime();
-    const newNotificationMessage = { id, text: message, sender };
-    const duration = getDisplayDuration(message.length);
+    const newNotificationMessage: Message = {...message, id};
+    const duration = getDisplayDuration(message.text.length);
 
     setNotificationMessages((prevNotificationMessages: Message[]) => [
       ...prevNotificationMessages,
