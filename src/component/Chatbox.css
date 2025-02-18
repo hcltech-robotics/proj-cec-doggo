@@ -1,0 +1,61 @@
+.chatbox {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  width: 1000px;
+  max-width: calc(100vw - 2 * 200px);
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  padding: 9px 16px;
+  border: 1px solid var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg);
+  box-shadow: var(--leva-shadows-level1);
+  background-color: #00000030;
+}
+
+.chat-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.chat-textarea {
+  font-family: sans-serif;
+  font-size: inherit;
+  background: unset;
+  border: 0;
+  flex-grow: 1;
+  color: inherit;
+  resize: none;
+  height: 1.2em;
+  padding: 4px;
+}
+
+.chat-textarea:active,
+.chat-textarea:focus {
+  outline: unset;
+}
+
+.chat-button {
+  width: 48px;
+  height: 48px;
+  background: unset;
+  border: 0;
+  color: inherit;
+  transition: all 200ms;
+}
+
+.chat-button:not([disabled]) {
+  cursor: pointer;
+}
+
+.chat-button:hover:not([disabled]) {
+  background-color: #ffffff20;
+  border-radius: 100vw;
+}
+
+.chat-button[disabled] {
+  color: gray;
+}
