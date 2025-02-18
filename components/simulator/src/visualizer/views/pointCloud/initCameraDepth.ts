@@ -1,4 +1,4 @@
-import { AxesHelper, Camera, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera } from 'three';
+import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera } from 'three';
 import { SceneManager } from '../../SceneManager';
 import { CameraDepthScene } from '../../types';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';

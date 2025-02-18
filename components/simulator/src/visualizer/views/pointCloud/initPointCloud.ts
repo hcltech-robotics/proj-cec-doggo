@@ -1,4 +1,4 @@
-import { AxesHelper, Camera, Color, DirectionalLight, GridHelper, HemisphereLight, PCFSoftShadowMap, PerspectiveCamera, WebGLRenderer } from "three";
+import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera } from "three";
 import { SceneManager } from "../../SceneManager";
 import { PointcloudScene } from "../../types";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -15,7 +15,7 @@ const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement) =>
   cameraControls.update();
 
   canvas.addEventListener('mouseleave', () => {
-    camera.position.set(0, 1, 0);
+    camera.position.set(0, 5, 0);
     camera.updateProjectionMatrix();
     cameraControls.target.set(0, 0, 0);
     cameraControls.update();
@@ -47,9 +47,6 @@ function createPointCloudScene(s:SceneManager) {
   element.addEventListener('dblclick', (event: MouseEvent) => {
     const target = event.currentTarget as Element;
     target?.classList.toggle('zoom');
-  });
-  element.addEventListener('mouseleave', (event: MouseEvent) => {
-    pointcloudCamera.position.set(0, 5, 0);
   });
   const views = document.getElementById("views")
   const sideViews = document.getElementById("side-views")
