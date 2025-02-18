@@ -31,6 +31,7 @@
   resize: none;
   height: 1.2em;
   padding: 4px;
+  user-select: text;
 }
 
 .chat-textarea:active,
@@ -45,6 +46,7 @@
   border: 0;
   color: inherit;
   transition: all 200ms;
+  outline: none;
 }
 
 .chat-button:not([disabled]) {
@@ -58,4 +60,36 @@
 
 .chat-button[disabled] {
   color: gray;
+}
+
+.chat-history {
+  user-select: text;
+  padding: 12px 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px dotted var(--leva-colors-elevation1);
+  max-height: 50vh;
+  overflow: auto;
+}
+
+.history-message {
+  padding: 9px 16px;
+  border-radius: var(--leva-radii-lg);
+  border-bottom-right-radius: 0;
+  max-width: 70%;
+}
+
+.history-message.me {
+  align-self: flex-end;
+  background-color: var(--leva-colors-accent1);
+}
+
+.history-message.other {
+  align-self: flex-start;
+  background-color: var(--leva-colors-elevation3);
+}
+
+.history-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
