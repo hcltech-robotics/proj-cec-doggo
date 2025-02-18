@@ -1,4 +1,4 @@
-import { LegacyRef, MutableRefObject, RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { RobotCommunication } from 'src/service/RobotCommunicationService';
 import { topicList } from '../model/Go2RobotTopics';
 

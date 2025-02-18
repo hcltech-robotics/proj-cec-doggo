@@ -1,21 +1,30 @@
 import { parse } from '@foxglove/rosmsg';
 import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
+import { LidarData, RobotCommand, Transform, TwistMessage, WebRtcMessage } from 'src/model/Go2RobotInterfaces';
 import { EnrichedChannel } from '../model/FoxgloveBasics';
-import { interestingTopics, topicList, TopicListName, TypedChannels } from '../model/Go2RobotTopics';
-import { LidarData, Transform } from 'src/model/Go2RobotInterfaces';
+import {
+  channelDefinitions,
+  PublishTopicListName,
+  publishTopics,
+  subscribedTopics,
+  topicList,
+  TopicListName,
+  TypedChannels,
+} from '../model/Go2RobotTopics';
 
 export class RobotCommunication {
   public voxelWorker: Worker;
   private client: FoxgloveClient;
   public channels: Record<number, EnrichedChannel<any>> = {};
   public channelByName: TypedChannels = {} as TypedChannels;
+  public pubTopics: Partial<Record<PublishTopicListName, number>> = {};
 
   public onOpen = () => {};
 
   public onAdvertise = (topics: Channel[]) => {
     topics.forEach((topic) => {
-      if (interestingTopics.includes(topic.topic as TopicListName)) {
+      if (subscribedTopics.includes(topic.topic as TopicListName)) {
         const subscriptionId = this.client.subscribe(topic.id);
         const definition = parse(topic.schema, { ros2: true });
         const reader = new MessageReader(definition);
@@ -66,6 +75,34 @@ export class RobotCommunication {
 
   public voxelParser = ({ data }: { data: LidarData }) => {
     this.channelByName[topicList.TOPIC_LIDAR].lastMessage = data;
+  };
+
+  public twistMessage = (twist: TwistMessage) => {
+    this.sendMessage(twist, publishTopics.TOPIC_VELOCITY);
+  };
+
+  public sportMessage = (command: RobotCommand) => {
+    this.webRtcMessage({ api_id: command, topic: 'rt/api/sport/request' });
+  };
+
+  public webRtcMessage = (rtcMessage: WebRtcMessage) => {
+    this.sendMessage(rtcMessage, publishTopics.TOPIC_WEBRTC);
+  };
+
+  public speakMessage = (text: string, voiceName: string = 'XrExE9yKIg1WjnnlVkGX') => {
+    this.sendMessage({ text, voice_name: voiceName }, publishTopics.TOPIC_WEBRTC);
+  };
+
+  public sendMessage = (structuredMessage: Record<any, any>, topic: PublishTopicListName) => {
+    let channelId = this.pubTopics[topic];
+    if (!channelId) {
+      this.pubTopics[topic] = this.client.advertise(channelDefinitions[topic]);
+      channelId = this.pubTopics[topic];
+    }
+
+    const message = new Uint8Array(new TextEncoder().encode(JSON.stringify(structuredMessage)));
+
+    this.client.sendMessage(channelId, message);
   };
 
   constructor(private address: string = 'ws://localhost:8765') {
