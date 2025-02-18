@@ -5,14 +5,16 @@ import { JoyController, JoysToRobot, JoystickHandler } from './joystick/joy-cont
 import { CanvasFrame, OverlayGUI } from './overlaygui/overlaygui';
 import { GuiCallback } from './types';
 import { getSceneManager } from './visualizer';
+import { SceneManager } from './visualizer/SceneManager';
+import { WebSocketEventHandler } from './robot/foxgloveConnection';
 
 class ExternalTools {
+  sceneManager: SceneManager = getSceneManager();
   guiCallback = (n: number) => {};
   constructor() {}
-  init() {
-    const sceneManager = getSceneManager();
-    sceneManager.init();
-    sceneManager.animate();
+  init(onEvent: WebSocketEventHandler) {
+    this.sceneManager.init(onEvent);
+    this.sceneManager.animate();
   }
   subscribeUI(cb: GuiCallback) {
     console.log('Subscribed...');
@@ -26,9 +28,6 @@ class ExternalTools {
   }
 }
 
-const tools = new ExternalTools();
-tools.init();
-
 const systemMessageFileLocation = '/chat-system-message';
 
 const joy1 = new JoystickHandler();
@@ -37,14 +36,28 @@ const robotControl = new JoysToRobot(joy1, joy2);
 
 const App = () => {
   const [data, setState] = useState(0);
+  const [fileContent, setFileContent] = useState<string>('');
+  const [isConnectionFailed, setIsConnectionFailed] = useState<boolean>(false);
+
+  const tools = new ExternalTools();
+  const ai = new InteractWithAI(fileContent);
+
   useEffect(() => {
     tools.subscribeUI((n) => setState(n));
     return () => {
       tools.unSubscribeUI();
     };
   }, [setState]);
+  
+  useEffect(() => {
+    tools.init(handleEvent);
 
-  const [fileContent, setFileContent] = useState<string>('');
+    return () => {
+      if (tools.sceneManager.client) {
+        tools.sceneManager.client.close();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const loadFile = async () => {
@@ -60,7 +73,22 @@ const App = () => {
     loadFile();
   }, []);
 
-  const ai = new InteractWithAI(fileContent);
+
+  const reconnect = () => {
+    tools.init(handleEvent);
+  };
+ 
+  const handleEvent = (event: 'open' | 'close' | 'error') => {
+    switch (event) {
+      case 'open':
+        setIsConnectionFailed(false);
+        break;
+      case 'close':
+      case 'error':
+        setIsConnectionFailed(true);
+        break;
+    }
+  };
 
   return (
     <div>
@@ -69,6 +97,9 @@ const App = () => {
       <ChatWindow ai={ai} />
       <JoyController joy={joy1} class="joy1" />
       <JoyController joy={joy2} class="joy2" />
+      <div className={`failed-connection-wrapper ${isConnectionFailed ? 'show' : ''} `}>
+        <p>Websocket connection <span>failed</span>. Please check the URL in the Configuration panel and try to <button onClick={reconnect}>reconnect</button> again.</p>
+      </div>
     </div>
   );
 };
