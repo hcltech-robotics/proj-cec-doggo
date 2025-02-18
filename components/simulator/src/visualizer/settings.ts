@@ -49,6 +49,12 @@ function initSettings(s: SceneManager) {
   const guiState = localStorage.getItem('guiState')
   if (guiState) gui.load(JSON.parse(guiState))
 
+  // save GUI state to localstorage if not available yet
+  if (!guiState) {
+    const guiState = gui.save();
+    localStorage.setItem('guiState', JSON.stringify(guiState))
+  }
+
   // reset GUI state button
   const resetGui = () => {
     localStorage.removeItem('guiState')
