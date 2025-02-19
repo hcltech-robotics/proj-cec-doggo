@@ -81,5 +81,9 @@ export interface UserSettings {
     foxglove_config: { url: string }
     pointCloudScene: { enabled: boolean }
     cameraDepthScene: { enabled: boolean }
+    topicNames: {
+      pointcloud: string
+      cameraDepth: string
+    }
 }
 

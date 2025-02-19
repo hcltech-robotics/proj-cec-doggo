@@ -37,6 +37,10 @@ class SceneManager {
             foxglove_config: { url: "ws://localhost:8765" },
             pointCloudScene: { enabled: true },
             cameraDepthScene: { enabled: true },
+            topicNames: {
+              pointcloud: '/pointcloud',
+              cameraDepth: '/camera/depth/color/points',
+            }
         };
         this.scenes = {
             main: new MainScene(),
