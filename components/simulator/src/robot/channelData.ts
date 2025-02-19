@@ -7,5 +7,6 @@ export const subscribe_channels = new Set([
   '/gpt_cmd',
   '/cmd_vel',
   '/pointcloud',
-  '/tts'
+  '/camera/depth/color/points',
+  '/tts',
 ]);

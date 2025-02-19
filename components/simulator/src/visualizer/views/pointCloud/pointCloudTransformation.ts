@@ -1,15 +1,13 @@
 import { BufferGeometry, Color, Float32BufferAttribute, Points, PointsMaterial } from "three";
 import { SceneManager } from "../../SceneManager";
-import { PointCloudData, FieldsMap } from './pointCloudTypes';
+import { PointCloudData } from './pointCloudTypes';
+import { getFieldsMap } from './utils';
 
 const parsePointCloud = ({ data, point_step, fields, is_bigendian }: PointCloudData) => {
     const points = [];
     const intensity = [];
     const uint8ArrayData = new Uint8Array(data);
-    const fieldsMap: FieldsMap = fields.reduce((acc, { name, ...rest }) => {
-        acc[name as keyof FieldsMap] = { ...rest };
-        return acc;
-    }, {} as FieldsMap);
+    const fieldsMap = getFieldsMap(fields);
 
     for (let i = 0; i < data.length; i += point_step) {
         const x = new DataView(uint8ArrayData.buffer, i + fieldsMap['x'].offset, 4).getFloat32(0, !is_bigendian);
@@ -42,9 +40,11 @@ function updatePointCloud(s: SceneManager, g: any) {
     pointCloudGeometry = new BufferGeometry();
     pointCloudGeometry.setAttribute("position", new Float32BufferAttribute(positions.points, 3));
     pointCloudGeometry.setAttribute("intensity", new Float32BufferAttribute(positions.intensity, 1));
+    pointCloudGeometry.rotateX(Math.PI);
+    pointCloudGeometry.rotateZ(Math.PI / 2);
 
     const material = new PointsMaterial({
-        size: 0.1,
+        size: 0.01,
         vertexColors: true
     });
 
@@ -62,6 +62,7 @@ function updatePointCloud(s: SceneManager, g: any) {
 
     pointsCloud = new Points(pointCloudGeometry, material);
     s.scenes.pointcloud.add(pointsCloud);
+    // (s.scenes.pointcloud.userData.domElement?.parentNode as HTMLElement).classList.remove('hidden');
 }
 
 export { updatePointCloud }

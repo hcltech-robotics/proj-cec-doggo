@@ -8,6 +8,7 @@ import {
     PointLightHelper,
     Points,
     Scene,
+    Vector3,
 } from 'three'
 import { DragControls, OrbitControls } from 'three/examples/jsm/Addons.js'
 import { URDFRobot } from 'urdf-loader'
@@ -36,22 +37,42 @@ export class MainScene extends Scene {
     }
 }
 
-interface PointcloudSceneUserData {
+export interface PointcloudSceneUserData {
     camera: PerspectiveCamera | null
     domElement: HTMLElement | null
+    cameraControls: OrbitControls | null
+    resetPosition: Vector3
+    lerpSpeed: number
 }
 
 export class PointcloudScene extends Scene {
     userData: PointcloudSceneUserData
     constructor() {
         super()
-        this.userData = { camera: null, domElement: null }
+        this.userData = { camera: null, domElement: null, cameraControls: null, resetPosition: new Vector3(0, 5, 1), lerpSpeed: 0.05 }
     }
+}
+
+export interface CameraDepthSceneUserData {
+  camera: PerspectiveCamera | null
+  domElement: HTMLElement | null
+  cameraControls: OrbitControls | null
+  resetPosition: Vector3
+  lerpSpeed: number
+}
+
+export class CameraDepthScene extends Scene {
+  userData: CameraDepthSceneUserData
+  constructor() {
+      super()
+      this.userData = { camera: null, domElement: null, cameraControls: null, resetPosition: new Vector3(0, 1, 0), lerpSpeed: 0.1 }
+  }
 }
 
 export interface Scenes {
     main: MainScene,
-    pointcloud: PointcloudScene
+    pointcloud: PointcloudScene,
+    cameraDepth: CameraDepthScene,
 }
 
 export interface UserSettings {
@@ -59,5 +80,6 @@ export interface UserSettings {
     apiKey: string
     foxglove_config: { url: string }
     pointCloudScene: { enabled: boolean }
+    cameraDepthScene: { enabled: boolean }
 }
 

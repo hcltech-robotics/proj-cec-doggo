@@ -29,15 +29,23 @@ function initSettings(s: SceneManager) {
   const cameraFolder = gui.addFolder('Camera')
   cameraFolder.add(s.scenes.main?.userData.cameraControls!, 'autoRotate')
 
-  const pointcloudFolder = gui.addFolder('PointCloudViewer')
-  pointcloudFolder.add(s.userSettings.pointCloudScene, 'enabled').name('turn on/off').onChange((value: boolean) => {
-    const node = document.getElementsByClassName("pointcloud-view")
-    for (let x of node) {
-      if (x) {
-        x.setAttribute("style", `display: ${value ? "block" : "none"}`)
-      }
+  const toggleVisibility = (value: boolean, sceneName: 'pointcloud' | 'cameraDepth') => {
+    const sceneWrapper = (s.scenes[sceneName].userData.domElement as HTMLElement).parentElement;
+    if (value) {
+      sceneWrapper?.classList.remove('hidden');
+    } else {
+      sceneWrapper?.classList.add('hidden');
     }
-  })
+  };
+
+  const topicsFolder = gui.addFolder('Topics')
+  topicsFolder.add(s.userSettings.pointCloudScene, 'enabled').name('/pointcloud').onChange((value: boolean) => {
+    toggleVisibility(value, 'pointcloud');
+  });
+  topicsFolder.add(s.userSettings.cameraDepthScene, 'enabled').name('/camera/depth/color/points').onChange((value: boolean) => {
+    toggleVisibility(value, 'cameraDepth');
+  });
+  topicsFolder.open();
 
   // persist GUI state in local storage on changes
   gui.onFinishChange(() => {
