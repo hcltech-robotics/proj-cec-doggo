@@ -7,12 +7,17 @@
   width: 1000px;
   max-width: calc(100vw - 2 * 200px);
   transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.chat-form {
   backdrop-filter: blur(10px);
   padding: 9px 16px;
   border: 1px solid var(--leva-colors-elevation1);
   border-radius: var(--leva-radii-lg);
   box-shadow: var(--leva-shadows-level1);
   background-color: #00000030;
+  pointer-events: all;
 }
 
 .chat-controls {
@@ -63,12 +68,18 @@
 }
 
 .chat-history {
+  pointer-events: all;
   user-select: text;
   padding: 12px 8px;
-  margin-bottom: 4px;
+  margin-bottom: -8px;
   border-bottom: 1px dotted var(--leva-colors-elevation1);
-  max-height: 50vh;
-  overflow: auto;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg) var(--leva-radii-lg) 0 0;
+  box-shadow: var(--leva-shadows-level1);
+  background-color: #00000030;
+  border-bottom-width: 0;
+  padding-bottom: 20px;
 }
 
 .history-message {
@@ -76,6 +87,7 @@
   border-radius: var(--leva-radii-lg);
   border-bottom-right-radius: 0;
   max-width: 70%;
+  pointer-events: painted;
 }
 
 .history-message.me {
@@ -89,7 +101,26 @@
 }
 
 .history-entries {
+  max-height: 50vh;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding-right: 8px;
+}
+
+.chat-recent {
+  user-select: text;
+  padding: 12px 8px;
+  margin-bottom: -8px;
+  border-bottom: 1px dotted var(--leva-colors-elevation1);
+  border-bottom-width: 0;
+  padding-bottom: 20px;
+  pointer-events: none;
+}
+
+.chat-recent .history-entries {
+  pointer-events: none;
+  max-height: unset;
+  overflow: hidden;
 }

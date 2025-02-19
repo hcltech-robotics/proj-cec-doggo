@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CameraSnapshot } from './component/CameraSnapshot';
-import { Chatbox } from './component/ChatBox';
+import { Chatbox } from './component/Chatbox';
 import { Config, ControlPanel } from './component/ControlPanel';
 import { Go2Robot } from './component/Go2Robot';
 import { MainScene } from './component/MainScene';
 import { VoxelCloud } from './component/VoxelCloud';
+import { ChatHistoryItem } from './model/ChatInterfaces';
 import { LlmCommunicationService } from './service/LlmCommunicationService';
 import { RobotCommunication } from './service/RobotCommunicationService';
 
@@ -14,6 +15,7 @@ const visualAgent = new LlmCommunicationService('');
 
 const App = () => {
   let [config, setConfig] = useState<Config>({ graphStats: true, grid: true, robotShadow: true, apiKey: '' });
+  const [history, setHistory] = useState<ChatHistoryItem[]>([]);
 
   useEffect(() => {
     chatAgent.setApiKey(config.apiKey);
@@ -28,7 +30,7 @@ const App = () => {
         <VoxelCloud connection={connection} />
       </MainScene>
       <CameraSnapshot connection={connection} />
-      <Chatbox connection={connection} llm={chatAgent} />
+      <Chatbox connection={connection} llm={chatAgent} history={history} setHistory={setHistory} />
     </>
   );
 };
