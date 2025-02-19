@@ -9,7 +9,7 @@ const pointCloudSceneSize = {
   height: 180,
 }
 
-const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement, s: SceneManager): OrbitControls => {
+const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement): OrbitControls => {
   const cameraControls = new OrbitControls(camera, canvas);
   cameraControls.enableDamping = true;
   cameraControls.update();
