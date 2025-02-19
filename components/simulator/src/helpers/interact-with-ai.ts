@@ -9,6 +9,8 @@ export interface MessageWithImage {
   image: string | null;
 }
 
+const DEFAULT_TIMEOUT = 10000;
+
 export const SPORT_CMD = {
   1001: 'Damp',
   1002: 'BalanceStand',
@@ -137,6 +139,8 @@ const sportCommand = (cmd: number) => {
     schemaName: 'unitree_go/msg/WebRtcReq',
   });
 
+  console.log('Sended command to "/webrtc_req": ', cmd, Object.keys(ROBOT_CMD).find(key => ROBOT_CMD[key] === cmd));
+
   const message = new Uint8Array(new TextEncoder().encode(JSON.stringify({ api_id: cmd, topic: 'rt/api/sport/request' })));
   client.sendMessage(channelId, message);
 };
@@ -176,6 +180,7 @@ export class InteractWithAI {
       apiKey: this.apiKey,
       model: 'gpt-4o-mini',
       maxTokens: 1000,
+      cache: true
     });
 
     const messages = [
@@ -187,7 +192,7 @@ export class InteractWithAI {
       }),
     ];
 
-    const result = await chat.invoke(messages);
+    const result = await chat.invoke(messages, { timeout: DEFAULT_TIMEOUT });
     const response = { text: result.content as string, image: this.imageData };
     this.imageData = '';
     return response;
@@ -265,7 +270,7 @@ export class InteractWithAI {
     ),
     standby_pose: tool(
       () => {
-        sportCommand(ROBOT_CMD.BalanceStand);
+        sportCommand(ROBOT_CMD.StandUp);
         return `** Sending "balancestand" thru WS://`;
       },
       {
@@ -321,7 +326,7 @@ export class InteractWithAI {
   public async invoke(message: string): Promise<MessageWithImage[]> {
     this.messages.push(new HumanMessage(message));
 
-    const aiMessage = await this.llmWithTools.invoke(this.messages);
+    const aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
     this.messages.push(aiMessage);
 
     if (aiMessage?.tool_calls && aiMessage.tool_calls.length > 0) {
@@ -329,7 +334,7 @@ export class InteractWithAI {
 
       for (const call of aiMessage.tool_calls) {
         if (Object.keys(this.tools).includes(call.name)) {
-          const toolResult = await this.tools[call.name].invoke(aiMessage);
+          const toolResult = await this.tools[call.name].invoke(aiMessage, { timeout: DEFAULT_TIMEOUT });
 
           console.log(aiMessage, toolResult);
 
@@ -340,14 +345,15 @@ export class InteractWithAI {
             this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
           }
 
-          const comment = await this.llmWithTools.invoke(this.messages);
+          const comment = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
 
           if (call.name !== 'image_analyze') {
             response.push({ text: comment.content, image: null });
+            sendVoice(comment.content);
           } else {
-            response.push({ text: comment.content, image: toolResult.image });
+            response.push({ text: toolResult.text, image: toolResult.image });
+            sendVoice(toolResult.text);
           }
-          sendVoice(comment.content);
         } else {
           response.push({ text: `*Missing tool: ${call.name}`, image: null });
         }
@@ -362,7 +368,7 @@ export class InteractWithAI {
   public handleAction = (action: string): void => {
     switch (action) {
       case 'standby_pose': {
-        sportCommand(ROBOT_CMD.RecoveryStand);
+        sportCommand(ROBOT_CMD.StandUp);
         break;
       }
       case 'dance': {
