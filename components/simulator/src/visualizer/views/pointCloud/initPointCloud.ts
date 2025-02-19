@@ -1,4 +1,4 @@
-import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera } from "three";
+import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera, Vector3 } from "three";
 import { SceneManager } from "../../SceneManager";
 import { PointcloudScene } from "../../types";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -9,17 +9,12 @@ const pointCloudSceneSize = {
   height: 180,
 }
 
-const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement) => {
+const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement, s: SceneManager): OrbitControls => {
   const cameraControls = new OrbitControls(camera, canvas);
   cameraControls.enableDamping = true;
   cameraControls.update();
 
-  canvas.addEventListener('mouseleave', () => {
-    camera.position.set(0, 5, 0);
-    camera.updateProjectionMatrix();
-    cameraControls.target.set(0, 0, 0);
-    cameraControls.update();
-  });
+  return cameraControls;
 };
 
 const createGridHelper = (scene: PointcloudScene) => {
@@ -58,8 +53,8 @@ function createPointCloudScene(s:SceneManager) {
     sideViews.appendChild(element)
   }
   const aspectRatio = pointCloudSceneSize.width / pointCloudSceneSize.height
-  const pointcloudCamera = new PerspectiveCamera(50, aspectRatio, 0.1, 10)
-  pointcloudCamera.position.set(0, 5, 0);
+  const pointcloudCamera = new PerspectiveCamera(50, aspectRatio, 0.1, 100)
+  pointcloudCamera.position.copy(s.scenes.pointcloud.userData.resetPosition);
   pointcloudScene.userData.camera = pointcloudCamera
   pointcloudScene.userData.domElement = sceneElement
   // NOTE: this is useful for debugging
@@ -76,7 +71,7 @@ function createPointCloudScene(s:SceneManager) {
 
   // createMockLidarData(s)
 
-  createCameraControls(pointcloudCamera, sceneElement);
+  s.scenes.pointcloud.userData.cameraControls = createCameraControls(pointcloudCamera, sceneElement, s);
   createGridHelper(s.scenes.pointcloud);
   createAxesHelper(s.scenes.pointcloud);
 }

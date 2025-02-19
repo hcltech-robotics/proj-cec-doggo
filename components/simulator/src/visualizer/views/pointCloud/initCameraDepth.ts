@@ -8,17 +8,12 @@ const cameraDepthSceneSize = {
   height: 180,
 };
 
-const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement) => {
+const createCameraControls = (camera: PerspectiveCamera, canvas: HTMLElement): OrbitControls => {
   const cameraControls = new OrbitControls(camera, canvas);
   cameraControls.enableDamping = true;
   cameraControls.update();
 
-  canvas.addEventListener('mouseleave', () => {
-    camera.position.set(0, 1, 0);
-    camera.updateProjectionMatrix();
-    cameraControls.target.set(0, 0, 0);
-    cameraControls.update();
-  });
+  return cameraControls;
 };
 
 const createGridHelper = (scene: CameraDepthScene) => {
@@ -54,8 +49,8 @@ function createCameraDepthScene(s: SceneManager) {
     sideViews.appendChild(element);
   }
   const aspectRatio = cameraDepthSceneSize.width / cameraDepthSceneSize.height;
-  const cameraDepthCamera = new PerspectiveCamera(30, aspectRatio, 0.1, 10);
-  cameraDepthCamera.position.set(0, 1, 0);
+  const cameraDepthCamera = new PerspectiveCamera(30, aspectRatio, 0.1, 100);
+  cameraDepthCamera.position.copy(s.scenes.cameraDepth.userData.resetPosition);
   cameraDepthScene.userData.camera = cameraDepthCamera;
   cameraDepthScene.userData.domElement = sceneElement;
   s.scenes.cameraDepth.userData.camera = cameraDepthCamera;
@@ -67,7 +62,7 @@ function createCameraDepthScene(s: SceneManager) {
   cameraDepthScene.add(light);
   cameraDepthScene.background = new Color().setHex(0x112233);
 
-  createCameraControls(cameraDepthCamera, sceneElement);
+  s.scenes.cameraDepth.userData.cameraControls = createCameraControls(cameraDepthCamera, sceneElement);
   createGridHelper(s.scenes.cameraDepth);
   createAxesHelper(s.scenes.cameraDepth);
 }
