@@ -3,15 +3,16 @@ import { SceneTransformParam } from "../../types";
 import { SceneManager } from "../SceneManager";
 import { updatePointCloud } from "../views/pointCloud/pointCloudTransformation";
 import { updateCameraDepthColors } from '../views/pointCloud/cameraDepthColorPointsTransformation';
-
+import { getGuiState } from '../settings';
 
 function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const { data } = p
   const msgData = data.messageData
+  const topicNames = getGuiState('TopicNames');
 
-  if (data.channelTopic === '/pointcloud') {
+  if (data.channelTopic === topicNames.pointcloud) {
     updatePointCloud(s, data.messageData);
-  } else if (data.channelTopic === '/camera/depth/color/points') {
+  } else if (data.channelTopic === topicNames.cameraDepth) {
     updateCameraDepthColors(s, data.messageData);
   } else if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData

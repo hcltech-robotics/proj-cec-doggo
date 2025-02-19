@@ -71,7 +71,7 @@ function createPointCloudScene(s:SceneManager) {
 
   // createMockLidarData(s)
 
-  s.scenes.pointcloud.userData.cameraControls = createCameraControls(pointcloudCamera, sceneElement, s);
+  s.scenes.pointcloud.userData.cameraControls = createCameraControls(pointcloudCamera, sceneElement);
   createGridHelper(s.scenes.pointcloud);
   createAxesHelper(s.scenes.pointcloud);
 }
