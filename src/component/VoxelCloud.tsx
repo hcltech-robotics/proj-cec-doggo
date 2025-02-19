@@ -19,7 +19,7 @@ export const VoxelCloud = (props: { connection: RobotCommunication }) => {
   return (
     <>
       {data?.geometryData ? (
-        <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[data.origin.at(0)!, data.origin.at(2)!, -1 * data.origin.at(1)!]}>
+        <group rotation={[Math.PI / -2, 0.0, 0.0, 'ZYX']} position={[data.origin.at(0)!, data.origin.at(2)!, -1 * data.origin.at(1)!]}>
           <mesh scale={data?.resolution ?? 0.05}>
             <bufferGeometry>
               <bufferAttribute args={[data.geometryData.positions || [], 3]} attach="attributes-position" />

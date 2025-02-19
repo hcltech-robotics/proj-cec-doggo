@@ -8,7 +8,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
   return (
     <Canvas shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 75 }}>
       {props.children}
-      <group rotation={[-3.14 / 2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
+      <group rotation={[Math.PI / -2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
         <mesh receiveShadow position={[0.0, 0.0, 0.04]}>
           <planeGeometry args={[10, 10]} isBufferGeometry />
           <shadowMaterial />
