@@ -54,7 +54,7 @@ const parseCameraDepthColors = ({
     const r = uint8ArrayData[i + fieldsMap["rgb"].offset] / 255;
     const g = uint8ArrayData[i + fieldsMap["rgb"].offset + 1] / 255;
     const b = uint8ArrayData[i + fieldsMap["rgb"].offset + 2] / 255;
-    const color = new Color(r, g, b);
+    const color = new Color(b, g, r);
     colors.push(color.r, color.g, color.b);
   }
 
