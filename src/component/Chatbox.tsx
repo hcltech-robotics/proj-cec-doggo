@@ -1,26 +1,16 @@
-import { addSeconds, differenceInSeconds, format } from 'date-fns';
+import { differenceInSeconds, format } from 'date-fns';
 import { History, Mic, Send } from 'lucide-react';
-import { FormEventHandler, KeyboardEventHandler, useEffect, useRef, useState } from 'react';
+import { FormEventHandler, KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import { ChatHistoryItem } from 'src/model/ChatInterfaces';
-import { LlmCommunicationService } from 'src/service/LlmCommunicationService';
-import { RobotCommunication } from 'src/service/RobotCommunicationService';
+import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
 import './Chatbox.css';
 
-export const Chatbox = ({
-  connection,
-  llm,
-  history,
-  setHistory,
-}: {
-  connection: RobotCommunication;
-  llm: LlmCommunicationService;
-  history: ChatHistoryItem[];
-  setHistory: React.Dispatch<React.SetStateAction<ChatHistoryItem[]>>;
-}) => {
+export const Chatbox = () => {
   const [input, setInput] = useState('');
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const [historyStart, setHistoryStart] = useState<number>(-1);
+  const { history, addTextMessage } = useContext(AppContext).chatHistory();
 
   const textarea = useRef<HTMLTextAreaElement>(null);
   const form = useRef<HTMLFormElement>(null);
@@ -48,12 +38,6 @@ export const Chatbox = ({
     }
   };
 
-  const calcReadingTime = (item: ChatHistoryItem) => {
-    const WORD_PER_MINUTE = 150;
-    const WORD_PER_SECOND = WORD_PER_MINUTE / 60;
-    return Math.ceil(item.text.split(/\s/).length / WORD_PER_SECOND);
-  };
-
   const submitForm: FormEventHandler<HTMLFormElement> = (e) => {
     if (textarea.current) {
       const query = textarea.current.value;
@@ -61,20 +45,7 @@ export const Chatbox = ({
         textarea.current.value = '';
         adjustHeight(textarea.current);
 
-        const newHistoryItem: ChatHistoryItem = {
-          text: query,
-          side: 'me',
-          added: new Date(),
-          key: Math.random() * 1e12,
-          hide: new Date(),
-        };
-        const lastHideTime = history[history.length - 1]?.hide ?? new Date();
-        newHistoryItem.hide = addSeconds(
-          lastHideTime.getTime() <= new Date().getTime() ? new Date() : lastHideTime,
-          calcReadingTime(newHistoryItem) + 1,
-        );
-
-        setHistory([...history, newHistoryItem]);
+        addTextMessage(query);
 
         // props.llm.invoke(query);
       }
