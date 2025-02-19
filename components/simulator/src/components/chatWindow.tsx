@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { InteractWithAI } from "../helpers/interact-with-ai";
+import { InteractWithAI, MessageWithImage } from "../helpers/interact-with-ai";
 import ChatInput from "../overlaygui/chatinput";
 
 import "./chatWindow.css";
@@ -30,7 +30,11 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
+const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: Function }> = ({ ai, onError }) => {
+  if (!ai) {
+    return;
+  }
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [historyActive, setHistoryActive] = useState<boolean>(false);
   const [notificationMessages, setNotificationMessages] = useState<Message[]>([]);
@@ -56,17 +60,22 @@ const ChatWindow: React.FC<{ ai: InteractWithAI }> = ({ ai }) => {
     setMessages([...messages, newMessage]);
     setNewNotificationMessage(newMessage);
 
-    const results = await ai.invoke(message);
-    results.forEach(result => {
-      const assistantMessage: Message = {
-        id: messages.length + 2,
-        text: result.text,
-        image: result.image,
-        sender: "assistant",
-      };
-      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
-      setNewNotificationMessage(assistantMessage);
-    });
+    let results: MessageWithImage[];
+    try {
+      results = await ai.invoke(message);
+      results.forEach(result => {
+        const assistantMessage: Message = {
+          id: messages.length + 2,
+          text: result.text,
+          image: result.image,
+          sender: "assistant",
+        };
+        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+        setNewNotificationMessage(assistantMessage);
+      });
+    } catch (error: unknown) {
+      onError(error);
+    }
   };
 
   const scrollToBottom = () => {
