@@ -11,6 +11,7 @@ import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { CameraDepthScene, CameraDepthSceneUserData, MainScene, PointcloudScene, PointcloudSceneUserData, Scenes, UserSettings } from './types'
+import { Channel } from '@foxglove/ws-protocol'
 
 const CANVAS_ID = 'scene'
 
@@ -23,6 +24,7 @@ class SceneManager {
     userSettings: UserSettings
     client: FoxgloveClient | null
     foxgloveConnection: Promise<void>
+    eventTarget: EventTarget
 
     get miniScenes() {
       return [this.scenes.pointcloud, this.scenes.cameraDepth];
@@ -37,10 +39,8 @@ class SceneManager {
             foxglove_config: { url: "ws://localhost:8765" },
             pointCloudScene: { enabled: true },
             cameraDepthScene: { enabled: true },
-            topicNames: {
-              pointcloud: '/pointcloud',
-              cameraDepth: '/camera/depth/color/points',
-            }
+            topics: ['No Point Cloud Scene'],
+            selectedMiniScene: '',
         };
         this.scenes = {
             main: new MainScene(),
@@ -54,6 +54,17 @@ class SceneManager {
         this.stats = new Stats()
         this.foxgloveConnection = Promise.resolve()
         this.animationFrame = 0;
+        this.eventTarget = new EventTarget();
+    }
+
+    parseChannels(channels: Channel[]) {
+      this.userSettings.topics = channels.reduce((acc, curr) => {
+        if (curr.schemaName.includes('PointCloud2')) {
+          acc.push(curr.topic);
+        }
+        return acc;
+      }, this.userSettings.topics);
+      this.eventTarget.dispatchEvent(new CustomEvent('topicsloaded', { detail: this.userSettings.topics }));
     }
 
     init(onEvent: WebSocketEventHandler) {
@@ -62,7 +73,7 @@ class SceneManager {
         initLidarWebWorker(this)
         this.bindEventListeners();
     }
-    
+
     reconnectWebsocketConnection(onEvent: WebSocketEventHandler) {
         if (this.client) {
           this.client.close();

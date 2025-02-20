@@ -64,7 +64,8 @@ const parseCameraDepthColors = ({
 function updateCameraDepthColors(s: SceneManager, g: any) {
     if (cameraDepth) {
         if (cameraDepthGeometry) { cameraDepthGeometry.dispose() }
-        s.scenes.cameraDepth.remove(cameraDepth)
+        // s.scenes.cameraDepth.remove(cameraDepth)
+        s.scenes.pointcloud.remove(cameraDepth)
     }
     const points = parseCameraDepthColorPoints(g);
     const colors = parseCameraDepthColors(g);
@@ -81,7 +82,8 @@ function updateCameraDepthColors(s: SceneManager, g: any) {
     });
 
     cameraDepth = new Points(cameraDepthGeometry, material);
-    s.scenes.cameraDepth.add(cameraDepth);
+    // s.scenes.cameraDepth.add(cameraDepth);
+    s.scenes.pointcloud.add(cameraDepth);
     // (s.scenes.cameraDepth.userData.domElement?.parentNode as HTMLElement).classList.remove('hidden');
 }
 

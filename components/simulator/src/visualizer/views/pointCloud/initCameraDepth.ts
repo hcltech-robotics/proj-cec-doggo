@@ -49,7 +49,8 @@ function createCameraDepthScene(s: SceneManager) {
     sideViews.appendChild(element);
   }
   const aspectRatio = cameraDepthSceneSize.width / cameraDepthSceneSize.height;
-  const cameraDepthCamera = new PerspectiveCamera(30, aspectRatio, 0.1, 100);
+  // const cameraDepthCamera = new PerspectiveCamera(30, aspectRatio, 0.1, 100);
+  const cameraDepthCamera = new PerspectiveCamera(50, aspectRatio, 0.1, 100)
   cameraDepthCamera.position.copy(s.scenes.cameraDepth.userData.resetPosition);
   cameraDepthScene.userData.camera = cameraDepthCamera;
   cameraDepthScene.userData.domElement = sceneElement;

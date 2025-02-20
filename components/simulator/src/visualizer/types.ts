@@ -49,7 +49,7 @@ export class PointcloudScene extends Scene {
     userData: PointcloudSceneUserData
     constructor() {
         super()
-        this.userData = { camera: null, domElement: null, cameraControls: null, resetPosition: new Vector3(0, 5, 1), lerpSpeed: 0.05 }
+        this.userData = { camera: null, domElement: null, cameraControls: null, resetPosition: new Vector3(0, 1, 0), lerpSpeed: 0.05 }
     }
 }
 
@@ -81,9 +81,7 @@ export interface UserSettings {
     foxglove_config: { url: string }
     pointCloudScene: { enabled: boolean }
     cameraDepthScene: { enabled: boolean }
-    topicNames: {
-      pointcloud: string
-      cameraDepth: string
-    }
+    selectedMiniScene: string
+    topics: string[]
 }
 

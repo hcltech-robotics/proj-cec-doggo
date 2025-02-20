@@ -1,10 +1,10 @@
-import { Channel, FoxgloveClient } from "@foxglove/ws-protocol";
-import { MessageReader } from "@foxglove/rosmsg2-serialization";
-import { parse } from "@foxglove/rosmsg";
-import { getSubscribeChannels } from "./channelData";
-import { SceneTransformCb } from "../types";
-import { registerAdvertisements } from "./communicate"
-import { SceneManager } from "../visualizer/SceneManager";
+import { Channel, FoxgloveClient } from '@foxglove/ws-protocol';
+import { MessageReader } from '@foxglove/rosmsg2-serialization';
+import { parse } from '@foxglove/rosmsg';
+import { getSubscribeChannels } from './channelData';
+import { SceneTransformCb } from '../types';
+import { registerAdvertisements } from './communicate';
+import { SceneManager } from '../visualizer/SceneManager';
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {};
@@ -20,7 +20,7 @@ export interface WebSocketEventHandler {
   (event: 'open' | 'close' | 'error'): void;
 }
 
-async function createFoxGloveWebsocket (
+async function createFoxGloveWebsocket(
   transform_cb: SceneTransformCb,
   ws_url = 'ws://localhost:8765',
   s: SceneManager,
@@ -35,10 +35,13 @@ async function createFoxGloveWebsocket (
   const deserializers = new Map();
   const subscribe_channels = getSubscribeChannels();
 
-  client.on("advertise", (channels) => {
+  client.on('advertise', (channels) => {
     if (!client) {
       return;
     }
+
+    s.parseChannels(channels);
+
     for (const channel of channels) {
       if (!subscribe_channels.has(channel.topic)) {
         console.warn('Not subscribed to channel', channel);
@@ -72,7 +75,6 @@ async function createFoxGloveWebsocket (
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
     if (parsedData.channelTopic === '/camera/compressed') {
-      // console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
     } else if ([...subscribe_channels].some((c) => c == parsedData.channelTopic)) {
       transform_cb({ subscriptionId, timestamp, data: parsedData }, s);

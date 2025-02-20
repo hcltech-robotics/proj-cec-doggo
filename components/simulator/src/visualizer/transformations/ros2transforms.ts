@@ -10,9 +10,12 @@ function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const msgData = data.messageData
   const topicNames = getGuiState('TopicNames');
 
-  if (data.channelTopic === topicNames.pointcloud) {
-    updatePointCloud(s, data.messageData);
-  } else if (data.channelTopic === topicNames.cameraDepth) {
+  // if (data.channelTopic === topicNames.pointcloud) {
+  if (data.channelTopic === '/pointcloud') {
+    // updatePointCloud(s, data.messageData);
+    updateCameraDepthColors(s, data.messageData);
+  // } else if (data.channelTopic === topicNames.cameraDepth) {
+  } else if (data.channelTopic === '/camera/depth/color/points') {
     updateCameraDepthColors(s, data.messageData);
   } else if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData
