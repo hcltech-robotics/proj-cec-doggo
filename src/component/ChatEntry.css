@@ -1,0 +1,29 @@
+.history-message {
+  padding: 9px 16px;
+  border-radius: var(--leva-radii-lg);
+  border-bottom-right-radius: 0;
+  max-width: 70%;
+  pointer-events: painted;
+}
+
+.history-image {
+  width: 35%;
+}
+
+.history-image img {
+  width: 100%;
+  height: 100%;
+  margin-bottom: -5px;
+}
+
+.history-image.me,
+.history-message.me {
+  align-self: flex-end;
+  background-color: var(--leva-colors-accent1);
+}
+
+.history-image.other,
+.history-message.other {
+  align-self: flex-start;
+  background-color: var(--leva-colors-elevation3);
+}

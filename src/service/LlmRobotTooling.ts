@@ -147,13 +147,17 @@ export class LlmRobotTooling implements LlmToolHelper {
 
   private analyzeImage = async () => {
     const imageData = uInt8ToBase64String(this.robot.channelByName[topicList.TOPIC_CAMERA].lastMessage.data);
+    const imageUrl = `data:image/png;base64,${imageData}`;
+
+    const { addImage } = this.chatHistory.getState();
+    addImage(imageUrl);
 
     const response = await this.visualAgent.invoke([
       {
         type: 'text',
         text: 'Describe this next photo as per instructions.',
       },
-      { image_url: { url: `data:image/png;base64,${imageData}`, detail: 'low' }, type: 'image_url' },
+      { image_url: { url: imageUrl, detail: 'low' }, type: 'image_url' },
     ]);
 
     return response;

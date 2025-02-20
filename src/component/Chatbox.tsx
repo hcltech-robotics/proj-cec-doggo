@@ -1,9 +1,10 @@
-import { differenceInSeconds, format } from 'date-fns';
+import { differenceInSeconds } from 'date-fns';
 import { History, Mic, Send } from 'lucide-react';
 import { FormEventHandler, KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import { ChatHistoryItem } from 'src/model/ChatInterfaces';
 import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
+import { ChatEntry } from './ChatEntry';
 import './Chatbox.css';
 
 export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
@@ -80,27 +81,15 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
         {history.length > 0 && showHistory ? (
           <div className="chat-history">
             <div className="history-entries" ref={historyNode}>
-              {history.map((item) => {
-                return (
-                  <div key={item.key} className={`history-message ${item.side}`} title={format(item.added, 'yyyy-MM-dd HH:mm:ss')}>
-                    {item.text}
-                  </div>
-                );
-              })}
+              {history.map((item) => (
+                <ChatEntry item={item} />
+              ))}
             </div>
           </div>
         ) : (
           <div className="chat-recent">
             <div className="history-entries" ref={historyNode}>
-              {historyStart >= 0
-                ? history.slice(historyStart).map((item) => {
-                    return (
-                      <div key={item.key} className={`history-message ${item.side}`} title={format(item.added, 'yyyy-MM-dd HH:mm:ss')}>
-                        {item.text}
-                      </div>
-                    );
-                  })
-                : ''}
+              {historyStart >= 0 ? history.slice(historyStart).map((item) => <ChatEntry item={item} />) : ''}
             </div>
           </div>
         )}

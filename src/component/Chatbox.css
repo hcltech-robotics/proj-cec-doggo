@@ -82,24 +82,6 @@
   padding-bottom: 20px;
 }
 
-.history-message {
-  padding: 9px 16px;
-  border-radius: var(--leva-radii-lg);
-  border-bottom-right-radius: 0;
-  max-width: 70%;
-  pointer-events: painted;
-}
-
-.history-message.me {
-  align-self: flex-end;
-  background-color: var(--leva-colors-accent1);
-}
-
-.history-message.other {
-  align-self: flex-start;
-  background-color: var(--leva-colors-elevation3);
-}
-
 .history-entries {
   max-height: 50vh;
   overflow: auto;

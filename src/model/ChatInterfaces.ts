@@ -1,5 +1,6 @@
 export interface ChatHistoryItem {
-  text: string;
+  text?: string;
+  image?: string;
   side: 'me' | 'other';
   added: Date;
   hide: Date;
