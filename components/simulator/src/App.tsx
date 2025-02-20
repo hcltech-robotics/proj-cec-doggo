@@ -5,15 +5,19 @@ import { JoyController, JoysToRobot, JoystickHandler } from './joystick/joy-cont
 import { CanvasFrame, OverlayGUI } from './overlaygui/overlaygui';
 import { GuiCallback } from './types';
 import { getSceneManager } from './visualizer';
-import Notification from './components/Notification';
+import { SceneManager } from './visualizer/SceneManager';
+import { WebSocketEventHandler } from './robot/foxgloveConnection';
 
 class ExternalTools {
+  sceneManager: SceneManager = getSceneManager();
   guiCallback = (n: number) => {};
   constructor() {}
-  init() {
-    const sceneManager = getSceneManager();
-    sceneManager.init();
-    sceneManager.animate();
+  init(onEvent: WebSocketEventHandler) {
+    this.sceneManager.init(onEvent);
+    this.sceneManager.animate();
+  }
+  reconnectWebsocketConnection(onEvent: WebSocketEventHandler) {
+    this.sceneManager.reconnectWebsocketConnection(onEvent);
   }
   subscribeUI(cb: GuiCallback) {
     console.log('Subscribed...');
@@ -27,9 +31,6 @@ class ExternalTools {
   }
 }
 
-const tools = new ExternalTools();
-tools.init();
-
 const systemMessageFileLocation = '/chat-system-message';
 
 const joy1 = new JoystickHandler();
@@ -40,31 +41,10 @@ const App = () => {
   const [data, setState] = useState(0);
   const hasLoaded = useRef<boolean>(false);
   const [fileContent, setFileContent] = useState<string>('');
-  // const [notification, setNotification] = useState<string | null>(null);
   const [aiInstance, setAiInstance] = useState<InteractWithAI | null>(null);
-  const [notification, setNotification] = useState<React.ReactNode | null>(null);
-
-  useEffect(() => {
-    try {
-      setNotification(null);
-      setAiInstance(new InteractWithAI(fileContent));
-    } catch (error) {
-      console.error('Error initializing AI:', error);
-      setNotification(
-        <Notification
-          content={
-            <div>
-              <span>Chat is not available. Please check API key in the Configuration panel and refresh the webpage.</span>
-              <br />
-              <br />
-              <span>{error instanceof Error ? `Error: ${error.message}.` : 'An unknown error occurred'}</span>
-            </div>
-          }
-          isClosable={false}
-        />,
-      );
-    }
-  }, []);
+  const [isConnectionFailed, setIsConnectionFailed] = useState<boolean>(false);
+  const [tools] = useState(new ExternalTools());
+  const hasDevelopmentLoaded = useRef<boolean>(false);
 
   useEffect(() => {
     tools.subscribeUI((n) => setState(n));
@@ -74,8 +54,27 @@ const App = () => {
   }, [setState]);
 
   useEffect(() => {
+    // Prevent re-running in dev mode
+    if (hasDevelopmentLoaded.current) {
+      return;
+    }
+    hasDevelopmentLoaded.current = true;
+
+    tools.init(handleEvent);
+
+    return () => {
+      if (tools.sceneManager.client) {
+        tools.sceneManager.client.close();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const loadFile = async () => {
-      if (hasLoaded.current) return; // Prevent re-running
+      // Prevent re-running
+      if (hasLoaded.current) {
+        return;
+      }
       hasLoaded.current = true;
 
       try {
@@ -83,6 +82,7 @@ const App = () => {
         const text = await markdown.text();
         console.trace('file load');
         setFileContent(text);
+        setAiInstance(new InteractWithAI(fileContent));
       } catch (error) {
         console.error('Error fetching file:', error);
       }
@@ -92,35 +92,40 @@ const App = () => {
   }, []);
 
   const onError = (error: unknown) => {
-    setNotification(
-      <Notification
-        content={
-          error.status === 401 ? (
-            <div>
-              <span>Chat is not available. Please check API key in the Configuration panel and refresh the webpage.</span>
-            </div>
-          ) : (
-            <div>
-              <span>Chat is not available.</span>
-              <br />
-              <br />
-              <span>{error instanceof Error ? `Error: ${error.message}.` : 'An unknown error occurred'}</span>
-            </div>
-          )
-        }
-        isClosable={false}
-      />,
-    );
+    console.error('OnError about chat: ', error);
+    setAiInstance(null);
+  }
+
+  const handleEvent = (event: 'open' | 'close' | 'error') => {
+    switch (event) {
+      case 'open':
+        setIsConnectionFailed(false);
+        break;
+      case 'close':
+      case 'error':
+        setIsConnectionFailed(true);
+        break;
+    }
+  };
+
+  const reconnect = () => {
+    setIsConnectionFailed(false);
+    tools.reconnectWebsocketConnection(handleEvent);
   };
 
   return (
     <div>
-      <OverlayGUI ai={aiInstance} data={data} show={true} />
+      {aiInstance && <OverlayGUI ai={aiInstance} data={data} show={true} />}
       <CanvasFrame />
-      {!notification ? <ChatWindow ai={aiInstance} onError={onError} /> : notification}
-      {/* {!hasAILoaded && notification} */}
+      {aiInstance && <ChatWindow ai={aiInstance} onError={onError} />}
       <JoyController joy={joy1} class="joy1" />
       <JoyController joy={joy2} class="joy2" />
+      <div className={`failed-connection-wrapper ${isConnectionFailed ? 'show' : ''} `}>
+        <p>
+          Websocket connection <span>failed</span>. Please check the URL in the Configuration panel and try to
+          <button onClick={reconnect}>reconnect</button> again.
+        </p>
+      </div>
     </div>
   );
 };

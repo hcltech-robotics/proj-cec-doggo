@@ -1,13 +1,13 @@
 import GUI from "lil-gui";
 import { SceneManager } from "./SceneManager";
-import { initFoxGloveWebsocket } from "../robot/foxgloveConnection";
+import { createFoxGloveWebsocket, WebSocketEventHandler } from "../robot/foxgloveConnection";
 import { transform_cb } from "./transformations/ros2transforms";
 
-function initSettings(s: SceneManager) {
+function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
   const gui = new GUI({ title: '⚙️ Configuration', width: 300 })
   const foxglove = gui.addFolder('Foxglove')
   foxglove.add(s.userSettings.foxglove_config, 'url').onFinishChange(() => {
-    initFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s)
+    createFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s, onEvent)
   })
 
   const apiFolder = gui.addFolder('API')
@@ -18,10 +18,10 @@ function initSettings(s: SceneManager) {
 
   const topicNamesFolder = gui.addFolder('TopicNames');
   topicNamesFolder.add(s.userSettings.topicNames, 'pointcloud').name('pointcloud').onFinishChange(() => {
-    initFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s)
+    createFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s, onEvent)
   });
   topicNamesFolder.add(s.userSettings.topicNames, 'cameraDepth').name('cameraDepth').onFinishChange(() => {
-    initFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s)
+    createFoxGloveWebsocket(transform_cb, s.userSettings.foxglove_config.url, s, onEvent)
   });
 
   const lightsFolder = gui.addFolder('Lights')
@@ -53,15 +53,20 @@ function initSettings(s: SceneManager) {
     toggleVisibility(value, 'cameraDepth');
   });
 
-  // persist GUI state in local storage on changes
-  gui.onFinishChange(() => {
-    const guiState = gui.save()
-    localStorage.setItem('guiState', JSON.stringify(guiState))
-  })
+  const saveGuiState = (gui: GUI) => {
+    const initialGuiState = gui.save();
+    localStorage.setItem('guiState', JSON.stringify(initialGuiState));
+  };
 
-  // load GUI state if available in local storage
-  const guiState = localStorage.getItem('guiState')
-  if (guiState) gui.load(JSON.parse(guiState))
+  gui.onFinishChange(() => saveGuiState(gui));
+
+  // Load the GUI state from localStorage if available
+  const storedGuiState = localStorage.getItem('guiState');
+  if (storedGuiState) {
+    gui.load(JSON.parse(storedGuiState));
+  } else {
+    saveGuiState(gui);
+  }
 
   // reset GUI state button
   const resetGui = () => {

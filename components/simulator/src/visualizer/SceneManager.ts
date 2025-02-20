@@ -1,17 +1,16 @@
 import {
     Clock,
-    PerspectiveCamera,
     Vector3,
     WebGLRenderer,
 } from 'three'
-import { initFoxGloveWebsocket } from '../robot/foxgloveConnection'
+import { FoxgloveClient } from '@foxglove/ws-protocol'
+import { createFoxGloveWebsocket, WebSocketEventHandler } from '../robot/foxgloveConnection'
 import { initThreeJSBase } from './views/initThreeJs'
 import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { CameraDepthScene, CameraDepthSceneUserData, MainScene, PointcloudScene, PointcloudSceneUserData, Scenes, UserSettings } from './types'
-
 
 const CANVAS_ID = 'scene'
 
@@ -21,8 +20,9 @@ class SceneManager {
     clock: Clock
     stats: Stats
     scenes: Scenes
-
     userSettings: UserSettings
+    client: FoxgloveClient | null
+    foxgloveConnection: Promise<void>
 
     get miniScenes() {
       return [this.scenes.pointcloud, this.scenes.cameraDepth];
@@ -49,16 +49,27 @@ class SceneManager {
         }
         this.canvas = document.querySelector<HTMLElement>(`canvas#${CANVAS_ID}`)!
         this.renderer = null
+        this.client = null
         this.clock = new Clock()
         this.stats = new Stats()
+        this.foxgloveConnection = Promise.resolve()
         this.animationFrame = 0;
     }
 
-    init() {
-        initThreeJSBase(this)
-        initFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this);
+    init(onEvent: WebSocketEventHandler) {
+        initThreeJSBase(this, onEvent)
+        createFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
         initLidarWebWorker(this)
         this.bindEventListeners();
+    }
+    
+    reconnectWebsocketConnection(onEvent: WebSocketEventHandler) {
+        if (this.client) {
+          this.client.close();
+          this.client = null;
+        }
+
+        createFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
     }
 
     animate() {
@@ -104,4 +115,3 @@ const sceneManager: SceneManager = new SceneManager();
 const getSceneManager = () => sceneManager;
 
 export { type SceneManager, getSceneManager }
-
