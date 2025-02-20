@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ChatWindow from './components/chatWindow';
 import { InteractWithAI } from './helpers/interact-with-ai';
 import { JoyController, JoysToRobot, JoystickHandler } from './joystick/joy-controller';
@@ -38,6 +38,7 @@ const App = () => {
   const [data, setState] = useState(0);
   const [fileContent, setFileContent] = useState<string>('');
   const [isConnectionFailed, setIsConnectionFailed] = useState<boolean>(false);
+  const hasDevelopmentLoaded = useRef<boolean>(false);
 
   const tools = new ExternalTools();
   const ai = new InteractWithAI(fileContent);
@@ -48,8 +49,14 @@ const App = () => {
       tools.unSubscribeUI();
     };
   }, [setState]);
-  
+
   useEffect(() => {
+    // Prevent re-running in dev mode
+    if (hasDevelopmentLoaded.current) {
+      return;
+    }
+    hasDevelopmentLoaded.current = true;
+
     tools.init(handleEvent);
 
     return () => {
@@ -73,11 +80,10 @@ const App = () => {
     loadFile();
   }, []);
 
-
   const reconnect = () => {
     tools.init(handleEvent);
   };
- 
+
   const handleEvent = (event: 'open' | 'close' | 'error') => {
     switch (event) {
       case 'open':
@@ -98,7 +104,10 @@ const App = () => {
       <JoyController joy={joy1} class="joy1" />
       <JoyController joy={joy2} class="joy2" />
       <div className={`failed-connection-wrapper ${isConnectionFailed ? 'show' : ''} `}>
-        <p>Websocket connection <span>failed</span>. Please check the URL in the Configuration panel and try to <button onClick={reconnect}>reconnect</button> again.</p>
+        <p>
+          Websocket connection <span>failed</span>. Please check the URL in the Configuration panel and try to
+          <button onClick={reconnect}>reconnect</button> again.
+        </p>
       </div>
     </div>
   );
