@@ -54,7 +54,7 @@ class SceneManager {
         this.client = null
         this.clock = new Clock()
         this.stats = new Stats()
-        this.foxgloveConnection = new Promise(()=>{})
+        this.foxgloveConnection = Promise.resolve()
         this.animationFrame = 0;
     }
 
