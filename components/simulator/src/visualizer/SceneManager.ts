@@ -64,6 +64,11 @@ class SceneManager {
     }
     
     reconnectWebsocketConnection(onEvent: WebSocketEventHandler) {
+        if (this.client) {
+          this.client.close();
+          this.client = null;
+        }
+
         createFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
     }
 
