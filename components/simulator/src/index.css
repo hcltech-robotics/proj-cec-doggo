@@ -258,4 +258,5 @@ h1 {
 
 .failed-connection-wrapper button {
   border-color: #fff;
+  margin-left: 4px;
 }
