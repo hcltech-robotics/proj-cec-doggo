@@ -6,11 +6,11 @@ import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
 import './Chatbox.css';
 
-export const Chatbox = () => {
+export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
   const [input, setInput] = useState('');
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const [historyStart, setHistoryStart] = useState<number>(-1);
-  const { history, addTextMessage } = useContext(AppContext).chatHistory();
+  const { history } = useContext(AppContext).chatHistory();
 
   const textarea = useRef<HTMLTextAreaElement>(null);
   const form = useRef<HTMLFormElement>(null);
@@ -44,10 +44,7 @@ export const Chatbox = () => {
       if (query) {
         textarea.current.value = '';
         adjustHeight(textarea.current);
-
-        addTextMessage(query);
-
-        // props.llm.invoke(query);
+        props.sendMessage(query);
       }
     }
     e.preventDefault();

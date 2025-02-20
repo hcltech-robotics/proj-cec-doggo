@@ -23,9 +23,10 @@ export class LlmCommunicationService {
       this.messages.push(new HumanMessage(message));
 
       const aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
-      this.llmWithTools?.invoke(aiMessage);
 
       this.messages.push(aiMessage);
+
+      return aiMessage.content;
     }
   };
 

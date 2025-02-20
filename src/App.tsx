@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AppContext } from './AppContext';
 import { CameraSnapshot } from './component/CameraSnapshot';
-import { Chatbox } from './component/Chatbox';
+import { ChatWithAi } from './component/ChatWithAi';
 import { Config, ControlPanel, initialConfig } from './component/ControlPanel';
 import { Go2Robot } from './component/Go2Robot';
 import { MainScene } from './component/MainScene';
@@ -31,7 +31,7 @@ const App = () => {
         <VoxelCloud />
       </MainScene>
       <CameraSnapshot />
-      <Chatbox />
+      <ChatWithAi />
     </AppContext.Provider>
   );
 };
