@@ -4,6 +4,7 @@ import { BrandLogo } from './component/BrandLogo';
 import { CameraSnapshot } from './component/CameraSnapshot';
 import { ChatWithAi } from './component/ChatWithAi';
 import { Config, ControlPanel, initialConfig } from './component/ControlPanel';
+import { DepthCam } from './component/DepthCam';
 import { Go2Robot } from './component/Go2Robot';
 import { JoyController } from './component/JoyController';
 import { MainScene } from './component/MainScene';
@@ -49,6 +50,7 @@ const App = () => {
       </MainScene>
       <JoyController />
       <CameraSnapshot />
+      <DepthCam />
       <ChatWithAi />
       <BrandLogo />
     </AppContext.Provider>

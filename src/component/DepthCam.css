@@ -1,0 +1,21 @@
+.depthcam {
+  position: absolute;
+  width: 20vw;
+  top: 50px;
+  right: 50px;
+
+  aspect-ratio: 16/9;
+  transition: all 250ms;
+  background-color: var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg);
+  box-shadow: var(--leva-shadows-level1);
+  cursor: pointer;
+  transform: translate(0%, 0%);
+}
+
+.depthcam.zoomed {
+  width: 90vw;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
