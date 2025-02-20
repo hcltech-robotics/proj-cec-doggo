@@ -10,8 +10,8 @@ const TARGET_FPS = 30;
 const parsePointCloud2 = (msg: PointCloud2) => {
   if (msg?.data) {
     const dv = new DataView(new Uint8Array(msg.data).buffer); // 1 ms
-    const points = []; // new Float32Array(Array.from({ length: msg.data.length / msg.point_step })); // 7ms
-    const colors = []; // new Float32Array(Array.from({ length: msg.data.length / msg.point_step })); // 7ms
+    const points = [];
+    const colors = [];
     const littleEndian = !msg.is_bigendian;
     const count = msg.data.length;
 
