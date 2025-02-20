@@ -30,7 +30,7 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: Function }> = ({ ai, onError }) => {
+const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: (error: unknown) => void }> = ({ ai, onError }) => {
   if (!ai) {
     return;
   }
