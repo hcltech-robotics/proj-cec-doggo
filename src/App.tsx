@@ -8,10 +8,12 @@ import { MainScene } from './component/MainScene';
 import { VoxelCloud } from './component/VoxelCloud';
 import { useChatHistoryStore } from './service/ChatHistoryService';
 import { LlmCommunicationService } from './service/LlmCommunicationService';
+import { LlmRobotTooling } from './service/LlmRobotTooling';
 import { RobotCommunicationService } from './service/RobotCommunicationService';
 
 const connection = new RobotCommunicationService();
-const chatAgent = new LlmCommunicationService('');
+const tooling = new LlmRobotTooling(connection);
+const chatAgent = new LlmCommunicationService('', tooling);
 const visualAgent = new LlmCommunicationService('');
 
 const App = () => {

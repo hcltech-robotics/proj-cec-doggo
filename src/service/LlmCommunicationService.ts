@@ -1,6 +1,7 @@
 import { BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { Runnable } from '@langchain/core/runnables';
 import { ChatOpenAI } from '@langchain/openai';
+import { LlmToolHelper } from 'src/model/LlmToolInterface';
 
 const DEFAULT_TIMEOUT = 10_000;
 
@@ -11,18 +12,42 @@ export class LlmCommunicationService {
 
   public setApiKey = (apiKey: string, clearHistory: boolean = false) => {
     this.llm = new ChatOpenAI({ apiKey });
-    this.llmWithTools = this.llm.bindTools(Object.values(this.tools));
+    if (this.tooling) {
+      this.llmWithTools = this.llm.bindTools(Object.values(this.tooling.getTools()));
+    } else {
+      this.llmWithTools = this.llm;
+    }
 
     if (clearHistory) {
       this.messages = [];
     }
   };
 
+  private handeToolCalls = async (aiMessage: any) => {
+    if (this.llmWithTools && this.tooling) {
+      for (const toolCall of aiMessage.tool_calls) {
+        const toolResult = await this.tooling.invokeTool(toolCall);
+        if (toolResult) {
+          this.messages.push(aiMessage);
+          this.messages.push(toolResult);
+        }
+      }
+      this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
+      aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
+    }
+
+    return aiMessage;
+  };
+
   public invoke = async (message: string) => {
     if (this.llmWithTools) {
       this.messages.push(new HumanMessage(message));
 
-      const aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
+      let aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
+
+      if (aiMessage.tool_calls) {
+        aiMessage = await this.handeToolCalls(aiMessage);
+      }
 
       this.messages.push(aiMessage);
 
@@ -30,7 +55,7 @@ export class LlmCommunicationService {
     }
   };
 
-  constructor(private apiKey: string, private tools = []) {
+  constructor(private apiKey: string, private tooling?: LlmToolHelper) {
     if (this.apiKey) {
       this.setApiKey(this.apiKey);
     }
