@@ -1,10 +1,10 @@
-import { Channel, FoxgloveClient } from '@foxglove/ws-protocol';
-import { MessageReader } from '@foxglove/rosmsg2-serialization';
-import { parse } from '@foxglove/rosmsg';
-import { subscribe_channels } from './channelData';
-import { SceneTransformCb } from '../types';
-import { registerAdvertisements } from './communicate';
-import { SceneManager } from '../visualizer/SceneManager';
+import { Channel, FoxgloveClient } from "@foxglove/ws-protocol";
+import { MessageReader } from "@foxglove/rosmsg2-serialization";
+import { parse } from "@foxglove/rosmsg";
+import { getSubscribeChannels } from "./channelData";
+import { SceneTransformCb } from "../types";
+import { registerAdvertisements } from "./communicate"
+import { SceneManager } from "../visualizer/SceneManager";
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {};
@@ -33,7 +33,9 @@ async function initFoxGloveWebsocket(
     ws: new WebSocket(ws_url, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
   });
   const deserializers = new Map();
-  client.on('advertise', (channels) => {
+  const subscribe_channels = getSubscribeChannels();
+
+  client.on("advertise", (channels) => {
     if (!client) {
       return;
     }

@@ -25,4 +25,5 @@ export interface FieldsMap {
   time: FieldsMapFieldValues;
   ring: FieldsMapFieldValues;
   intensity: FieldsMapFieldValues;
+  rgb: FieldsMapFieldValues;
 }

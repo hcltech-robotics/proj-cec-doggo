@@ -139,6 +139,8 @@ const sportCommand = (cmd: number) => {
     schemaName: 'unitree_go/msg/WebRtcReq',
   });
 
+  console.log('Sended command to "/webrtc_req": ', cmd, Object.keys(ROBOT_CMD).find(key => ROBOT_CMD[key] === cmd));
+
   const message = new Uint8Array(new TextEncoder().encode(JSON.stringify({ api_id: cmd, topic: 'rt/api/sport/request' })));
   client.sendMessage(channelId, message);
 };
@@ -268,7 +270,7 @@ export class InteractWithAI {
     ),
     standby_pose: tool(
       () => {
-        sportCommand(ROBOT_CMD.BalanceStand);
+        sportCommand(ROBOT_CMD.StandUp);
         return `** Sending "balancestand" thru WS://`;
       },
       {
@@ -347,10 +349,11 @@ export class InteractWithAI {
 
           if (call.name !== 'image_analyze') {
             response.push({ text: comment.content, image: null });
+            sendVoice(comment.content);
           } else {
-            response.push({ text: comment.content, image: toolResult.image });
+            response.push({ text: toolResult.text, image: toolResult.image });
+            sendVoice(toolResult.text);
           }
-          sendVoice(comment.content);
         } else {
           response.push({ text: `*Missing tool: ${call.name}`, image: null });
         }
@@ -365,7 +368,7 @@ export class InteractWithAI {
   public handleAction = (action: string): void => {
     switch (action) {
       case 'standby_pose': {
-        sportCommand(ROBOT_CMD.RecoveryStand);
+        sportCommand(ROBOT_CMD.StandUp);
         break;
       }
       case 'dance': {

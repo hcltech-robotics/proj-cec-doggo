@@ -17,7 +17,7 @@
   border: 1px solid #000;
   box-shadow: 0 0 5px #262626 inset;
   pointer-events: all;
-  margin: 50px auto;
+  margin: 0 auto 50px;
   height: 150px;
   width: 150px;
 

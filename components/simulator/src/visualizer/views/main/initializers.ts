@@ -37,7 +37,7 @@ function createMainScene(s: SceneManager) {
 }
 
 function createHelpers(s: SceneManager) {
-  const axesHelper = new AxesHelper(4)
+  const axesHelper = new AxesHelper(10)
   axesHelper.visible = false
 
   s.scenes.main.userData.axesHelper = axesHelper
