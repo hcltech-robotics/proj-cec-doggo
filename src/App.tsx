@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppContext } from './AppContext';
+import { BrandLogo } from './component/BrandLogo';
 import { CameraSnapshot } from './component/CameraSnapshot';
 import { ChatWithAi } from './component/ChatWithAi';
 import { Config, ControlPanel, initialConfig } from './component/ControlPanel';
@@ -47,6 +48,7 @@ const App = () => {
       </MainScene>
       <CameraSnapshot />
       <ChatWithAi />
+      <BrandLogo />
     </AppContext.Provider>
   );
 };
