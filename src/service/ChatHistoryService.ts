@@ -41,12 +41,3 @@ export const useChatHistoryStore = create<ChatHistoryState & ChatHistoryActions>
     },
   })),
 );
-
-export const chatHistoryFacade = () => {
-  const { history, addTextMessage } = useChatHistoryStore((state) => ({
-    history: state.history,
-    addTextMessage: state.addTextMessage,
-  }));
-
-  return { history, addTextMessage };
-};

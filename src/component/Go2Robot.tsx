@@ -1,8 +1,9 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { useEffect } from 'react';
-import { RobotCommunication } from 'src/service/RobotCommunicationService';
+import { useContext, useEffect } from 'react';
+import { RobotCommunicationService } from 'src/service/RobotCommunicationService';
 import { Vector3, Vector4 } from 'three';
 import URDFLoader, { URDFRobot } from 'urdf-loader';
+import { AppContext } from '../AppContext';
 import { initialJointState, initialPosition } from '../model/Go2RobotInterfaces';
 import { topicList } from '../model/Go2RobotTopics';
 
@@ -12,7 +13,7 @@ const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
   });
 };
 
-const updateJoints = (connection: RobotCommunication, mesh: URDFRobot) => {
+const updateJoints = (connection: RobotCommunicationService, mesh: URDFRobot) => {
   const jointState = connection.channelByName[topicList.TOPIC_JOINT_STATES].lastMessage;
   if (jointState && jointState.name) {
     const joints = jointState.name.reduce((acc, joint, idx) => {
@@ -28,7 +29,7 @@ const setPosition = (position: Vector3, mesh: URDFRobot) => {
   mesh.position.copy(position);
 };
 
-const updatePosition = (connection: RobotCommunication, mesh: URDFRobot) => {
+const updatePosition = (connection: RobotCommunicationService, mesh: URDFRobot) => {
   const odom = connection.channelByName[topicList.TOPIC_ODOM]?.lastMessage;
   if (odom && odom.pose) {
     setPosition(odom.pose.pose.position, mesh);
@@ -39,7 +40,7 @@ const setRotation = (rotation: Vector4, mesh: URDFRobot) => {
   mesh.quaternion.copy(rotation);
 };
 
-const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
+const updateRotation = (connection: RobotCommunicationService, mesh: URDFRobot) => {
   const transform = connection.channelByName[topicList.TOPIC_TRANSFORM]?.lastMessage;
   if (transform.transforms) {
     const base = transform.transforms.find((t) => t.child_frame_id === 'base_link');
@@ -49,7 +50,8 @@ const updateRotation = (connection: RobotCommunication, mesh: URDFRobot) => {
   }
 };
 
-export const Go2Robot = (props: { connection: RobotCommunication; castShadow: boolean }) => {
+export const Go2Robot = (props: { castShadow: boolean }) => {
+  const connection = useContext(AppContext).connection;
   const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf') as URDFRobot;
 
   useEffect(() => {
@@ -59,9 +61,9 @@ export const Go2Robot = (props: { connection: RobotCommunication; castShadow: bo
   }, [props.castShadow]);
 
   useFrame(() => {
-    updateJoints(props.connection, robotMesh);
-    updatePosition(props.connection, robotMesh);
-    updateRotation(props.connection, robotMesh);
+    updateJoints(connection, robotMesh);
+    updatePosition(connection, robotMesh);
+    updateRotation(connection, robotMesh);
   });
 
   return (

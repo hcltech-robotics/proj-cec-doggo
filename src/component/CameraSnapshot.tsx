@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { RobotCommunication } from 'src/service/RobotCommunicationService';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { AppContext } from '../AppContext';
 import { topicList } from '../model/Go2RobotTopics';
-
 import './CameraSnapshot.css';
 
 const TARGET_FPS = 30;
@@ -32,7 +31,8 @@ const useObjectURL = (initialObject: null | File | Blob | MediaSource) => {
   };
 };
 
-export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
+export const CameraSnapshot = () => {
+  const connection = useContext(AppContext).connection;
   const { objectURL, setObject } = useObjectURL(null);
 
   const [timer, setTimer] = useState<NodeJS.Timeout>();
@@ -46,7 +46,7 @@ export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
 
     setTimer(
       setInterval(() => {
-        const msg = props.connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
+        const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
         if (msg && msg.header) {
           setStamp(`${msg.header.stamp.sec}-${msg.header.stamp.nanosec}`);
         }
@@ -55,7 +55,7 @@ export const CameraSnapshot = (props: { connection: RobotCommunication }) => {
   }, []);
 
   useMemo(() => {
-    const msg = props.connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
+    const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
     if (msg) {
       const blob = new Blob([msg.data], { type: 'image/jpeg' });
       setObject(blob);

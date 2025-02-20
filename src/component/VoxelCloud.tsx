@@ -1,11 +1,13 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { LidarData } from 'src/model/Go2RobotInterfaces';
-import { RobotCommunication } from 'src/service/RobotCommunicationService';
 import { DoubleSide, NearestFilter, TextureLoader } from 'three';
+import { AppContext } from '../AppContext';
 import { topicList } from '../model/Go2RobotTopics';
 
-export const VoxelCloud = (props: { connection: RobotCommunication }) => {
+export const VoxelCloud = () => {
+  const connection = useContext(AppContext).connection;
+
   const voxelTex = useLoader(TextureLoader, '/assets/voxel-colors.png');
   voxelTex.minFilter = NearestFilter;
   voxelTex.magFilter = NearestFilter;
@@ -13,7 +15,7 @@ export const VoxelCloud = (props: { connection: RobotCommunication }) => {
   const [data, setData] = useState<LidarData | undefined>(undefined);
 
   useFrame(() => {
-    setData(props.connection.channelByName[topicList.TOPIC_LIDAR]?.lastMessage);
+    setData(connection.channelByName[topicList.TOPIC_LIDAR]?.lastMessage);
   });
 
   return (

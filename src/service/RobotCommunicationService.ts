@@ -13,9 +13,10 @@ import {
   TypedChannels,
 } from '../model/Go2RobotTopics';
 
-export class RobotCommunication {
+export class RobotCommunicationService {
+  private client: FoxgloveClient | undefined = undefined;
+
   public voxelWorker: Worker;
-  private client: FoxgloveClient;
   public channels: Record<number, EnrichedChannel<any>> = {};
   public channelByName: TypedChannels = {} as TypedChannels;
   public pubTopics: Partial<Record<PublishTopicListName, number>> = {};
@@ -25,7 +26,7 @@ export class RobotCommunication {
   public onAdvertise = (topics: Channel[]) => {
     topics.forEach((topic) => {
       if (subscribedTopics.includes(topic.topic as TopicListName)) {
-        const subscriptionId = this.client.subscribe(topic.id);
+        const subscriptionId = this.client!.subscribe(topic.id);
         const definition = parse(topic.schema, { ros2: true });
         const reader = new MessageReader(definition);
         this.channels[subscriptionId] = {
@@ -94,26 +95,34 @@ export class RobotCommunication {
   };
 
   public sendMessage = (structuredMessage: Record<any, any>, topic: PublishTopicListName) => {
-    let channelId = this.pubTopics[topic];
-    if (!channelId) {
-      this.pubTopics[topic] = this.client.advertise(channelDefinitions[topic]);
-      channelId = this.pubTopics[topic];
+    if (this.client) {
+      let channelId = this.pubTopics[topic];
+      if (!channelId) {
+        this.pubTopics[topic] = this.client.advertise(channelDefinitions[topic]);
+        channelId = this.pubTopics[topic];
+      }
+
+      const message = new Uint8Array(new TextEncoder().encode(JSON.stringify(structuredMessage)));
+
+      this.client.sendMessage(channelId, message);
     }
-
-    const message = new Uint8Array(new TextEncoder().encode(JSON.stringify(structuredMessage)));
-
-    this.client.sendMessage(channelId, message);
   };
 
-  constructor(private address: string = 'ws://localhost:8765') {
+  public connect = (address: string = 'ws://localhost:8765') => {
+    if (this.client) {
+      this.client.close();
+    }
+
     this.client = new FoxgloveClient({
-      ws: new WebSocket(this.address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
+      ws: new WebSocket(address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
     });
 
     this.client.on('open', this.onOpen);
     this.client.on('advertise', this.onAdvertise);
     this.client.on('message', this.onMessage);
+  };
 
+  constructor() {
     this.voxelWorker = new Worker(new URL('/assets/voxel-worker.js', import.meta.url));
     this.voxelWorker.onmessage = this.voxelParser;
   }

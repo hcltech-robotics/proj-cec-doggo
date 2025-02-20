@@ -7,9 +7,10 @@ export interface Config {
   graphStats: boolean;
   grid: boolean;
   apiKey: string;
+  robotWs: string;
 }
 
-const initialConfig: Config = { graphStats: true, grid: true, robotShadow: true, apiKey: '' };
+export const initialConfig: Config = { graphStats: true, grid: true, robotShadow: true, apiKey: '', robotWs: 'ws://127.0.0.1:8765' };
 
 export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Config>> }) => {
   const [config] = useControls(() => {
@@ -23,10 +24,11 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
     }
 
     return {
-      robotShadow: { label: 'Robot Cast Shadow', type: LevaInputs.BOOLEAN, value: config.robotShadow ?? true },
-      graphStats: { label: 'Stats (FPS)', type: LevaInputs.BOOLEAN, value: config.graphStats ?? true },
-      grid: { label: 'Show Grid', type: LevaInputs.BOOLEAN, value: config.grid ?? true },
-      apiKey: passwordInput({ label: 'API Key', value: config.apiKey ?? '' }),
+      robotShadow: { label: 'Robot Cast Shadow', type: LevaInputs.BOOLEAN, value: config.robotShadow ?? initialConfig.robotShadow },
+      graphStats: { label: 'Stats (FPS)', type: LevaInputs.BOOLEAN, value: config.graphStats ?? initialConfig.graphStats },
+      grid: { label: 'Show Grid', type: LevaInputs.BOOLEAN, value: config.grid ?? initialConfig.grid },
+      robotWs: { label: 'ROS Connection', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
+      apiKey: passwordInput({ label: 'API Key', value: config.apiKey ?? initialConfig.apiKey }),
     };
   });
 
