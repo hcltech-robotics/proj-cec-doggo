@@ -20,7 +20,7 @@ export interface WebSocketEventHandler {
   (event: 'open' | 'close' | 'error'): void;
 }
 
-async function initFoxGloveWebsocket(
+async function createFoxGloveWebsocket (
   transform_cb: SceneTransformCb,
   ws_url = 'ws://localhost:8765',
   s: SceneManager,
@@ -93,4 +93,4 @@ async function initFoxGloveWebsocket(
   });
 }
 
-export { initFoxGloveWebsocket };
+export { createFoxGloveWebsocket };

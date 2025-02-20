@@ -1,18 +1,16 @@
 import {
     Clock,
-    PerspectiveCamera,
     Vector3,
     WebGLRenderer,
 } from 'three'
 import { FoxgloveClient } from '@foxglove/ws-protocol'
-import { getClient, initFoxGloveWebsocket, WebSocketEventHandler } from '../robot/foxgloveConnection'
+import { createFoxGloveWebsocket, WebSocketEventHandler } from '../robot/foxgloveConnection'
 import { initThreeJSBase } from './views/initThreeJs'
 import { initLidarWebWorker } from './views/lidarBox/lidarBoxTransformation'
 import { transform_cb } from './transformations/ros2transforms'
 import { animate } from './renderloop'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
 import { CameraDepthScene, CameraDepthSceneUserData, MainScene, PointcloudScene, PointcloudSceneUserData, Scenes, UserSettings } from './types'
-
 
 const CANVAS_ID = 'scene'
 
@@ -59,10 +57,14 @@ class SceneManager {
     }
 
     init(onEvent: WebSocketEventHandler) {
-        initThreeJSBase(this)
-        initFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
+        initThreeJSBase(this, onEvent)
+        createFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
         initLidarWebWorker(this)
         this.bindEventListeners();
+    }
+    
+    reconnectWebsocketConnection(onEvent: WebSocketEventHandler) {
+        createFoxGloveWebsocket(transform_cb, this.userSettings.foxglove_config.url, this, onEvent);
     }
 
     animate() {

@@ -12,20 +12,21 @@ import {
   createLights,
   createMainScene,
 } from './main/initializers';
+import { WebSocketEventHandler } from '../../robot/foxgloveConnection';
 
-function initThreeJSBase(s: SceneManager) {
-  createCanvas(s);
-  createMainScene(s);
-  createPointCloudScene(s);
-  createCameraDepthScene(s);
-  createLights(s);
-  createHelpers(s);
-  createRobot(s);
-  createCameraControls(s);
-  createDomModifications(s);
-  createCustomGUITransforms(s);
+function initThreeJSBase(sceneManager: SceneManager, onEvent: WebSocketEventHandler) {
+  createCanvas(sceneManager);
+  createMainScene(sceneManager);
+  createPointCloudScene(sceneManager);
+  createCameraDepthScene(sceneManager);
+  createLights(sceneManager);
+  createHelpers(sceneManager);
+  createRobot(sceneManager);
+  createCameraControls(sceneManager);
+  createDomModifications(sceneManager);
+  createCustomGUITransforms(sceneManager);
 
-  initSettings(s);
+  initSettings(sceneManager, onEvent);
 
   // console.log("READY1?", s.scenes.main.userData)
   // console.log("READY2?", s.scenes.pointcloud.userData)
