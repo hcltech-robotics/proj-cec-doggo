@@ -14,17 +14,17 @@ export interface ChatHistoryState {
 }
 
 export interface ChatHistoryActions {
-  addTextMessage: (query: string) => void;
+  addTextMessage: (query: string, origin?: ChatHistoryItem['side']) => void;
 }
 
 export const useChatHistoryStore = create<ChatHistoryState & ChatHistoryActions>()(
   immer((set) => ({
     history: [],
-    addTextMessage: (query: string) => {
+    addTextMessage: (query: string, origin: ChatHistoryItem['side'] = 'me') => {
       set((state: ChatHistoryState) => {
         const newHistoryItem: ChatHistoryItem = {
           text: query,
-          side: 'me',
+          side: origin,
           added: new Date(),
           key: Math.random() * 1e12,
           hide: new Date(),
