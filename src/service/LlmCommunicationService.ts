@@ -1,4 +1,4 @@
-import { BaseMessage, HumanMessage } from '@langchain/core/messages';
+import { BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { Runnable } from '@langchain/core/runnables';
 import { ChatOpenAI } from '@langchain/openai';
 import { LlmToolHelper } from 'src/model/LlmToolInterface';
@@ -10,8 +10,8 @@ export class LlmCommunicationService {
   private llmWithTools: Runnable | undefined;
   private messages: BaseMessage[] = [];
 
-  public setApiKey = (apiKey: string, clearHistory: boolean = false) => {
-    this.llm = new ChatOpenAI({ apiKey });
+  public setApiKey = (apiKey: string, clearHistory: boolean = false, ...llmArgs: any) => {
+    this.llm = new ChatOpenAI({ model: 'gpt-4o-mini', apiKey, ...llmArgs });
     if (this.tooling) {
       this.llmWithTools = this.llm.bindTools(Object.values(this.tooling.getTools()));
     } else {
@@ -23,25 +23,35 @@ export class LlmCommunicationService {
     }
   };
 
+  public setSystemPrompt = (prompt: string) => {
+    this.messages = [new SystemMessage({ content: prompt })];
+  };
+
   private handeToolCalls = async (aiMessage: any) => {
     if (this.llmWithTools && this.tooling) {
-      for (const toolCall of aiMessage.tool_calls) {
-        const toolResult = await this.tooling.invokeTool(toolCall);
-        if (toolResult) {
-          this.messages.push(aiMessage);
-          this.messages.push(toolResult);
+      if (aiMessage.tool_calls) {
+        for (const toolCall of aiMessage.tool_calls) {
+          const callResult = await this.tooling.invokeTool(toolCall);
+          if (callResult?.toolResult) {
+            this.messages.push(aiMessage);
+            this.messages.push(callResult?.toolResult);
+            if (!callResult.displayResponse) {
+              this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
+              aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
+            } else {
+              return;
+            }
+          }
         }
       }
-      this.messages.push(new HumanMessage('Comment the tool call with an informal short message as thought by a clever dog.'));
-      aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
     }
 
     return aiMessage;
   };
 
-  public invoke = async (message: string) => {
+  public invoke = async (message: any) => {
     if (this.llmWithTools) {
-      this.messages.push(new HumanMessage(message));
+      this.messages.push(new HumanMessage({ content: message }));
 
       let aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
 
@@ -49,9 +59,11 @@ export class LlmCommunicationService {
         aiMessage = await this.handeToolCalls(aiMessage);
       }
 
-      this.messages.push(aiMessage);
+      if (aiMessage) {
+        this.messages.push(aiMessage);
 
-      return aiMessage.content;
+        return aiMessage.content;
+      }
     }
   };
 

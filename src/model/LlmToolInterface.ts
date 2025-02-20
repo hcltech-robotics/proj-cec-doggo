@@ -3,5 +3,5 @@ import { Tool } from '@langchain/core/tools';
 
 export interface LlmToolHelper {
   getTools: () => Tool[];
-  invokeTool: (input: ToolCall) => Promise<ToolMessage | undefined>;
+  invokeTool: (input: ToolCall) => Promise<{ toolResult: ToolMessage; displayResponse: boolean } | undefined>;
 }

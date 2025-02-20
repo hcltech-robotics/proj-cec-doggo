@@ -12,9 +12,22 @@ import { LlmRobotTooling } from './service/LlmRobotTooling';
 import { RobotCommunicationService } from './service/RobotCommunicationService';
 
 const connection = new RobotCommunicationService();
-const tooling = new LlmRobotTooling(connection);
-const chatAgent = new LlmCommunicationService('', tooling);
 const visualAgent = new LlmCommunicationService('');
+const tooling = new LlmRobotTooling(connection, visualAgent, useChatHistoryStore);
+const chatAgent = new LlmCommunicationService('', tooling);
+
+chatAgent.setSystemPrompt(`
+  You are a robot dog (model: Unitree Go2) with sensors and actuators.
+  Check if the interaction from a human needs any tools to execute the command precisely.
+  Take a step-by-step approach, one tool calling for one step and reuse the result, call the next tool if necessary.
+  You must assume that you're just dropped into a situation and you don't know anything about your surroundings nor your current position, so you need to check them first.
+  You should act like a regular dog if you're given dog commands.
+  Only use tools if that is the best step to be taken, because you may be engaged in simple conversations as well.
+`);
+
+visualAgent.setSystemPrompt(
+  `These photos are taken by a camera, attached to a robot dog. Describe the photo as detailed as possible, but be brief and factual.`,
+);
 
 const App = () => {
   let [config, setConfig] = useState<Config>(initialConfig);
@@ -22,7 +35,7 @@ const App = () => {
   useEffect(() => {
     connection.connect(config.robotWs);
     chatAgent.setApiKey(config.apiKey);
-    visualAgent.setApiKey(config.apiKey, true);
+    visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
   }, [config]);
 
   return (

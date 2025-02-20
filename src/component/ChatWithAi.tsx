@@ -9,7 +9,9 @@ export const ChatWithAi = () => {
   const askLlm = async (query: string) => {
     addTextMessage(query);
     const response = await chatAgent.invoke(query);
-    addTextMessage(response, 'other');
+    if (response) {
+      addTextMessage(response, 'other');
+    }
   };
 
   return (
