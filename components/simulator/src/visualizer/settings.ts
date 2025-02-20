@@ -54,16 +54,16 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
   });
 
   const saveGuiState = (gui: GUI) => {
-    const guiState = gui.save();
-    localStorage.setItem('guiState', JSON.stringify(guiState));
+    const initialGuiState = gui.save();
+    localStorage.setItem('guiState', JSON.stringify(initialGuiState));
   };
 
   gui.onFinishChange(() => saveGuiState(gui));
 
   // Load the GUI state from localStorage if available
-  const guiState = localStorage.getItem('guiState');
-  if (guiState) {
-    gui.load(JSON.parse(guiState));
+  const storedGuiState = localStorage.getItem('guiState');
+  if (storedGuiState) {
+    gui.load(JSON.parse(storedGuiState));
   } else {
     saveGuiState(gui);
   }
