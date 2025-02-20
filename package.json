@@ -20,6 +20,7 @@
     "immer": "^10.1.1",
     "leva": "^0.10.0",
     "lucide-react": "^0.475.0",
+    "rc-joystick": "^1.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.173.0",

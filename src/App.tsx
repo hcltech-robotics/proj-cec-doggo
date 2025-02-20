@@ -5,6 +5,7 @@ import { CameraSnapshot } from './component/CameraSnapshot';
 import { ChatWithAi } from './component/ChatWithAi';
 import { Config, ControlPanel, initialConfig } from './component/ControlPanel';
 import { Go2Robot } from './component/Go2Robot';
+import { JoyController } from './component/JoyController';
 import { MainScene } from './component/MainScene';
 import { VoxelCloud } from './component/VoxelCloud';
 import { useChatHistoryStore } from './service/ChatHistoryService';
@@ -46,6 +47,7 @@ const App = () => {
         <Go2Robot castShadow={config.robotShadow} />
         <VoxelCloud />
       </MainScene>
+      <JoyController />
       <CameraSnapshot />
       <ChatWithAi />
       <BrandLogo />
