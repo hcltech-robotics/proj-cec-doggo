@@ -145,3 +145,20 @@ export interface WebRtcMessage {
   api_id: number;
   topic: string;
 }
+
+export interface PointCloud2 {
+  data: Uint8Array;
+  fields: {
+    name: string;
+    offset: number;
+    datatype: number;
+    count: number;
+  }[];
+  header: { stamp: { sec: number; nanosec: number }; frame_id: string };
+  width: number;
+  height: number;
+  is_bigendian: boolean;
+  is_dense: boolean;
+  point_step: number;
+  row_step: number;
+}

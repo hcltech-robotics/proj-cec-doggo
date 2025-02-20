@@ -1,58 +1,27 @@
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 import { AppContext } from '../AppContext';
+import { useInterval } from '../helper/TimeHooks';
+import { useObjectURL } from '../helper/UInt8ToImageUrl';
 import { topicList } from '../model/Go2RobotTopics';
 import './CameraSnapshot.css';
 
 const TARGET_FPS = 30;
 
-const useObjectURL = (initialObject: null | File | Blob | MediaSource) => {
-  const [objectURL, setObjectURL] = useState<null | string>(null);
-
-  const [object, setObject] = useState<null | File | Blob | MediaSource>(initialObject);
-
-  useEffect(() => {
-    if (!object) {
-      return;
-    }
-
-    const objectURL = URL.createObjectURL(object);
-    setObjectURL(objectURL);
-
-    return () => {
-      URL.revokeObjectURL(objectURL);
-      setObjectURL(null);
-    };
-  }, [object]);
-
-  return {
-    objectURL,
-    object,
-    setObject,
-  };
-};
-
 export const CameraSnapshot = () => {
   const connection = useContext(AppContext).connection;
   const { objectURL, setObject } = useObjectURL(null);
 
-  const [timer, setTimer] = useState<NodeJS.Timeout>();
   const [stamp, setStamp] = useState<string>('');
   const [zoom, setZoom] = useState<boolean>(false);
 
   const wrapper = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    clearInterval(timer);
-
-    setTimer(
-      setInterval(() => {
-        const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
-        if (msg && msg.header) {
-          setStamp(`${msg.header.stamp.sec}-${msg.header.stamp.nanosec}`);
-        }
-      }, 1000 / TARGET_FPS),
-    );
-  }, []);
+  useInterval(() => {
+    const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
+    if (msg && msg.header) {
+      setStamp(`${msg.header.stamp.sec}-${msg.header.stamp.nanosec}`);
+    }
+  }, 1000 / TARGET_FPS);
 
   useMemo(() => {
     const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
