@@ -13,11 +13,51 @@ import {
   PointcloudScene,
   PointcloudSceneUserData,
   Scenes,
+  TopicListCustomEvent,
   UserSettings,
 } from './types';
 import { Channel } from '@foxglove/ws-protocol';
 
 const CANVAS_ID = 'scene';
+
+class TopicList {
+  public selectedItem: string = '';
+
+  private defaultItem: string = 'No Point Cloud Scene';
+  private items!: string[];
+  private eventTarget: EventTarget = new EventTarget();
+
+  constructor() {
+    this.init();
+  }
+
+  public parse(channels: Channel[]): void {
+    this.items = channels.reduce((acc, curr) => {
+      if (curr.schemaName.includes('PointCloud2')) {
+        acc.push(curr.topic);
+      }
+      return acc;
+    }, this.items);
+
+    this.dispatch('topicsLoaded', this.items);
+  }
+
+  public on(customEvent: TopicListCustomEvent, cb: (data: string[]) => void): void {
+    this.eventTarget.addEventListener(customEvent, (event) => cb((event as CustomEvent).detail));
+  }
+
+  public dispatch<T>(customEvent: TopicListCustomEvent, data?: T): void {
+    this.eventTarget.dispatchEvent(new CustomEvent(customEvent, { detail: data }));
+  }
+
+  public reset(): void {
+    this.init();
+  }
+
+  private init(): void {
+    this.items = [this.defaultItem];
+  }
+}
 
 class SceneManager {
   canvas: HTMLElement;
@@ -25,10 +65,9 @@ class SceneManager {
   clock: Clock;
   stats: Stats;
   scenes: Scenes;
-  userSettings: UserSettings;
+  userSettings: UserSettings<TopicList>;
   client: FoxgloveClient | null;
   foxgloveConnection: Promise<void>;
-  eventTarget: EventTarget;
 
   get miniScenes() {
     return [this.scenes.pointcloud, this.scenes.cameraDepth];
@@ -43,8 +82,7 @@ class SceneManager {
       foxglove_config: { url: 'ws://localhost:8765' },
       pointCloudScene: { enabled: true },
       cameraDepthScene: { enabled: true },
-      topics: ['No Point Cloud Scene'],
-      selectedMiniScene: '',
+      topicList: new TopicList(),
     };
     this.scenes = {
       main: new MainScene(),
@@ -58,17 +96,6 @@ class SceneManager {
     this.stats = new Stats();
     this.foxgloveConnection = Promise.resolve();
     this.animationFrame = 0;
-    this.eventTarget = new EventTarget();
-  }
-
-  parseChannels(channels: Channel[]) {
-    this.userSettings.topics = channels.reduce((acc, curr) => {
-      if (curr.schemaName.includes('PointCloud2')) {
-        acc.push(curr.topic);
-      }
-      return acc;
-    }, this.userSettings.topics);
-    this.eventTarget.dispatchEvent(new CustomEvent('topicsloaded', { detail: this.userSettings.topics }));
   }
 
   init(onEvent: WebSocketEventHandler) {

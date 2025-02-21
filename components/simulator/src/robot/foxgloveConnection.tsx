@@ -40,7 +40,7 @@ async function createFoxGloveWebsocket(
       return;
     }
 
-    s.parseChannels(channels);
+    s.userSettings.topicList.parse(channels);
 
     for (const channel of channels) {
       if (!subscribe_channels.has(channel.topic)) {
@@ -87,6 +87,7 @@ async function createFoxGloveWebsocket(
     onEvent('open');
   });
   client.on('close', () => {
+    s.userSettings.topicList.reset();
     onEvent('close');
   });
 

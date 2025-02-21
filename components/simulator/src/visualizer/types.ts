@@ -89,12 +89,13 @@ export interface Scenes {
   cameraDepth: CameraDepthScene;
 }
 
-export interface UserSettings {
+export interface UserSettings<T> {
   animation: { enabled: boolean; play: boolean };
   apiKey: string;
   foxglove_config: { url: string };
   pointCloudScene: { enabled: boolean };
   cameraDepthScene: { enabled: boolean };
-  selectedMiniScene: string;
-  topics: string[];
+  topicList: T;
 }
+
+export type TopicListCustomEvent = 'topicsLoaded';

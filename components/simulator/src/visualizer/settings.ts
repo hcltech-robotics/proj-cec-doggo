@@ -33,7 +33,7 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
   };
 
   const topicNamesFolder = gui.addFolder('TopicNames');
-  const selectedMiniSceneController = topicNamesFolder.add(s.userSettings, 'selectedMiniScene', []).name('Selected Scene');
+  const selectedMiniSceneController = topicNamesFolder.add(s.userSettings.topicList, 'selectedItem', []).name('Selected Scene');
 
   const lightsFolder = gui.addFolder('Lights');
   lightsFolder.add(s.scenes.main?.userData.pointLight!, 'visible').name('point light');
@@ -75,21 +75,14 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
 
   loadGuiState();
 
-  s.eventTarget.addEventListener('topicsloaded', (event) => {
+  s.userSettings.topicList.on('topicsLoaded', (channels) => {
     loadGuiState();
-    const selectedMiniSceneState = Object.values(getGuiState('TopicNames'))[0];
-    const channels = (event as CustomEvent).detail;
-
-    console.log('topicsloaded...');
-    console.log(topicNamesFolder);
-
-    // const selectedMiniSceneController = topicNamesFolder.add(s.userSettings, 'selectedMiniScene', channels).name('Selected Scene');
+    const selectedMiniSceneState = Object.values<string>(getGuiState('TopicNames'))[0];
     selectedMiniSceneController.options(channels);
 
     if (!channels.includes(selectedMiniSceneState)) {
       selectedMiniSceneController.setValue(channels[1]);
-      const guiState = gui.save();
-      localStorage.setItem('guiState', JSON.stringify(guiState));
+      saveGuiState(gui);
     } else {
       selectedMiniSceneController.setValue(selectedMiniSceneState);
     }
