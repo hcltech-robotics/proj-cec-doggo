@@ -14,8 +14,8 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
           <shadowMaterial />
         </mesh>
       </group>
-      <Environment background preset="sunset" blur={0.5} />
-      <ambientLight intensity={0.5} />
+      {/* <Environment background preset="sunset" blur={0.5} /> */}
+      <ambientLight intensity={1} />
       <directionalLight
         castShadow
         position={[2, 4, 2]}
@@ -45,7 +45,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
         <Bloom luminanceThreshold={2} mipmapBlur />
         <ToneMapping />
       </EffectComposer>
-      <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
+      <OrbitControls enableDamping={true} enableZoom={true} makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2} autoRotate/>
       {props.config.graphStats ? <Stats /> : ''}
     </Canvas>
   );

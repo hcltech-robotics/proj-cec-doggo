@@ -8,9 +8,17 @@ export interface Config {
   grid: boolean;
   apiKey: string;
   robotWs: string;
+  volume: number;
 }
 
-export const initialConfig: Config = { graphStats: true, grid: true, robotShadow: true, apiKey: '', robotWs: 'ws://127.0.0.1:8765' };
+export const initialConfig: Config = {
+  graphStats: true,
+  grid: true,
+  robotShadow: true,
+  apiKey: '',
+  robotWs: 'ws://127.0.0.1:8765',
+  volume: 50,
+};
 
 export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Config>> }) => {
   const [config] = useControls(() => {
@@ -29,6 +37,7 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
       grid: { label: 'Show Grid', type: LevaInputs.BOOLEAN, value: config.grid ?? initialConfig.grid },
       robotWs: { label: 'ROS Connection', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
       apiKey: passwordInput({ label: 'API Key', value: config.apiKey ?? initialConfig.apiKey }),
+      volume: { label: 'Robot Volume', type: LevaInputs.NUMBER, value: config.volume ?? initialConfig.volume, min: 0, max: 100 },
     };
   });
 

@@ -43,7 +43,7 @@ export const DepthCam = () => {
   };
 
   return (
-    <div className={`depthcam zoomed ${zoom ? 'zoomed' : ''}`} ref={wrapper} onDoubleClick={changeZoom}>
+    <div className={`depthcam ${zoom ? 'zoomed' : ''}`} ref={wrapper} onDoubleClick={changeZoom}>
       <Canvas className="depthcam-canvas" shadows camera={{ position: [0.1, 0.0, 0.0], fov: 50 }}>
         {data ? (
           <group>
