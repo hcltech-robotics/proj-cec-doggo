@@ -163,8 +163,8 @@ export interface PointCloud2 {
   row_step: number;
 }
 
-export interface ParsedPointCloud2 {
+export interface ParsedPointCloud2<T = ArrayBuffer> {
   header: { stamp: { sec: number; nanosec: number }; frame_id: string };
-  points: ArrayBuffer;
-  colors: ArrayBuffer;
+  points: T;
+  colors: T;
 }

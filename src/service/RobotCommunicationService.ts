@@ -61,7 +61,7 @@ export class RobotCommunicationService {
           data: data.data,
         }, [data.data.buffer]);
       } else if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_DEPTHCAM) {
-        this.depthCamWorker.postMessage(data, [data.data.buffer]);
+        this.depthCamWorker.postMessage(data);
       } else {
         if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_TRANSFORM) {
           const transform = data as Transform;

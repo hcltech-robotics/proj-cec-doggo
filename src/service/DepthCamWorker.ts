@@ -6,7 +6,7 @@ export const depthCamWorker = () => {
     console.time('pc2');
     const result = parsePointCloud2(data);
     console.timeEnd('pc2');
-    self.postMessage(result, [result.colors, result.points]);
+    self.postMessage(result);
   });
 
   const parsePointCloud2 = (msg: PointCloud2): ParsedPointCloud2 => {
