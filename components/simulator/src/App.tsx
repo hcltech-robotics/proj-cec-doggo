@@ -84,7 +84,7 @@ const App = () => {
         const markdown = await fetch(`${systemMessageFileLocation}.md`);
         const text = await markdown.text();
         setFileContent(text);
-        setAiInstance(new InteractWithAI(fileContent));
+        setAiInstance(new InteractWithAI(text));
       } catch (error) {
         console.error('Error fetching file:', error);
         setChatConnectionError(error as MessageError);

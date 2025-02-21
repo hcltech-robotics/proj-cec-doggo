@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from 'react';
 
-import './notifiaction.css';
+import './notification.css';
 
 interface NotificationProps {
   align?: string;
