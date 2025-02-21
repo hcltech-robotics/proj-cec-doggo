@@ -19,8 +19,8 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
     inp.setAttribute('type', 'password');
   }
 
-  // const toggleVisibility = (value: boolean, sceneName: 'pointcloud' | 'cameraDepth') => {
-  const toggleVisibility = (sceneName: 'pointcloud' | 'cameraDepth') => {
+  // const toggleVisibility = (value: boolean, sceneName: 'pointcloud') => {
+  const toggleVisibility = (sceneName: 'pointcloud') => {
     // const sceneWrapper = (s.scenes[sceneName].userData.domElement as HTMLElement).parentElement;
     const sceneWrapper = s.scenes[sceneName]?.userData.domElement as HTMLElement;
     console.log(sceneWrapper);
@@ -33,7 +33,7 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
   };
 
   const topicNamesFolder = gui.addFolder('TopicNames');
-  const selectedMiniSceneController = topicNamesFolder.add(s.userSettings.topicList, 'selectedItem', []).name('Selected Scene');
+  const selectedMiniSceneController = topicNamesFolder.add(s.userSettings.topicList, 'selectedTopic', []).name('Selected Scene');
 
   const lightsFolder = gui.addFolder('Lights');
   lightsFolder.add(s.scenes.main?.userData.pointLight!, 'visible').name('point light');
@@ -47,7 +47,7 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
   const cameraFolder = gui.addFolder('Camera');
   cameraFolder.add(s.scenes.main?.userData.cameraControls!, 'autoRotate');
 
-  // const toggleVisibility = (value: boolean, sceneName: 'pointcloud' | 'cameraDepth') => {
+  // const toggleVisibility = (value: boolean, sceneName: 'pointcloud') => {
   //   const sceneWrapper = (s.scenes[sceneName].userData.domElement as HTMLElement).parentElement;
   //   if (value) {
   //     sceneWrapper?.classList.remove('hidden');
@@ -75,13 +75,19 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
 
   loadGuiState();
 
-  s.userSettings.topicList.on('topicsLoaded', (channels) => {
+  s.userSettings.topicList.on('topicsLoaded', (dropDownItems) => {
     loadGuiState();
+    // const selectedMiniSceneState = Object.values<number>(getGuiState('TopicNames'))[0];
     const selectedMiniSceneState = Object.values<string>(getGuiState('TopicNames'))[0];
-    selectedMiniSceneController.options(channels);
+    // const dropDownValues = Object.values(dropDownItems ?? {});
+    // const [dropDownValuesPrompt, dropDownValuesFirstItem] = dropDownValues;
+    const [dropDownValuesPrompt, dropDownValuesFirstItem] = dropDownItems;
 
-    if (!channels.includes(selectedMiniSceneState)) {
-      selectedMiniSceneController.setValue(channels[1]);
+    selectedMiniSceneController.options(dropDownItems);
+
+    // if (!dropDownValues.includes(selectedMiniSceneState)) {
+    if (!dropDownItems.includes(selectedMiniSceneState)) {
+      selectedMiniSceneController.setValue(dropDownValuesFirstItem || dropDownValuesPrompt);
       saveGuiState(gui);
     } else {
       selectedMiniSceneController.setValue(selectedMiniSceneState);

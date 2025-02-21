@@ -33,14 +33,15 @@ async function createFoxGloveWebsocket(
     ws: new WebSocket(ws_url, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
   });
   const deserializers = new Map();
-  const subscribe_channels = getSubscribeChannels();
+  let subscribe_channels: Set<string>;
 
   client.on('advertise', (channels) => {
     if (!client) {
       return;
     }
 
-    s.userSettings.topicList.parse(channels);
+    const topicList = s.userSettings.topicList.parse(channels);
+    subscribe_channels = getSubscribeChannels(topicList);
 
     for (const channel of channels) {
       if (!subscribe_channels.has(channel.topic)) {

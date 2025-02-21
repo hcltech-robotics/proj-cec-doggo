@@ -1,23 +1,17 @@
 import { Quaternion, Vector3 } from "three";
 import { SceneTransformParam } from "../../types";
 import { SceneManager } from "../SceneManager";
-import { updatePointCloud } from "../views/pointCloud/pointCloudTransformation";
-import { updateCameraDepthColors } from '../views/pointCloud/cameraDepthColorPointsTransformation';
-import { getGuiState } from '../settings';
+import { updatePointCloud } from '../views/pointCloud/pointCloudTransformation';
 
 function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const { data } = p
   const msgData = data.messageData
-  const topicNames = getGuiState('TopicNames');
 
-  // if (data.channelTopic === topicNames.pointcloud) {
-  if (data.channelTopic === '/pointcloud') {
-    // updatePointCloud(s, data.messageData);
-    updateCameraDepthColors(s, data.messageData);
-  // } else if (data.channelTopic === topicNames.cameraDepth) {
-  } else if (data.channelTopic === '/camera/depth/color/points') {
-    updateCameraDepthColors(s, data.messageData);
-  } else if (data.channelTopic === "/utlidar/voxel_map_compressed") {
+  if (data.channelTopic === s.userSettings.topicList.selectedTopic) {
+    updatePointCloud(s, msgData);
+  }
+
+  if (data.channelTopic === "/utlidar/voxel_map_compressed") {
     const vertexBinaryData = data.messageData
     s.scenes.main.userData.lidarWebWorker?.postMessage({
       resolution: vertexBinaryData.resolution,

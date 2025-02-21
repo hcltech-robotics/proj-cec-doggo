@@ -1,4 +1,4 @@
-import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera, Vector3 } from "three";
+import { AxesHelper, Color, DirectionalLight, GridHelper, HemisphereLight, PerspectiveCamera } from "three";
 import { SceneManager } from "../../SceneManager";
 import { PointcloudScene } from "../../types";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -53,7 +53,7 @@ function createPointCloudScene(s:SceneManager) {
     sideViews.appendChild(element)
   }
   const aspectRatio = pointCloudSceneSize.width / pointCloudSceneSize.height
-  const pointcloudCamera = new PerspectiveCamera(50, aspectRatio, 0.1, 100)
+  const pointcloudCamera = new PerspectiveCamera(30, aspectRatio, 0.1, 100);
   pointcloudCamera.position.copy(s.scenes.pointcloud.userData.resetPosition);
   pointcloudScene.userData.camera = pointcloudCamera
   pointcloudScene.userData.domElement = sceneElement

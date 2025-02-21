@@ -7,8 +7,6 @@ import { transform_cb } from './transformations/ros2transforms';
 import { animate } from './renderloop';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import {
-  CameraDepthScene,
-  CameraDepthSceneUserData,
   MainScene,
   PointcloudScene,
   PointcloudSceneUserData,
@@ -21,32 +19,38 @@ import { Channel } from '@foxglove/ws-protocol';
 const CANVAS_ID = 'scene';
 
 class TopicList {
-  public selectedItem: string = '';
+  public selectedTopic: string = '';
 
   private defaultItem: string = 'No Point Cloud Scene';
-  private items!: string[];
+  private dropDownItems!: string[];
   private eventTarget: EventTarget = new EventTarget();
+
+  private get items(): string[] {
+    return this.dropDownItems.filter((dropDownItem) => dropDownItem !== this.defaultItem);
+  }
 
   constructor() {
     this.init();
   }
 
-  public parse(channels: Channel[]): void {
-    this.items = channels.reduce((acc, curr) => {
+  public parse(channels: Channel[]): string[] {
+    this.dropDownItems = channels.reduce((acc, curr) => {
       if (curr.schemaName.includes('PointCloud2')) {
         acc.push(curr.topic);
       }
       return acc;
-    }, this.items);
+    }, this.dropDownItems);
 
-    this.dispatch('topicsLoaded', this.items);
+    this.dispatch('topicsLoaded', this.dropDownItems);
+
+    return this.items;
   }
 
-  public on(customEvent: TopicListCustomEvent, cb: (data: string[]) => void): void {
+  public on<T = string[]>(customEvent: TopicListCustomEvent, cb: (data: T) => void): void {
     this.eventTarget.addEventListener(customEvent, (event) => cb((event as CustomEvent).detail));
   }
 
-  public dispatch<T>(customEvent: TopicListCustomEvent, data?: T): void {
+  public dispatch<T = string[]>(customEvent: TopicListCustomEvent, data?: T): void {
     this.eventTarget.dispatchEvent(new CustomEvent(customEvent, { detail: data }));
   }
 
@@ -55,7 +59,7 @@ class TopicList {
   }
 
   private init(): void {
-    this.items = [this.defaultItem];
+    this.dropDownItems = [this.defaultItem];
   }
 }
 
@@ -69,10 +73,6 @@ class SceneManager {
   client: FoxgloveClient | null;
   foxgloveConnection: Promise<void>;
 
-  get miniScenes() {
-    return [this.scenes.pointcloud, this.scenes.cameraDepth];
-  }
-
   private animationFrame: number;
 
   constructor() {
@@ -81,13 +81,11 @@ class SceneManager {
       apiKey: 'defaultapiKey',
       foxglove_config: { url: 'ws://localhost:8765' },
       pointCloudScene: { enabled: true },
-      cameraDepthScene: { enabled: true },
       topicList: new TopicList(),
     };
     this.scenes = {
       main: new MainScene(),
       pointcloud: new PointcloudScene(),
-      cameraDepth: new CameraDepthScene(),
     };
     this.canvas = document.querySelector<HTMLElement>(`canvas#${CANVAS_ID}`)!;
     this.renderer = null;
@@ -119,18 +117,18 @@ class SceneManager {
   }
 
   bindEventListeners() {
-    this.miniScenes.forEach(({ userData }) => {
-      userData.cameraControls?.addEventListener('start', () => {
-        cancelAnimationFrame(this.animationFrame);
-      });
+    const { userData } = this.scenes.pointcloud;
 
-      userData.domElement?.addEventListener('mouseleave', () => {
-        this.resetCameraPosition(userData);
-      });
+    userData.cameraControls?.addEventListener('start', () => {
+      cancelAnimationFrame(this.animationFrame);
+    });
+
+    userData.domElement?.addEventListener('mouseleave', () => {
+      this.resetCameraPosition(userData);
     });
   }
 
-  resetCameraPosition({ camera, cameraControls, resetPosition, lerpSpeed }: PointcloudSceneUserData | CameraDepthSceneUserData) {
+  resetCameraPosition({ camera, cameraControls, resetPosition, lerpSpeed }: PointcloudSceneUserData) {
     if (!camera || !cameraControls) {
       return;
     }

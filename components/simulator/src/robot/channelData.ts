@@ -1,6 +1,4 @@
-import { getGuiState } from '../visualizer/settings';
-
-export const getSubscribeChannels = () => {
+export const getSubscribeChannels = (items: string[] = []) => {
   return new Set([
     '/joint_states',
     '/odom',
@@ -10,6 +8,6 @@ export const getSubscribeChannels = () => {
     '/gpt_cmd',
     '/cmd_vel',
     '/tts',
-    ...Object.values(getGuiState('TopicNames')),
+    ...items,
   ]);
 };
