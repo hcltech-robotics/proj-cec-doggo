@@ -59,7 +59,7 @@ export class RobotCommunicationService {
           origin: data.origin,
           width: data.width,
           data: data.data,
-        }, [data.data.buffer]);
+        });
       } else if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_DEPTHCAM) {
         this.depthCamWorker.postMessage(data);
       } else {
@@ -111,6 +111,8 @@ export class RobotCommunicationService {
       }
 
       const message = new Uint8Array(new TextEncoder().encode(JSON.stringify(structuredMessage)));
+
+      console.log('[LOG: Robot] Sending message to', topic, structuredMessage);
 
       this.client.sendMessage(channelId, message);
     }

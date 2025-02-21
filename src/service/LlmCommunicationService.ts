@@ -31,6 +31,8 @@ export class LlmCommunicationService {
     if (this.llmWithTools && this.tooling) {
       if (aiMessage.tool_calls) {
         for (const toolCall of aiMessage.tool_calls) {
+          console.log('[LOG: LLM] Tool call:', toolCall);
+
           const callResult = await this.tooling.invokeTool(toolCall);
           if (callResult?.toolResult) {
             this.messages.push(aiMessage);
@@ -51,9 +53,13 @@ export class LlmCommunicationService {
 
   public invoke = async (message: any) => {
     if (this.llmWithTools) {
+      console.log('[LOG: LLM] Message received:', message);
+
       this.messages.push(new HumanMessage({ content: message }));
 
       let aiMessage = await this.llmWithTools.invoke(this.messages, { timeout: DEFAULT_TIMEOUT });
+
+      console.log('[LOG: LLM] Response from LLM:', aiMessage);
 
       if (aiMessage.tool_calls) {
         aiMessage = await this.handeToolCalls(aiMessage);

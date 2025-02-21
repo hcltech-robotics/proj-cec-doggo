@@ -55,6 +55,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
           maxPolarAngle={Math.PI / 2}
           autoRotate={props.config.autoRotateMain}
           autoRotateSpeed={0.1}
+          target={[0.0, 1.0, 0.0]}
         />
         {props.config.graphStats ? <Stats /> : ''}
       </Canvas>

@@ -100,7 +100,7 @@ export class LlmRobotTooling implements LlmToolHelper {
         },
         {
           name: 'standby_pose',
-          description: 'This tools is for reset your pose into the regular state. Also understood as stand on 4 legs.',
+          description: 'This tools is for reset your pose into the regular state, also understood as stand on 4 legs or stand up or stand by.',
         },
       ),
     },
@@ -113,7 +113,7 @@ export class LlmRobotTooling implements LlmToolHelper {
         },
         {
           name: 'lie_down',
-          description: 'This tools is for lie down the dog.',
+          description: 'This tools is for lie down the dog, also understood as prone. lie down, lay down or stand down.',
         },
       ),
     },
@@ -127,6 +127,19 @@ export class LlmRobotTooling implements LlmToolHelper {
         {
           name: 'sit',
           description: 'This tools is for sit the dog.',
+        },
+      ),
+    },
+    hello: {
+      displayResponse: false,
+      tool: tool(
+        () => {
+          this.robot.sportMessage(robotCommands.Hello);
+          return `** Sending "hello" thru WS://`;
+        },
+        {
+          name: 'hello',
+          description: 'This tools is to say hello to someone, also known as shake hands, greet, give me five, hi five or hello.',
         },
       ),
     },

@@ -5,7 +5,7 @@
   left: 50%;
   bottom: 50px;
   width: 1000px;
-  max-width: calc(100vw - 2 * 200px);
+  max-width: calc(100vw - 2 * 220px);
   transform: translateX(-50%);
   pointer-events: none;
 }
