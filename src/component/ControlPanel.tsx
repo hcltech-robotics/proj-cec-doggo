@@ -9,6 +9,7 @@ export interface Config {
   apiKey: string;
   robotWs: string;
   volume: number;
+  autoRotateMain: boolean;
 }
 
 export const initialConfig: Config = {
@@ -18,6 +19,7 @@ export const initialConfig: Config = {
   apiKey: '',
   robotWs: 'ws://127.0.0.1:8765',
   volume: 50,
+  autoRotateMain: true,
 };
 
 export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Config>> }) => {
@@ -38,6 +40,11 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
       robotWs: { label: 'ROS Connection', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
       apiKey: passwordInput({ label: 'API Key', value: config.apiKey ?? initialConfig.apiKey }),
       volume: { label: 'Robot Volume', type: LevaInputs.NUMBER, value: config.volume ?? initialConfig.volume, min: 0, max: 100 },
+      autoRotateMain: {
+        label: 'Auto-rotate Main Scene',
+        type: LevaInputs.BOOLEAN,
+        value: config.autoRotateMain ?? initialConfig.autoRotateMain,
+      },
     };
   });
 

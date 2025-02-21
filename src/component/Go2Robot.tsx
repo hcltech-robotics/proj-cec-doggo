@@ -14,7 +14,7 @@ const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
 };
 
 const updateJoints = (connection: RobotCommunicationService, mesh: URDFRobot) => {
-  const jointState = connection.channelByName[topicList.TOPIC_JOINT_STATES].lastMessage;
+  const jointState = connection.channelByName[topicList.TOPIC_JOINT_STATES]?.lastMessage;
   if (jointState && jointState.name) {
     const joints = jointState.name.reduce((acc, joint, idx) => {
       acc[joint] = jointState.position[idx]!;
@@ -42,7 +42,7 @@ const setRotation = (rotation: Vector4, mesh: URDFRobot) => {
 
 const updateRotation = (connection: RobotCommunicationService, mesh: URDFRobot) => {
   const transform = connection.channelByName[topicList.TOPIC_TRANSFORM]?.lastMessage;
-  if (transform.transforms) {
+  if (transform?.transforms) {
     const base = transform.transforms.find((t) => t.child_frame_id === 'base_link');
     if (base) {
       setRotation(base?.transform.rotation, mesh);
