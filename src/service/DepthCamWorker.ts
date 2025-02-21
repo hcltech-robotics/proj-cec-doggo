@@ -3,17 +3,19 @@ import { ParsedPointCloud2, PointCloud2 } from 'src/model/Go2RobotInterfaces';
 export const depthCamWorker = () => {
   self.addEventListener('message', (event) => {
     const data = event.data;
-    console.time('pc2');
+    // console.time('pc2');
     const result = parsePointCloud2(data);
-    console.timeEnd('pc2');
+    // console.timeEnd('pc2');
     self.postMessage(result);
   });
 
   const parsePointCloud2 = (msg: PointCloud2): ParsedPointCloud2 => {
+    const points = [];
+    const colors = [];
+    let header = { frame_id: '', stamp: { sec: 0, nanosec: 0 } };
+
     if (msg?.data) {
       const dv = new DataView(new Uint8Array(msg.data).buffer); // 1 ms
-      const points = [];
-      const colors = [];
       const littleEndian = !msg.is_bigendian;
       const count = msg.data.length;
 
@@ -34,9 +36,9 @@ export const depthCamWorker = () => {
         colors.push(dv.getUint8(i + offsets.rgb + 0) / 255);
       }
 
-      return { points: new Float32Array(points).buffer, colors: new Float32Array(colors).buffer, header: msg.header };
+      header = msg.header;
     }
 
-    return { points: new Float32Array().buffer, colors: new Float32Array().buffer, header: { frame_id: '', stamp: { sec: 0, nanosec: 0 } } };
+    return { points: new Float32Array(points), colors: new Float32Array(colors), header };
   };
 };

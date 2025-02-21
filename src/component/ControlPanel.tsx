@@ -1,4 +1,4 @@
-import { LevaInputs, useControls } from 'leva';
+import { Leva, LevaInputs, useControls } from 'leva';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { passwordInput } from './LevaPasswordInput';
 
@@ -37,5 +37,9 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
     localStorage.setItem('config', JSON.stringify(config));
   }, [config]);
 
-  return <></>;
+  return (
+    <>
+      <Leva collapsed />
+    </>
+  );
 };

@@ -32,7 +32,7 @@ export const DepthCam = () => {
       const points = new Float32Array(msg.points);
       const colors = new Float32Array(msg.colors);
 
-      console.log({ p: points.slice(0, 20), c: colors.slice(0, 20) });
+      // console.log({ p: points.slice(0, 20), c: colors.slice(0, 20) });
 
       setData({ colors, points, header: msg.header });
     }
@@ -43,8 +43,21 @@ export const DepthCam = () => {
   };
 
   return (
-    <div className={`depthcam ${zoom ? 'zoomed' : ''}`} ref={wrapper} onDoubleClick={changeZoom}>
-      <Canvas className="depthcam-canvas" shadows camera={{ position: [-4.0, 4.0, 4.0], fov: 75 }}>
+    <div className={`depthcam zoomed ${zoom ? 'zoomed' : ''}`} ref={wrapper} onDoubleClick={changeZoom}>
+      <Canvas className="depthcam-canvas" shadows camera={{ position: [0.1, 0.0, 0.0], fov: 50 }}>
+        {data ? (
+          <group>
+            <mesh rotation={[Math.PI / -2, Math.PI / 2, Math.PI / 2, 'ZYX']}>
+              <bufferGeometry>
+                <float32BufferAttribute args={[data.points || [], 3]} attach="attributes-position" />
+                <float32BufferAttribute args={[data.colors || [], 3]} attach="attributes-color" />
+              </bufferGeometry>
+            </mesh>
+          </group>
+        ) : (
+          ''
+        )}
+
         <ambientLight intensity={0.5} />
         <Grid
           infiniteGrid
