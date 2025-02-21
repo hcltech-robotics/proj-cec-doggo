@@ -1,0 +1,30 @@
+.notification-wrapper {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px #0003;
+  opacity: 0.95;
+  z-index: 9;
+
+  &.middle {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.bottom {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .close-button {
+    margin-left: 10px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer
+  }
+}

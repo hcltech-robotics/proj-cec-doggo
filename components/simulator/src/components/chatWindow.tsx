@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { InteractWithAI, MessageWithImage } from "../helpers/interact-with-ai";
+
+import { InteractWithAI } from "../helpers/interact-with-ai";
 import ChatInput from "../overlaygui/chatinput";
+import { MessageError, MessageWithImage } from "../interfaces/interact-with-ai.interface";
 
 import "./chatWindow.css";
 
@@ -30,7 +32,7 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: (error: unknown) => void }> = ({ ai, onError }) => {
+const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: (error: MessageError) => void }> = ({ ai, onError }) => {
   if (!ai) {
     return;
   }
@@ -74,7 +76,7 @@ const ChatWindow: React.FC<{ ai: InteractWithAI | null, onError: (error: unknown
         setNewNotificationMessage(assistantMessage);
       });
     } catch (error: unknown) {
-      onError(error);
+      onError(error as MessageError);
     }
   };
 

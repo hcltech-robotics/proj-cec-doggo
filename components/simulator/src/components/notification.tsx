@@ -1,41 +1,41 @@
-// Notification.tsx
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
+
+import './notifiaction.css';
 
 interface NotificationProps {
-  content: ReactNode;
-  isClosable: boolean;
+  align?: string;
+  content?: ReactNode;
+  error?: string;
+  message?: string;
+  isClosable?: boolean;
   onClose?: () => void;
 }
 
-const Notification: React.FC<NotificationProps> = ({ content, isClosable, onClose }) => {
+const Notification: React.FC<NotificationProps> = ({ message, content, isClosable = false, error, align = 'middle', onClose }) => {
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '20px',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: '#333',
-        color: '#fff',
-        padding: '10px 20px',
-        borderRadius: '5px',
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-        zIndex: 9999,
-      }}
-    >
-      <div>
-        {content}
-        {isClosable && (
-          <button
-            onClick={onClose}
-            style={{ marginLeft: '10px', background: 'transparent', color: 'white', border: 'none', cursor: 'pointer' }}
-          >
-            X
-          </button>
-        )}
-      </div>
+    <div className={`notification-wrapper ${align}`}>
+      {message && <p>{message}</p>}
+      {content}
+      {error && <Accordion title='Details' content={error} />}
+      {isClosable && <button onClick={onClose}>X</button>}
     </div>
   );
 };
 
 export default Notification;
+
+interface AccordionProps { title: string; content: string }
+
+const Accordion = ({ title, content }: AccordionProps) => {
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <div className="accordion-item">
+      <div className="accordion-title" onClick={() => setIsActive(!isActive)}>
+        <span>{title}</span>
+        <span>{isActive ? '-' : '+'}</span>
+      </div>
+      {isActive && <div className="accordion-content">{content}</div>}
+    </div>
+  );
+};
