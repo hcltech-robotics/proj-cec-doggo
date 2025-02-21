@@ -2,5 +2,7 @@
 
 ```bash
 npm i
+```
+```bash
 npx vite
 ```
