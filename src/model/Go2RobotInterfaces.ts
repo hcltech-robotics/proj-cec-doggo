@@ -162,3 +162,9 @@ export interface PointCloud2 {
   point_step: number;
   row_step: number;
 }
+
+export interface ParsedPointCloud2 {
+  header: { stamp: { sec: number; nanosec: number }; frame_id: string };
+  points: ArrayBuffer;
+  colors: ArrayBuffer;
+}

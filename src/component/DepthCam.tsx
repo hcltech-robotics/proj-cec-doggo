@@ -1,42 +1,10 @@
 import { useContext, useMemo, useRef, useState } from 'react';
-import { PointCloud2 } from 'src/model/Go2RobotInterfaces';
 import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
 import { topicList } from '../model/Go2RobotTopics';
 import './DepthCam.css';
 
 const TARGET_FPS = 30;
-
-const parsePointCloud2 = (msg: PointCloud2) => {
-  if (msg?.data) {
-    const dv = new DataView(new Uint8Array(msg.data).buffer); // 1 ms
-    const points = [];
-    const colors = [];
-    const littleEndian = !msg.is_bigendian;
-    const count = msg.data.length;
-
-    const offsets = {
-      x: msg.fields.find((f) => f.name === 'x')!.offset,
-      y: msg.fields.find((f) => f.name === 'y')!.offset,
-      z: msg.fields.find((f) => f.name === 'z')!.offset,
-      rgb: msg.fields.find((f) => f.name === 'rgb')!.offset,
-    };
-
-    for (let i = 0; i < count; i += msg.point_step) {
-      points.push(dv.getFloat32(i + offsets.x, littleEndian));
-      points.push(dv.getFloat32(i + offsets.y, littleEndian));
-      points.push(dv.getFloat32(i + offsets.z, littleEndian));
-
-      colors.push(dv.getUint8(i + offsets.rgb + 2) / 256);
-      colors.push(dv.getUint8(i + offsets.rgb + 1) / 256);
-      colors.push(dv.getUint8(i + offsets.rgb + 0) / 256);
-    }
-
-    return { points, colors };
-  }
-
-  return { points: [], colors: [] };
-};
 
 export const DepthCam = () => {
   const connection = useContext(AppContext).connection;
@@ -56,11 +24,12 @@ export const DepthCam = () => {
   useMemo(() => {
     const msg = connection.channelByName[topicList.TOPIC_DEPTHCAM]?.lastMessage;
 
-    console.time('pc2');
-    const { points, colors } = parsePointCloud2(msg);
-    console.timeEnd('pc2');
+    if (msg?.header) {
+      const points = new Float32Array(msg.points);
+      const colors = new Float32Array(msg.colors);
 
-    console.log({ p: points.slice(0, 20), c: colors.slice(0, 20) });
+      console.log({ p: points.slice(0, 20), c: colors.slice(0, 20) });
+    }
   }, [stamp]);
 
   const changeZoom = () => {

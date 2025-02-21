@@ -1,7 +1,7 @@
 import { parse } from '@foxglove/rosmsg';
 import { MessageReader } from '@foxglove/rosmsg2-serialization';
 import { Channel, FoxgloveClient, MessageData } from '@foxglove/ws-protocol';
-import { LidarData, RobotCommand, Transform, TwistMessage, WebRtcMessage } from 'src/model/Go2RobotInterfaces';
+import { LidarData, ParsedPointCloud2, RobotCommand, Transform, TwistMessage, WebRtcMessage } from 'src/model/Go2RobotInterfaces';
 import { EnrichedChannel } from '../model/FoxgloveBasics';
 import {
   channelDefinitions,
@@ -12,11 +12,13 @@ import {
   TopicListName,
   TypedChannels,
 } from '../model/Go2RobotTopics';
+import { depthCamWorker } from './DepthCamWorker';
 
 export class RobotCommunicationService {
   private client: FoxgloveClient | undefined = undefined;
 
   public voxelWorker: Worker;
+  public depthCamWorker: Worker;
   public channels: Record<number, EnrichedChannel<any>> = {};
   public channelByName: TypedChannels = {} as TypedChannels;
   public pubTopics: Partial<Record<PublishTopicListName, number>> = {};
@@ -57,7 +59,9 @@ export class RobotCommunicationService {
           origin: data.origin,
           width: data.width,
           data: data.data,
-        });
+        }, [data.data.buffer]);
+      } else if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_DEPTHCAM) {
+        this.depthCamWorker.postMessage(data, [data.data.buffer]);
       } else {
         if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_TRANSFORM) {
           const transform = data as Transform;
@@ -76,6 +80,10 @@ export class RobotCommunicationService {
 
   public voxelParser = ({ data }: { data: LidarData }) => {
     this.channelByName[topicList.TOPIC_LIDAR].lastMessage = data;
+  };
+
+  public depthCamParser = ({ data }: { data: ParsedPointCloud2 }) => {
+    this.channelByName[topicList.TOPIC_DEPTHCAM].lastMessage = data;
   };
 
   public twistMessage = (twist: TwistMessage) => {
@@ -125,5 +133,10 @@ export class RobotCommunicationService {
   constructor() {
     this.voxelWorker = new Worker(new URL('/assets/voxel-worker.js', import.meta.url));
     this.voxelWorker.onmessage = this.voxelParser;
+
+    const depthCamWorkerCode = depthCamWorker.toString();
+    const depthCamWorkerBlob = new Blob([`(${depthCamWorkerCode})()`]);
+    this.depthCamWorker = new Worker(URL.createObjectURL(depthCamWorkerBlob));
+    this.depthCamWorker.onmessage = this.depthCamParser;
   }
 }
