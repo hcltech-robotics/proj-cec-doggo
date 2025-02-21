@@ -1,6 +1,23 @@
 import { Leva, LevaInputs, useControls } from 'leva';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { passwordInput } from './LevaPasswordInput';
+import { PresetsType } from '@react-three/drei/helpers/environment-assets';
+
+export type SceneEnvironment = 'none' | PresetsType;
+
+const backgroundOptions: SceneEnvironment[] = [
+  'none',
+  'apartment',
+  'city',
+  'dawn',
+  'forest',
+  'lobby',
+  'night',
+  'park',
+  'studio',
+  'sunset',
+  'warehouse',
+];
 
 export interface Config {
   robotShadow: boolean;
@@ -10,6 +27,7 @@ export interface Config {
   robotWs: string;
   volume: number;
   autoRotateMain: boolean;
+  envBackground: SceneEnvironment;
 }
 
 export const initialConfig: Config = {
@@ -20,6 +38,7 @@ export const initialConfig: Config = {
   robotWs: 'ws://127.0.0.1:8765',
   volume: 50,
   autoRotateMain: true,
+  envBackground: 'none',
 };
 
 export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Config>> }) => {
@@ -45,11 +64,18 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
         type: LevaInputs.BOOLEAN,
         value: config.autoRotateMain ?? initialConfig.autoRotateMain,
       },
+      envBackground: {
+        label: 'Environment',
+        type: LevaInputs.SELECT,
+        options: backgroundOptions,
+        value:
+          config.envBackground && backgroundOptions.includes(config.envBackground) ? config.envBackground : initialConfig.envBackground,
+      },
     };
   });
 
   useEffect(() => {
-    props.configChange(config);
+    props.configChange(config as Config);
     localStorage.setItem('config', JSON.stringify(config));
   }, [config]);
 

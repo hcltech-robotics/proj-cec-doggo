@@ -1,4 +1,4 @@
-import { Grid, OrbitControls, Stats } from '@react-three/drei';
+import { Environment, Grid, OrbitControls, Stats } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing';
 import { PropsWithChildren } from 'react';
@@ -16,7 +16,7 @@ export const MainScene = (props: PropsWithChildren<{ config: Config }>) => {
             <shadowMaterial />
           </mesh>
         </group>
-        {/* <Environment background preset="night" blur={0.5} /> */}
+        {props.config.envBackground !== 'none' ? <Environment background preset={props.config.envBackground} blur={0.5} /> : ''}
         <ambientLight intensity={1} />
         <directionalLight
           castShadow

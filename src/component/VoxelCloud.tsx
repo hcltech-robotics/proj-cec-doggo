@@ -28,7 +28,7 @@ export const VoxelCloud = () => {
               <bufferAttribute args={[data.geometryData.uvs || [], 2, true]} attach="attributes-uv" />
               <bufferAttribute args={[data.geometryData.indices || [], 1]} attach="index" />
             </bufferGeometry>
-            <meshStandardMaterial map={voxelTex.clone()} transparent={false} side={DoubleSide} />
+            <meshStandardMaterial map={voxelTex} transparent={false} side={DoubleSide} />
           </mesh>
         </group>
       ) : (
