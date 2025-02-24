@@ -17,7 +17,7 @@ export function getChannelData() {
 }
 
 export interface WebSocketEventHandler {
-  (event: 'open' | 'close' | 'error'): void;
+  (event: { type: 'open' | 'close' | 'error'; url: string }): void;
 }
 
 async function createFoxGloveWebsocket(
@@ -85,15 +85,15 @@ async function createFoxGloveWebsocket(
     if (client) {
       registerAdvertisements(client);
     }
-    onEvent('open');
+    onEvent({ type: 'open', url: ws_url });
   });
   client.on('close', () => {
+    onEvent({ type: 'close', url: ws_url });
     s.userSettings.topicList.reset();
-    onEvent('close');
   });
 
   client.on('error', () => {
-    onEvent('error');
+    onEvent({ type: 'error', url: ws_url });
   });
 }
 

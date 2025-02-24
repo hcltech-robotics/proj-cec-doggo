@@ -2,12 +2,9 @@ import { BaseMessage, HumanMessage, SystemMessage, ToolMessage } from '@langchai
 import { Runnable } from '@langchain/core/runnables';
 import { Tool, tool } from '@langchain/core/tools';
 import { ChatOpenAI } from '@langchain/openai';
-import { getClient } from '../robot/foxgloveConnection';
 
-export interface MessageWithImage {
-  text: string;
-  image: string | null;
-}
+import { getClient } from '../robot/foxgloveConnection';
+import { MessageWithImage } from '../interfaces/interact-with-ai.interface';
 
 const DEFAULT_TIMEOUT = 10000;
 
