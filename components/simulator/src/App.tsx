@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import ChatWindow from './components/chatWindow';
 import { InteractWithAI } from './helpers/interact-with-ai';
 import { JoyController, JoysToRobot, JoystickHandler } from './joystick/joy-controller';
 import { CanvasFrame, OverlayGUI } from './overlaygui/overlaygui';
-import { GuiCallback } from './types';
-import { getSceneManager } from './visualizer';
 import { SceneManager } from './visualizer/SceneManager';
 import { WebSocketEventHandler } from './robot/foxgloveConnection';
-import Notification from './components/notification';
 import { MessageError } from './interfaces/interact-with-ai.interface';
+import { GuiCallback } from './types';
+import { getSceneManager } from './visualizer';
+import ChatWindow from './components/chatWindow';
+import Notification, { NotificationError } from './components/notification';
 
 class ExternalTools {
   sceneManager: SceneManager = getSceneManager();
@@ -45,8 +45,8 @@ const App = () => {
   const hasDevelopmentLoaded = useRef<boolean>(false);
   const [fileContent, setFileContent] = useState<string>('');
   const [aiInstance, setAiInstance] = useState<InteractWithAI | null>(null);
-  const [isConnectionFailed, setIsConnectionFailed] = useState<boolean>(false);
-  const [chatConnectionError, setChatConnectionError] = useState<MessageError | null>(null);
+  const [isConnectionFailed, setIsConnectionFailed] = useState<string | null>(null);
+  const [chatConnectionError, setChatConnectionError] = useState<NotificationError | null>(null);
   const [tools] = useState(new ExternalTools());
 
   useEffect(() => {
@@ -100,20 +100,20 @@ const App = () => {
     setChatConnectionError(error);
   };
 
-  const handleEvent = (event: 'open' | 'close' | 'error') => {
-    switch (event) {
+  const handleEvent = (event: { type: 'open' | 'close' | 'error'; url: string }) => {
+    switch (event.type) {
       case 'open':
-        setIsConnectionFailed(false);
+        setIsConnectionFailed(null);
         break;
       case 'close':
       case 'error':
-        setIsConnectionFailed(true);
+        setIsConnectionFailed(event.url);
         break;
     }
   };
 
   const reconnect = () => {
-    setIsConnectionFailed(false);
+    setIsConnectionFailed(null);
     tools.reconnectWebsocketConnection(handleEvent);
   };
 
@@ -125,26 +125,27 @@ const App = () => {
         <ChatWindow ai={aiInstance} onError={onError} />
       ) : (
         <Notification
-          align='bottom'
-          message='Chat is not available. Please check API key in the ⚙️ Configuration panel in the top right corner and refresh the webpage.'
-          error={chatConnectionError ? chatConnectionError.message : 'An unknown error occurred.'}
+          align="bottom"
+          message="Chat is not available. Please check API key in the ⚙️ Configuration panel in the top right corner and refresh the webpage."
+          error={chatConnectionError}
         />
       )}
       <JoyController joy={joy1} class="joy1" />
       <JoyController joy={joy2} class="joy2" />
-      {isConnectionFailed &&
+      {isConnectionFailed && (
         <Notification
+          error={null}
           content={
             <>
               <p>
-                Websocket connection <span>failed</span>. Please check the URL in the ⚙️ Configuration panel in the top right corner and try to
-                reconnect again.
+                Websocket connection failed to '{isConnectionFailed}'. Please check the URL in the ⚙️ Configuration panel in the top right
+                corner and try to reconnect again.
               </p>
-              <button onClick={reconnect}>Try to reconnect</button>
+              <button onClick={reconnect}>🔄 Try to reconnect</button>
             </>
           }
         />
-      }
+      )}
     </div>
   );
 };
