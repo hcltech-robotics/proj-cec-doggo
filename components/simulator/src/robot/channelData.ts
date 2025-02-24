@@ -10,6 +10,7 @@ export const getSubscribeChannels = () => {
     '/gpt_cmd',
     '/cmd_vel',
     '/tts',
+    '/robot_description',
     ...Object.values(getGuiState('TopicNames')),
   ]);
 };
