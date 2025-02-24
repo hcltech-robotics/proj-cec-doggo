@@ -33,12 +33,16 @@ async function createFoxGloveWebsocket(
     ws: new WebSocket(ws_url, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
   });
   const deserializers = new Map();
-  const subscribe_channels = getSubscribeChannels();
+  let subscribe_channels: Set<string>;
 
   client.on('advertise', (channels) => {
     if (!client) {
       return;
     }
+
+    const topicList = s.userSettings.topicList.parse(channels);
+    subscribe_channels = getSubscribeChannels(topicList);
+
     for (const channel of channels) {
       if (!subscribe_channels.has(channel.topic)) {
         console.warn('Not subscribed to channel', channel);
@@ -72,7 +76,6 @@ async function createFoxGloveWebsocket(
     const { subscriptionId, timestamp, data } = m;
     const parsedData = deserializers.get(subscriptionId)(data);
     if (parsedData.channelTopic === '/camera/compressed') {
-      // console.log(parsedData);
       window.updateCanvasWithJPEG(parsedData.messageData.data);
     } else if ([...subscribe_channels].some((c) => c == parsedData.channelTopic)) {
       transform_cb({ subscriptionId, timestamp, data: parsedData }, s);
@@ -86,6 +89,7 @@ async function createFoxGloveWebsocket(
   });
   client.on('close', () => {
     onEvent({ type: 'close', url: ws_url });
+    s.userSettings.topicList.reset();
   });
 
   client.on('error', () => {

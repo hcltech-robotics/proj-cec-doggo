@@ -16,14 +16,10 @@ function animate(s: SceneManager) {
   if (!renderer.xr.isPresenting) {
     s.scenes.main.userData.cameraControls?.update();
     s.scenes.pointcloud.userData.cameraControls?.update();
-    s.scenes.cameraDepth.userData.cameraControls?.update();
   }
   const needResize = resizeRendererToDisplaySize(renderer);
-  for (let curr of [s.scenes.main, s.scenes.pointcloud, s.scenes.cameraDepth]) {
-    if (
-      (!s.userSettings.pointCloudScene.enabled && curr === s.scenes.pointcloud) ||
-      (!s.userSettings.cameraDepthScene.enabled && curr === s.scenes.cameraDepth)
-    ) {
+  for (let curr of [s.scenes.main, s.scenes.pointcloud]) {
+      if (!s.userSettings.pointCloudScene.enabled && curr === s.scenes.pointcloud) {
       continue;
     }
     if (needResize) {
