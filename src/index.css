@@ -3,6 +3,10 @@ body {
   --leva-fontSizes-root: 14px;
   --leva-sizes-controlWidth: 270px;
   --leva-colors-highlight1: #9fa7b9;
+
+  --joystick-size: 150px;
+  --joystick-margin: 50px;
+  --joystick-space: calc(var(--joystick-size) + var(--joystick-margin) + 20px);
 }
 
 body {
