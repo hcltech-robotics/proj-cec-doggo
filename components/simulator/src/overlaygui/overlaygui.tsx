@@ -4,7 +4,7 @@ import './overlaygui.css';
 import { InteractWithAI } from '../helpers/interact-with-ai';
 
 interface OverlayGUIProps {
-  ai: InteractWithAI;
+  ai: InteractWithAI | null;
   data?: number;
   show?: boolean;
 }
@@ -21,6 +21,10 @@ function OverlayGUI(props: OverlayGUIProps) {
   };
 
   const handleFunction = (action: string) => {
+    if (!props.ai) {
+      return;
+    }
+
     props.ai.handleAction(action);
   };
 

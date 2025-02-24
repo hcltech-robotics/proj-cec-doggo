@@ -1,0 +1,60 @@
+.notification-wrapper {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px #0003;
+  opacity: 0.95;
+  z-index: 9;
+
+  &.middle {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.bottom {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .error-icon-wrapper {
+    text-align: center;
+
+    .error-icon {
+      width: 65px;
+      height: 60px;
+    }
+  }
+
+  .close-button {
+    margin-left: 10px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  .detail-icon {
+    margin-left: 8px;
+  }
+
+  .accordion-title {
+    cursor: pointer;
+  }
+
+  .accordion-content {
+    height: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 500ms ease-in;
+
+    &.detailed {
+      height: 100%;
+      max-height: 150px;
+      transition: all 500ms ease-in;
+    }
+  }
+}

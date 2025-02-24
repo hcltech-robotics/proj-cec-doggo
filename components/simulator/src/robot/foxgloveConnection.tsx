@@ -1,10 +1,10 @@
-import { Channel, FoxgloveClient } from "@foxglove/ws-protocol";
-import { MessageReader } from "@foxglove/rosmsg2-serialization";
-import { parse } from "@foxglove/rosmsg";
-import { getSubscribeChannels } from "./channelData";
-import { SceneTransformCb } from "../types";
-import { registerAdvertisements } from "./communicate"
-import { SceneManager } from "../visualizer/SceneManager";
+import { Channel, FoxgloveClient } from '@foxglove/ws-protocol';
+import { MessageReader } from '@foxglove/rosmsg2-serialization';
+import { parse } from '@foxglove/rosmsg';
+import { getSubscribeChannels } from './channelData';
+import { SceneTransformCb } from '../types';
+import { registerAdvertisements } from './communicate';
+import { SceneManager } from '../visualizer/SceneManager';
 
 let client: FoxgloveClient | null = null;
 const channelData: Record<string, Channel> = {};
@@ -17,10 +17,10 @@ export function getChannelData() {
 }
 
 export interface WebSocketEventHandler {
-  (event: 'open' | 'close' | 'error'): void;
+  (event: { type: 'open' | 'close' | 'error'; url: string }): void;
 }
 
-async function createFoxGloveWebsocket (
+async function createFoxGloveWebsocket(
   transform_cb: SceneTransformCb,
   ws_url = 'ws://localhost:8765',
   s: SceneManager,
@@ -35,7 +35,7 @@ async function createFoxGloveWebsocket (
   const deserializers = new Map();
   const subscribe_channels = getSubscribeChannels();
 
-  client.on("advertise", (channels) => {
+  client.on('advertise', (channels) => {
     if (!client) {
       return;
     }
@@ -82,14 +82,14 @@ async function createFoxGloveWebsocket (
     if (client) {
       registerAdvertisements(client);
     }
-    onEvent('open');
+    onEvent({ type: 'open', url: ws_url });
   });
   client.on('close', () => {
-    onEvent('close');
+    onEvent({ type: 'close', url: ws_url });
   });
 
   client.on('error', () => {
-    onEvent('error');
+    onEvent({ type: 'error', url: ws_url });
   });
 }
 
