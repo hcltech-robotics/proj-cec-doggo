@@ -56,5 +56,10 @@
       max-height: 150px;
       transition: all 500ms ease-in;
     }
+
+    .error-details {
+      border: 1px dashed #fff5;
+      padding: 10px;
+    }
   }
 }
