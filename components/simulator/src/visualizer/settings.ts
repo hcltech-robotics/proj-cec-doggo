@@ -77,15 +77,11 @@ function initSettings(s: SceneManager, onEvent: WebSocketEventHandler) {
 
   s.userSettings.topicList.on('topicsLoaded', (dropDownItems) => {
     loadGuiState();
-    // const selectedMiniSceneState = Object.values<number>(getGuiState('TopicNames'))[0];
     const selectedMiniSceneState = Object.values<string>(getGuiState('TopicNames'))[0];
-    // const dropDownValues = Object.values(dropDownItems ?? {});
-    // const [dropDownValuesPrompt, dropDownValuesFirstItem] = dropDownValues;
     const [dropDownValuesPrompt, dropDownValuesFirstItem] = dropDownItems;
 
     selectedMiniSceneController.options(dropDownItems);
 
-    // if (!dropDownValues.includes(selectedMiniSceneState)) {
     if (!dropDownItems.includes(selectedMiniSceneState)) {
       selectedMiniSceneController.setValue(dropDownValuesFirstItem || dropDownValuesPrompt);
       saveGuiState(gui);
