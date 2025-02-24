@@ -1,7 +1,7 @@
-import { Leva, LevaInputs, useControls } from 'leva';
+import { PresetsType } from '@react-three/drei/helpers/environment-assets';
+import { folder, Leva, LevaInputs, useControls } from 'leva';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { passwordInput } from './LevaPasswordInput';
-import { PresetsType } from '@react-three/drei/helpers/environment-assets';
 
 export type SceneEnvironment = 'none' | PresetsType;
 
@@ -27,6 +27,11 @@ export interface Config {
   robotWs: string;
   volume: number;
   autoRotateMain: boolean;
+  showCamera: boolean;
+  showDepthCam: boolean;
+  joystick: boolean;
+  depthCamTopic: string;
+  cameraTopic: string;
   envBackground: SceneEnvironment;
 }
 
@@ -38,6 +43,11 @@ export const initialConfig: Config = {
   robotWs: 'ws://127.0.0.1:8765',
   volume: 50,
   autoRotateMain: true,
+  showCamera: true,
+  showDepthCam: true,
+  joystick: true,
+  depthCamTopic: '/camera/depth/color/points',
+  cameraTopic: '/camera/compressed',
   envBackground: 'none',
 };
 
@@ -53,24 +63,44 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
     }
 
     return {
-      robotShadow: { label: 'Robot Cast Shadow', type: LevaInputs.BOOLEAN, value: config.robotShadow ?? initialConfig.robotShadow },
-      graphStats: { label: 'Stats (FPS)', type: LevaInputs.BOOLEAN, value: config.graphStats ?? initialConfig.graphStats },
-      grid: { label: 'Show Grid', type: LevaInputs.BOOLEAN, value: config.grid ?? initialConfig.grid },
-      robotWs: { label: 'ROS Connection', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
-      apiKey: passwordInput({ label: 'API Key', value: config.apiKey ?? initialConfig.apiKey }),
-      volume: { label: 'Robot Volume', type: LevaInputs.NUMBER, value: config.volume ?? initialConfig.volume, min: 0, max: 100 },
-      autoRotateMain: {
-        label: 'Auto-rotate Main Scene',
-        type: LevaInputs.BOOLEAN,
-        value: config.autoRotateMain ?? initialConfig.autoRotateMain,
-      },
-      envBackground: {
-        label: 'Environment',
-        type: LevaInputs.SELECT,
-        options: backgroundOptions,
-        value:
-          config.envBackground && backgroundOptions.includes(config.envBackground) ? config.envBackground : initialConfig.envBackground,
-      },
+      'Connections': folder({
+        robotWs: { label: 'Foxglove', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
+        apiKey: passwordInput({ label: 'OpenAI API key', value: config.apiKey ?? initialConfig.apiKey }),
+        Topics: folder(
+          {
+            cameraTopic: { label: 'Camera', type: LevaInputs.STRING, value: config.cameraTopic ?? initialConfig.cameraTopic },
+            depthCamTopic: { label: 'Depth Cam', type: LevaInputs.STRING, value: config.depthCamTopic ?? initialConfig.depthCamTopic },
+          },
+          { collapsed: true },
+        ),
+      }),
+      'Visuals': folder({
+        robotShadow: { label: 'Robot Cast Shadow', type: LevaInputs.BOOLEAN, value: config.robotShadow ?? initialConfig.robotShadow },
+        envBackground: {
+          label: 'Environment',
+          type: LevaInputs.SELECT,
+          options: backgroundOptions,
+          value:
+            config.envBackground && backgroundOptions.includes(config.envBackground) ? config.envBackground : initialConfig.envBackground,
+        },
+        autoRotateMain: {
+          label: 'Auto-rotate Main Scene',
+          type: LevaInputs.BOOLEAN,
+          value: config.autoRotateMain ?? initialConfig.autoRotateMain,
+        },
+      }),
+      'Helpers': folder({
+        graphStats: { label: 'Stats (FPS)', type: LevaInputs.BOOLEAN, value: config.graphStats ?? initialConfig.graphStats },
+        grid: { label: 'Show Grid', type: LevaInputs.BOOLEAN, value: config.grid ?? initialConfig.grid },
+      }),
+      'Robot Controls': folder({
+        volume: { label: 'Robot Volume', type: LevaInputs.NUMBER, value: config.volume ?? initialConfig.volume, min: 0, max: 100 },
+        joystick: { label: 'Joystick controls', type: LevaInputs.BOOLEAN, value: config.joystick ?? initialConfig.joystick },
+      }),
+      'Views': folder({
+        showCamera: { label: 'Camera', type: LevaInputs.BOOLEAN, value: config.showCamera ?? initialConfig.showCamera },
+        showDepthCam: { label: 'Depth Cam', type: LevaInputs.BOOLEAN, value: config.showDepthCam ?? initialConfig.showDepthCam },
+      }),
     };
   });
 

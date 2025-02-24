@@ -1,5 +1,7 @@
 body {
-  --leva-sizes-rootWidth: 360px;
+  --leva-sizes-rootWidth: 500px;
+  --leva-fontSizes-root: 14px;
+  --leva-sizes-controlWidth: 270px;
 }
 
 body {

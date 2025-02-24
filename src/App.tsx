@@ -48,9 +48,9 @@ const App = () => {
         <Go2Robot castShadow={config.robotShadow} />
         <VoxelCloud />
       </MainScene>
-      <JoyController />
-      <CameraSnapshot />
-      <DepthCam />
+      {config.joystick ? <JoyController /> : ''}
+      {config.showCamera ? <CameraSnapshot /> : ''}
+      {config.showDepthCam ? <DepthCam /> : ''}
       <ChatWithAi />
       <BrandLogo />
     </AppContext.Provider>
