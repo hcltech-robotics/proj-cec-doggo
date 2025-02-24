@@ -44,16 +44,15 @@ export const DepthCam = () => {
 
   return (
     <div className={`depthcam ${zoom ? 'zoomed' : ''}`} ref={wrapper} onDoubleClick={changeZoom}>
-      <Canvas className="depthcam-canvas" shadows camera={{ position: [0.1, 0.0, 0.0], fov: 50 }}>
+      <Canvas className="depthcam-canvas" shadows camera={{ position: [0.1, 0.0, 0.0], fov: 45 }}>
         {data ? (
-          <group>
-            <mesh rotation={[Math.PI / -2, Math.PI / 2, Math.PI / 2, 'ZYX']}>
-              <bufferGeometry>
-                <float32BufferAttribute args={[data.points || [], 3]} attach="attributes-position" />
-                <float32BufferAttribute args={[data.colors || [], 3]} attach="attributes-color" />
-              </bufferGeometry>
-            </mesh>
-          </group>
+          <points rotation={[Math.PI / -2, Math.PI / 2, Math.PI / 2, 'ZYX']}>
+            <bufferGeometry>
+              <bufferAttribute args={[data.points, 3]} attach="attributes-position" />
+              <bufferAttribute args={[data.colors, 3]} attach="attributes-color" />
+            </bufferGeometry>
+            <pointsMaterial size={zoom ? 0.01 : 0.0001} vertexColors={true} />
+          </points>
         ) : (
           ''
         )}
