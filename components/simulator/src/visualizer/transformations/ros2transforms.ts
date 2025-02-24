@@ -2,10 +2,15 @@ import { Quaternion, Vector3 } from "three";
 import { SceneTransformParam } from "../../types";
 import { SceneManager } from "../SceneManager";
 import { updatePointCloud } from '../views/pointCloud/pointCloudTransformation';
+import { createRobot } from '../robot/robotLoader';
 
 function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const { data } = p
   const msgData = data.messageData
+
+  if (data.channelTopic === '/robot_description') {
+    createRobot(s, msgData.data)
+  }
 
   if (data.channelTopic === s.userSettings.topicList.selectedTopic) {
     updatePointCloud(s, msgData);

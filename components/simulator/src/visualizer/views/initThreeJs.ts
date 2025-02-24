@@ -1,4 +1,3 @@
-import { createRobot } from '../robot/robotLoader';
 import { SceneManager } from '../SceneManager';
 import { initSettings } from '../settings';
 import { createCustomGUITransforms } from '../transformations/customGuiTransforms';
@@ -19,7 +18,6 @@ function initThreeJSBase(sceneManager: SceneManager, onEvent: WebSocketEventHand
   createPointCloudScene(sceneManager);
   createLights(sceneManager);
   createHelpers(sceneManager);
-  createRobot(sceneManager);
   createCameraControls(sceneManager);
   createDomModifications(sceneManager);
   createCustomGUITransforms(sceneManager);

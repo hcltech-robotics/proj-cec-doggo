@@ -8,6 +8,7 @@ export const getSubscribeChannels = (items: string[] = []) => {
     '/gpt_cmd',
     '/cmd_vel',
     '/tts',
+    '/robot_description',
     ...items,
   ]);
 };
