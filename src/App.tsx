@@ -53,8 +53,6 @@ const App = () => {
     }
   }, [paused]);
 
-  console.log('render');
-
   return (
     <AppContext.Provider value={{ chatHistory: useChatHistoryStore, connection, chatAgent, visualAgent }}>
       <ControlPanel configChange={setConfig} paused={paused} setPaused={setPaused} />

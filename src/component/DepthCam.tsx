@@ -31,8 +31,6 @@ export const DepthCam = () => {
       const points = new Float32Array(msg.points);
       const colors = new Float32Array(msg.colors);
 
-      // console.log({ p: points.slice(0, 20), c: colors.slice(0, 20) });
-
       setData({ colors, points, header: msg.header });
     }
   }, [stamp]);
