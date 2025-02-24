@@ -4,11 +4,16 @@ import { SceneManager } from "../SceneManager";
 import { updatePointCloud } from "../views/pointCloud/pointCloudTransformation";
 import { updateCameraDepthColors } from '../views/pointCloud/cameraDepthColorPointsTransformation';
 import { getGuiState } from '../settings';
+import { createRobot } from '../robot/robotLoader';
 
 function transform_cb(p: SceneTransformParam, s: SceneManager) {
   const { data } = p
   const msgData = data.messageData
   const topicNames = getGuiState('TopicNames');
+
+  if (data.channelTopic === '/robot_description') {
+    createRobot(s, msgData.data)
+  }
 
   if (data.channelTopic === topicNames.pointcloud) {
     updatePointCloud(s, data.messageData);
