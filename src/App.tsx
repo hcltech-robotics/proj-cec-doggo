@@ -38,12 +38,15 @@ const App = () => {
   let [paused, setPaused] = useState(false);
 
   useEffect(() => {
+    chatAgent.setApiKey(config.apiKey);
+    visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
+  }, [config.apiKey]);
+
+  useEffect(() => {
     connection.setTopicOverride(topicList.TOPIC_DEPTHCAM, config.depthCamTopic);
     connection.setTopicOverride(topicList.TOPIC_CAMERA, config.cameraTopic);
     connection.connect(config.robotWs);
-    chatAgent.setApiKey(config.apiKey);
-    visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
-  }, [config]);
+  }, [config.robotWs, config.depthCamTopic, config.cameraTopic]);
 
   useEffect(() => {
     if (paused) {
