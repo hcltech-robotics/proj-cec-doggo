@@ -35,6 +35,7 @@ visualAgent.setSystemPrompt(
 
 const App = () => {
   let [config, setConfig] = useState<Config>(initialConfig);
+  let [paused, setPaused] = useState(false);
 
   useEffect(() => {
     connection.setTopicOverride(topicList.TOPIC_DEPTHCAM, config.depthCamTopic);
@@ -44,9 +45,19 @@ const App = () => {
     visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
   }, [config]);
 
+  useEffect(() => {
+    if (paused) {
+      connection.pause();
+    } else {
+      connection.resume();
+    }
+  }, [paused]);
+
+  console.log('render');
+
   return (
     <AppContext.Provider value={{ chatHistory: useChatHistoryStore, connection, chatAgent, visualAgent }}>
-      <ControlPanel configChange={setConfig} />
+      <ControlPanel configChange={setConfig} paused={paused} setPaused={setPaused} />
       <MainScene config={config}>
         <Go2Robot castShadow={config.robotShadow} />
         <VoxelCloud />

@@ -19,6 +19,8 @@ export class RobotCommunicationService {
 
   private topicOverrides: Partial<Record<TopicListName, string>> = {};
 
+  private paused: boolean = false;
+
   public get depthCamTopic() {
     return (this.topicOverrides[topicList.TOPIC_DEPTHCAM] as typeof topicList.TOPIC_DEPTHCAM) || topicList.TOPIC_DEPTHCAM;
   }
@@ -67,7 +69,7 @@ export class RobotCommunicationService {
   public onMessage = (message: MessageData) => {
     const data = this.decode(message);
 
-    if (data) {
+    if (data && !this.paused) {
       if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_LIDAR) {
         this.voxelWorker.postMessage({
           resolution: data.resolution,
@@ -145,6 +147,14 @@ export class RobotCommunicationService {
     this.client.on('open', this.onOpen);
     this.client.on('advertise', this.onAdvertise);
     this.client.on('message', this.onMessage);
+  };
+
+  public pause = () => {
+    this.paused = true;
+  };
+
+  public resume = () => {
+    this.paused = false;
   };
 
   constructor() {

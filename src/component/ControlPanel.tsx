@@ -1,5 +1,5 @@
 import { PresetsType } from '@react-three/drei/helpers/environment-assets';
-import { folder, Leva, LevaInputs, useControls } from 'leva';
+import { button, folder, Leva, LevaInputs, useControls } from 'leva';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { passwordInput } from './LevaPasswordInput';
 
@@ -51,7 +51,11 @@ export const initialConfig: Config = {
   envBackground: 'none',
 };
 
-export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Config>> }) => {
+export const ControlPanel = (props: {
+  configChange: Dispatch<SetStateAction<Config>>;
+  paused: boolean;
+  setPaused: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [config] = useControls(() => {
     let config: Config = initialConfig;
 
@@ -63,6 +67,8 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
     }
 
     return {
+      'Pause': button(() => props.setPaused(true), { disabled: props.paused }),
+      'Unpause': button(() => props.setPaused(false), { disabled: !props.paused }),
       'Connections': folder({
         robotWs: { label: 'Foxglove', type: LevaInputs.STRING, value: config.robotWs ?? initialConfig.robotWs },
         apiKey: passwordInput({ label: 'OpenAI API key', value: config.apiKey ?? initialConfig.apiKey }),
@@ -102,7 +108,7 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
         showDepthCam: { label: 'Depth Cam', type: LevaInputs.BOOLEAN, value: config.showDepthCam ?? initialConfig.showDepthCam },
       }),
     };
-  });
+  }, [props.paused]);
 
   useEffect(() => {
     props.configChange(config as Config);
