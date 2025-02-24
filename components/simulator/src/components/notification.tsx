@@ -51,9 +51,9 @@ const Accordion = ({ title, content }: AccordionProps) => {
         <span className="detail-icon">{isActive ? '⬆️' : '⬇️'}</span>
       </div>
       <div className={`accordion-content ${isActive ? 'detailed' : ''}`}>
-        <ul>
-          <li>Reason: {content.code}</li>
-          <li>Message: {content.message}</li>
+        <ul className='error-details'>
+          <li>- Reason: {content.code}</li>
+          <li>- Message: {content.message}</li>
         </ul>
       </div>
     </div>
