@@ -17,6 +17,16 @@ import { depthCamWorker } from './DepthCamWorker';
 export class RobotCommunicationService {
   private client: FoxgloveClient | undefined = undefined;
 
+  private topicOverrides: Partial<Record<TopicListName, string>> = {};
+
+  public get depthCamTopic() {
+    return (this.topicOverrides[topicList.TOPIC_DEPTHCAM] as typeof topicList.TOPIC_DEPTHCAM) || topicList.TOPIC_DEPTHCAM;
+  }
+
+  public get cameraTopic() {
+    return (this.topicOverrides[topicList.TOPIC_CAMERA] as typeof topicList.TOPIC_CAMERA) || topicList.TOPIC_CAMERA;
+  }
+
   public voxelWorker: Worker;
   public depthCamWorker: Worker;
   public channels: Record<number, EnrichedChannel<any>> = {};
@@ -26,8 +36,9 @@ export class RobotCommunicationService {
   public onOpen = () => {};
 
   public onAdvertise = (topics: Channel[]) => {
+    const subscribeTo = [...subscribedTopics, ...Object.values(this.topicOverrides)];
     topics.forEach((topic) => {
-      if (subscribedTopics.includes(topic.topic as TopicListName)) {
+      if (subscribeTo.includes(topic.topic as TopicListName)) {
         const subscriptionId = this.client!.subscribe(topic.id);
         const definition = parse(topic.schema, { ros2: true });
         const reader = new MessageReader(definition);
@@ -49,6 +60,10 @@ export class RobotCommunicationService {
     return;
   };
 
+  public setTopicOverride = (topic: TopicListName, newTopicName: string) => {
+    this.topicOverrides[topic] = newTopicName;
+  };
+
   public onMessage = (message: MessageData) => {
     const data = this.decode(message);
 
@@ -60,7 +75,7 @@ export class RobotCommunicationService {
           width: data.width,
           data: data.data,
         });
-      } else if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_DEPTHCAM) {
+      } else if (this.channels[message.subscriptionId]?.topic === this.depthCamTopic) {
         this.depthCamWorker.postMessage(data);
       } else {
         if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_TRANSFORM) {
@@ -83,7 +98,7 @@ export class RobotCommunicationService {
   };
 
   public depthCamParser = ({ data }: { data: ParsedPointCloud2 }) => {
-    this.channelByName[topicList.TOPIC_DEPTHCAM].lastMessage = data;
+    this.channelByName[this.depthCamTopic].lastMessage = data;
   };
 
   public twistMessage = (twist: TwistMessage) => {

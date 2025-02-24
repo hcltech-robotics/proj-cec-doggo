@@ -4,7 +4,6 @@ import { useContext, useMemo, useRef, useState } from 'react';
 import { ParsedPointCloud2 } from 'src/model/Go2RobotInterfaces';
 import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
-import { topicList } from '../model/Go2RobotTopics';
 import './DepthCam.css';
 
 const TARGET_FPS = 30;
@@ -19,14 +18,14 @@ export const DepthCam = () => {
   const wrapper = useRef<HTMLDivElement>(null);
 
   useInterval(() => {
-    const msg = connection.channelByName[topicList.TOPIC_DEPTHCAM]?.lastMessage;
+    const msg = connection.channelByName[connection.depthCamTopic]?.lastMessage;
     if (msg && msg.header) {
       setStamp(`${msg.header.stamp.sec}-${msg.header.stamp.nanosec}`);
     }
   }, 1000 / TARGET_FPS);
 
   useMemo(() => {
-    const msg = connection.channelByName[topicList.TOPIC_DEPTHCAM]?.lastMessage;
+    const msg = connection.channelByName[connection.depthCamTopic]?.lastMessage;
 
     if (msg?.header) {
       const points = new Float32Array(msg.points);

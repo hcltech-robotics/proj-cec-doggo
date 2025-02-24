@@ -2,7 +2,6 @@ import { useContext, useMemo, useRef, useState } from 'react';
 import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
 import { useObjectURL } from '../helper/UInt8ToImageUrl';
-import { topicList } from '../model/Go2RobotTopics';
 import './CameraSnapshot.css';
 
 const TARGET_FPS = 30;
@@ -17,14 +16,14 @@ export const CameraSnapshot = () => {
   const wrapper = useRef<HTMLDivElement>(null);
 
   useInterval(() => {
-    const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
+    const msg = connection.channelByName[connection.cameraTopic]?.lastMessage;
     if (msg && msg.header) {
       setStamp(`${msg.header.stamp.sec}-${msg.header.stamp.nanosec}`);
     }
   }, 1000 / TARGET_FPS);
 
   useMemo(() => {
-    const msg = connection.channelByName[topicList.TOPIC_CAMERA]?.lastMessage;
+    const msg = connection.channelByName[connection.cameraTopic]?.lastMessage;
     if (msg) {
       const blob = new Blob([msg.data], { type: 'image/jpeg' });
       setObject(blob);

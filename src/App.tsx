@@ -9,6 +9,7 @@ import { Go2Robot } from './component/Go2Robot';
 import { JoyController } from './component/JoyController';
 import { MainScene } from './component/MainScene';
 import { VoxelCloud } from './component/VoxelCloud';
+import { topicList } from './model/Go2RobotTopics';
 import { useChatHistoryStore } from './service/ChatHistoryService';
 import { LlmCommunicationService } from './service/LlmCommunicationService';
 import { LlmRobotTooling } from './service/LlmRobotTooling';
@@ -36,6 +37,8 @@ const App = () => {
   let [config, setConfig] = useState<Config>(initialConfig);
 
   useEffect(() => {
+    connection.setTopicOverride(topicList.TOPIC_DEPTHCAM, config.depthCamTopic);
+    connection.setTopicOverride(topicList.TOPIC_CAMERA, config.cameraTopic);
     connection.connect(config.robotWs);
     chatAgent.setApiKey(config.apiKey);
     visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });

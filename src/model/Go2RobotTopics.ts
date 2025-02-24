@@ -8,7 +8,7 @@ export const topicList = {
   TOPIC_TRANSFORM: '/tf',
   TOPIC_LIDAR: '/utlidar/voxel_map_compressed',
   TOPIC_CAMERA: '/camera/compressed',
-  TOPIC_DEPTHCAM: '/camera/camera/depth/color/points',
+  TOPIC_DEPTHCAM: '/camera/depth/color/points',
 } as const;
 
 export type TopicListName = (typeof topicList)[keyof typeof topicList];

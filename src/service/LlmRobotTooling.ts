@@ -6,7 +6,6 @@ import { Vector3 } from 'three';
 import { StoreApi, UseBoundStore } from 'zustand';
 import { uInt8ToBase64String } from '../helper/UInt8ToBase64';
 import { robotCommands } from '../model/Go2RobotInterfaces';
-import { topicList } from '../model/Go2RobotTopics';
 import { ChatHistoryActions, ChatHistoryState } from './ChatHistoryService';
 import { LlmCommunicationService } from './LlmCommunicationService';
 import { RobotCommunicationService } from './RobotCommunicationService';
@@ -100,7 +99,8 @@ export class LlmRobotTooling implements LlmToolHelper {
         },
         {
           name: 'standby_pose',
-          description: 'This tools is for reset your pose into the regular state, also understood as stand on 4 legs or stand up or stand by.',
+          description:
+            'This tools is for reset your pose into the regular state, also understood as stand on 4 legs or stand up or stand by.',
         },
       ),
     },
@@ -159,7 +159,7 @@ export class LlmRobotTooling implements LlmToolHelper {
   };
 
   private analyzeImage = async () => {
-    const imageData = uInt8ToBase64String(this.robot.channelByName[topicList.TOPIC_CAMERA].lastMessage.data);
+    const imageData = uInt8ToBase64String(this.robot.channelByName[this.robot.cameraTopic].lastMessage.data);
     const imageUrl = `data:image/png;base64,${imageData}`;
 
     const { addImage } = this.chatHistory.getState();
