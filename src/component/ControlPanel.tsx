@@ -111,7 +111,7 @@ export const ControlPanel = (props: { configChange: Dispatch<SetStateAction<Conf
 
   return (
     <>
-      <Leva collapsed />
+      <Leva collapsed titleBar={{ title: 'Configuration' }} />
     </>
   );
 };
