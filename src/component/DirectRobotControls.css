@@ -1,0 +1,57 @@
+.direct-robot-controls {
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  transition: all 500ms ease-in-out;
+  background-color: var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg);
+  box-shadow: var(--leva-shadows-level1);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.controls-expander {
+  display: flex;
+}
+
+.control-button {
+  --size: 64px;
+  transition: all 150ms ease-in-out;
+  width: calc(var(--size) + 24px);
+  height: calc(var(--size) + 1.2em);
+  min-width: calc(var(--size) + 24px);
+  min-height: calc(var(--size) + 1.2em);
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  border-radius: var(--leva-radii-sm);
+  color: var(--leva-colors-highlight3);
+  outline: none;
+}
+
+.control-button:hover {
+  background-color: #ffffff20;
+}
+
+.control-button svg {
+  width: 100%;
+  height: calc(100% - 2em);
+  fill: currentColor;
+}
+
+.controls {
+  transition: all 500ms ease-in-out;
+  display: flex;
+  gap: 8px;
+  max-width: 0;
+  overflow: hidden;
+}
+
+.controls.expanded {
+  padding-right: 8px;
+  margin-right: 8px;
+  max-width: calc(100vw - 2 * 50px);
+  border-right: 1px solid var(--leva-colors-highlight1);
+}

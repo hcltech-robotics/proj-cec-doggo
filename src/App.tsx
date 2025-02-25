@@ -14,6 +14,7 @@ import { useChatHistoryStore } from './service/ChatHistoryService';
 import { LlmCommunicationService } from './service/LlmCommunicationService';
 import { LlmRobotTooling } from './service/LlmRobotTooling';
 import { RobotCommunicationService } from './service/RobotCommunicationService';
+import { DirectRobotControls } from './component/DirectRobotControls';
 
 const connection = new RobotCommunicationService();
 const visualAgent = new LlmCommunicationService('');
@@ -66,6 +67,7 @@ const App = () => {
       {config.joystick ? <JoyController /> : ''}
       {config.showCamera ? <CameraSnapshot /> : ''}
       {config.showDepthCam ? <DepthCam /> : ''}
+      <DirectRobotControls />
       <ChatWithAi />
       <BrandLogo />
     </AppContext.Provider>
