@@ -82,14 +82,14 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
           <div className="chat-history">
             <div className="history-entries" ref={historyNode}>
               {history.map((item) => (
-                <ChatEntry item={item} />
+                <ChatEntry key={item.key} item={item} />
               ))}
             </div>
           </div>
         ) : (
           <div className="chat-recent">
             <div className="history-entries" ref={historyNode}>
-              {historyStart >= 0 ? history.slice(historyStart).map((item) => <ChatEntry item={item} />) : ''}
+              {historyStart >= 0 ? history.slice(historyStart).map((item) => <ChatEntry key={item.key} item={item} />) : ''}
             </div>
           </div>
         )}
