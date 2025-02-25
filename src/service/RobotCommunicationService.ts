@@ -49,7 +49,7 @@ export class RobotCommunicationService {
           lastMessage: {},
           decoder: (msg: DataView) => reader.readMessage(msg),
         };
-        this.channelByName[topic.topic as TopicListName] = this.channels[subscriptionId];
+        this.channelByName[topic.topic as TopicListName] = this.channels[subscriptionId]!;
       }
     });
   };
@@ -131,7 +131,7 @@ export class RobotCommunicationService {
 
       console.log('[LOG: Robot] Sending message to', topic, structuredMessage);
 
-      this.client.sendMessage(channelId, message);
+      this.client.sendMessage(channelId!, message);
     }
   };
 
