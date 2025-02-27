@@ -52,7 +52,13 @@ const updateRotation = (connection: RobotCommunicationService, mesh: URDFRobot) 
 
 export const Go2Robot = (props: { castShadow: boolean }) => {
   const connection = useContext(AppContext).connection;
-  const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf') as URDFRobot;
+  const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf', (loader) => {
+    loader.packages = {
+      'go2_robot_sdk': import.meta.env.BASE_URL + 'assets/go2_robot',
+      'go2_description': import.meta.env.BASE_URL + 'assets/go2_robot',
+      'realsense2_description': import.meta.env.BASE_URL + 'assets/go2_robot',
+    };
+  }) as URDFRobot;
 
   useEffect(() => {
     robotMesh.traverse((c) => (c.castShadow = props.castShadow));

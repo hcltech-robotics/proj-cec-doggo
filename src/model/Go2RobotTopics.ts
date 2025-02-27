@@ -9,6 +9,7 @@ export const topicList = {
   TOPIC_LIDAR: '/utlidar/voxel_map_compressed',
   TOPIC_CAMERA: '/camera/compressed',
   TOPIC_DEPTHCAM: '/camera/depth/color/points',
+  TOPIC_ROBOT_DESCRIPTION: '/robot_description',
 } as const;
 
 export type TopicListName = (typeof topicList)[keyof typeof topicList];
@@ -20,6 +21,7 @@ export const subscribedTopics: TopicListName[] = [
   topicList.TOPIC_LIDAR,
   topicList.TOPIC_CAMERA,
   topicList.TOPIC_DEPTHCAM,
+  topicList.TOPIC_ROBOT_DESCRIPTION,
 ];
 
 export interface TypedChannels {
@@ -29,6 +31,7 @@ export interface TypedChannels {
   [topicList.TOPIC_LIDAR]: EnrichedChannel<LidarData>;
   [topicList.TOPIC_CAMERA]: EnrichedChannel<CompressedImageData>;
   [topicList.TOPIC_DEPTHCAM]: EnrichedChannel<ParsedPointCloud2>;
+  [topicList.TOPIC_ROBOT_DESCRIPTION]: EnrichedChannel<any>;
 }
 
 export const publishTopics = {
