@@ -37,6 +37,7 @@
   height: 1.2em;
   padding: 4px;
   user-select: text;
+  max-height: 50vh;
 }
 
 .chat-textarea:active,

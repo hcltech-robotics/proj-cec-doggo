@@ -1,5 +1,5 @@
 import { differenceInSeconds } from 'date-fns';
-import { History, Mic, Send } from 'lucide-react';
+import { History, Mic, Send, X } from 'lucide-react';
 import { FormEventHandler, KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
 import { ChatHistoryItem } from 'src/model/ChatInterfaces';
 import { AppContext } from '../AppContext';
@@ -33,19 +33,28 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
 
   const handleKeyPress: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      setInput('');
       e.preventDefault();
       form.current?.requestSubmit();
+    }
+    if (e.key === 'Escape') {
+      textarea.current?.select();
+    }
+  };
+
+  const clearInput = () => {
+    setInput('');
+    if (textarea.current) {
+      textarea.current.value = '';
+      adjustHeight(textarea.current);
     }
   };
 
   const submitForm: FormEventHandler<HTMLFormElement> = (e) => {
     if (textarea.current) {
-      const query = textarea.current.value;
+      const query = textarea.current.value.trim();
       if (query) {
-        textarea.current.value = '';
-        adjustHeight(textarea.current);
         props.sendMessage(query);
+        clearInput();
       }
     }
     e.preventDefault();
@@ -103,6 +112,13 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
               onKeyDown={handleKeyPress}
               ref={textarea}
             ></textarea>
+            {input.length > 0 ? (
+              <button type="button" className="chat-button" onClick={clearInput}>
+                <X />
+              </button>
+            ) : (
+              ''
+            )}
             <button type="button" className="chat-button">
               <Mic />
             </button>
