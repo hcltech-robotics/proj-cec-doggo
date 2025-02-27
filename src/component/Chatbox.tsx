@@ -43,12 +43,16 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
     }
   };
 
-  const clearInput = () => {
-    setInput('');
+  const setInputValue = (value: string = '') => {
+    setInput(value);
     if (textarea.current) {
-      textarea.current.value = '';
+      textarea.current.value = value;
       adjustHeight(textarea.current);
     }
+  };
+
+  const clearInput = () => {
+    setInputValue('');
   };
 
   const submitForm: FormEventHandler<HTMLFormElement> = (e) => {
@@ -71,6 +75,10 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
       historyNode.current.scrollTop = historyNode.current.scrollHeight;
     }
   }, [history, showHistory]);
+
+  useEffect(() => {
+    setInputValue(result);
+  }, [result]);
 
   const calcHistory = (lHistory: ChatHistoryItem[]): number => {
     const historyStart = lHistory.findIndex((item) => differenceInSeconds(item.hide, new Date()) > 0);

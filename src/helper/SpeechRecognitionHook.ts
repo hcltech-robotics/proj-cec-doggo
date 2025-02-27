@@ -14,8 +14,9 @@ export const useSpeechRecognition = () => {
   };
 
   const onResult = (event: SpeechRecognitionEvent) => {
-    setListening(false);
-    console.log(event);
+    if (event.results?.[0]?.[0]?.transcript) {
+      setResult(event.results[0][0].transcript);
+    }
   };
 
   const onSpeechEnd = () => {
