@@ -1,6 +1,7 @@
 import { differenceInSeconds } from 'date-fns';
 import { History, Mic, Send, X } from 'lucide-react';
 import { FormEventHandler, KeyboardEventHandler, useContext, useEffect, useRef, useState } from 'react';
+import { useSpeechRecognition } from '../helper/SpeechRecognitionHook';
 import { ChatHistoryItem } from 'src/model/ChatInterfaces';
 import { AppContext } from '../AppContext';
 import { useInterval } from '../helper/TimeHooks';
@@ -12,6 +13,7 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
   const [showHistory, setShowHistory] = useState<boolean>(false);
   const [historyStart, setHistoryStart] = useState<number>(-1);
   const { history } = useContext(AppContext).chatHistory();
+  const { speechRecognitionAvailable, listen, result, listening } = useSpeechRecognition();
 
   const textarea = useRef<HTMLTextAreaElement>(null);
   const form = useRef<HTMLFormElement>(null);
@@ -119,7 +121,12 @@ export const Chatbox = (props: { sendMessage: (query: string) => void }) => {
             ) : (
               ''
             )}
-            <button type="button" className="chat-button">
+            <button
+              type="button"
+              className={`chat-button ${listening ? 'pulse' : ''}`}
+              disabled={!speechRecognitionAvailable}
+              onClick={listen}
+            >
               <Mic />
             </button>
             <button type="submit" className="chat-button" disabled={input.trim().length === 0}>
