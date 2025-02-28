@@ -70,6 +70,8 @@ export class RobotCommunicationService {
     const data = this.decode(message);
 
     if (data && !this.paused) {
+      document.dispatchEvent(new CustomEvent('robotMessage', { detail: { topic: this.channels[message.subscriptionId]?.topic } }));
+
       if (this.channels[message.subscriptionId]?.topic === topicList.TOPIC_LIDAR) {
         this.voxelWorker.postMessage({
           resolution: data.resolution,
