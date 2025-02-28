@@ -1,11 +1,17 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { RobotCommunicationService } from 'src/service/RobotCommunicationService';
-import { Vector3, Vector4 } from 'three';
+import { LoadingManager, Vector3, Vector4 } from 'three';
 import URDFLoader, { URDFRobot } from 'urdf-loader';
 import { AppContext } from '../AppContext';
 import { initialJointState, initialPosition } from '../model/Go2RobotInterfaces';
 import { topicList } from '../model/Go2RobotTopics';
+
+const packageOverrides = {
+  go2_robot_sdk: import.meta.env.BASE_URL + 'assets/go2_robot',
+  go2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
+  realsense2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
+};
 
 const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
   Object.keys(joints).forEach((joint) => {
@@ -52,13 +58,30 @@ const updateRotation = (connection: RobotCommunicationService, mesh: URDFRobot) 
 
 export const Go2Robot = (props: { castShadow: boolean }) => {
   const connection = useContext(AppContext).connection;
-  const robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf', (loader) => {
-    loader.packages = {
-      'go2_robot_sdk': import.meta.env.BASE_URL + 'assets/go2_robot',
-      'go2_description': import.meta.env.BASE_URL + 'assets/go2_robot',
-      'realsense2_description': import.meta.env.BASE_URL + 'assets/go2_robot',
-    };
+  const [robotXml, setRobotXml] = useState<string | null>(null);
+
+  let robotMesh = useLoader(URDFLoader as any, '/assets/go2.urdf', (loader) => {
+    loader.packages = packageOverrides;
   }) as URDFRobot;
+
+  document.addEventListener('robotMessage', (e: Event) => {
+    const event = e as CustomEvent<{ topic: string }>;
+    if (event.detail.topic === topicList.TOPIC_ROBOT_DESCRIPTION) {
+      const robotDescription = connection.channelByName[topicList.TOPIC_ROBOT_DESCRIPTION]?.lastMessage;
+      if (robotDescription && robotDescription.data) {
+        setRobotXml(robotDescription.data);
+      }
+    }
+  });
+
+  useMemo(() => {
+    if (robotXml) {
+      const manager = new LoadingManager();
+      const loader = new URDFLoader(manager);
+      loader.packages = packageOverrides;
+      robotMesh = loader.parse(robotXml);
+    }
+  }, [robotXml]);
 
   useEffect(() => {
     robotMesh.traverse((c) => (c.castShadow = props.castShadow));
