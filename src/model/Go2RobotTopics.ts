@@ -1,6 +1,6 @@
 import { ClientChannelWithoutId } from '@foxglove/ws-protocol';
 import { EnrichedChannel } from './FoxgloveBasics';
-import { CompressedImageData, JointState, LidarData, Odometry, ParsedPointCloud2, Transform } from './Go2RobotInterfaces';
+import { CompressedImageData, JointState, LidarData, Odometry, ParsedPointCloud2, RobotDescription, Transform } from './Go2RobotInterfaces';
 
 export const topicList = {
   TOPIC_JOINT_STATES: '/joint_states',
@@ -31,7 +31,7 @@ export interface TypedChannels {
   [topicList.TOPIC_LIDAR]: EnrichedChannel<LidarData>;
   [topicList.TOPIC_CAMERA]: EnrichedChannel<CompressedImageData>;
   [topicList.TOPIC_DEPTHCAM]: EnrichedChannel<ParsedPointCloud2>;
-  [topicList.TOPIC_ROBOT_DESCRIPTION]: EnrichedChannel<any>;
+  [topicList.TOPIC_ROBOT_DESCRIPTION]: EnrichedChannel<RobotDescription>;
 }
 
 export const publishTopics = {

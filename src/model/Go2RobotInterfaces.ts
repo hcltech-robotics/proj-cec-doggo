@@ -168,3 +168,7 @@ export interface ParsedPointCloud2<T = ArrayBuffer> {
   points: T;
   colors: T;
 }
+
+export interface RobotDescription {
+  data: string;
+}
