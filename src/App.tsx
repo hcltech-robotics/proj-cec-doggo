@@ -15,6 +15,7 @@ import { LlmCommunicationService } from './service/LlmCommunicationService';
 import { LlmRobotTooling } from './service/LlmRobotTooling';
 import { RobotCommunicationService } from './service/RobotCommunicationService';
 import { DirectRobotControls } from './component/DirectRobotControls';
+import ErrorNotification, { ErrorNotificationMessage } from './component/ErrorNotification';
 
 const connection = new RobotCommunicationService();
 const visualAgent = new LlmCommunicationService('');
@@ -35,8 +36,10 @@ visualAgent.setSystemPrompt(
 );
 
 const App = () => {
-  let [config, setConfig] = useState<Config>(initialConfig);
-  let [paused, setPaused] = useState(false);
+  const [config, setConfig] = useState<Config>(initialConfig);
+  const [paused, setPaused] = useState(false);
+  const [connectionError, setConnectionError] = useState<ErrorNotificationMessage | null>(null)
+  const [chatError, setChatError] = useState<ErrorNotificationMessage | null>(null)
 
   useEffect(() => {
     chatAgent.setApiKey(config.apiKey);
@@ -46,7 +49,10 @@ const App = () => {
   useEffect(() => {
     connection.setTopicOverride(topicList.TOPIC_DEPTHCAM, config.depthCamTopic);
     connection.setTopicOverride(topicList.TOPIC_CAMERA, config.cameraTopic);
-    connection.connect(config.robotWs);
+    connectToWebsocket();
+    return () => {
+      connection.disconnect();
+    };
   }, [config.robotWs, config.depthCamTopic, config.cameraTopic]);
 
   useEffect(() => {
@@ -57,8 +63,42 @@ const App = () => {
     }
   }, [paused]);
 
+  const connectToWebsocket = () => {
+    connection
+      .connect(config.robotWs)
+      .then(() => setConnectionError(null))
+      .catch((error) => setConnectionError(error));
+  };
+
+  const reconnect = () => {
+    setConnectionError(null);
+    connectToWebsocket();
+  };
+
+  const handleChatError = (error: ErrorNotificationMessage) => {
+    setChatError(error)
+  };
+
   return (
     <AppContext.Provider value={{ chatHistory: useChatHistoryStore, connection, chatAgent, visualAgent }}>
+      {connectionError && (
+        <ErrorNotification
+          align="middle"
+          message={
+            `${connectionError.message}  Please check the URL in the Configuration panel in the top right corner and try to reconnect again.` ||
+            'Error'
+          }
+          errorDetails={null}
+          buttonProps={{ title: 'Try to reconnect', onClick: reconnect }}
+        />
+      )}
+      {chatError && (
+        <ErrorNotification
+          align="bottom"
+          message="Chat is not available. Please check API key in the Configuration panel in the top right corner and refresh the webpage."
+          errorDetails={chatError}
+        />
+      )}
       <ControlPanel configChange={setConfig} paused={paused} setPaused={setPaused} />
       <MainScene config={config}>
         <Go2Robot castShadow={config.robotShadow} />
@@ -68,7 +108,8 @@ const App = () => {
       {config.showCamera ? <CameraSnapshot /> : ''}
       {config.showDepthCam ? <DepthCam /> : ''}
       <DirectRobotControls />
-      <ChatWithAi />
+
+      {!chatError && <ChatWithAi handleConnection={handleChatError} />}
       <BrandLogo />
     </AppContext.Provider>
   );

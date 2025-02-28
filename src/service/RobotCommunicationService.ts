@@ -13,6 +13,7 @@ import {
   TypedChannels,
 } from '../model/Go2RobotTopics';
 import { depthCamWorker } from './DepthCamWorker';
+import { ErrorNotificationMessage } from '../component/ErrorNotification';
 
 export class RobotCommunicationService {
   private client: FoxgloveClient | undefined = undefined;
@@ -136,17 +137,43 @@ export class RobotCommunicationService {
   };
 
   public connect = (address: string = 'ws://localhost:8765') => {
-    if (this.client) {
-      this.client.close();
-    }
+    return new Promise((resolve, reject) => {
+      if (this.client) {
+        this.client.close();
+      }
 
-    this.client = new FoxgloveClient({
-      ws: new WebSocket(address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
+      try {
+        this.client = new FoxgloveClient({
+          ws: new WebSocket(address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
+        });
+
+        this.client.on('open', this.onOpen);
+        this.client.on('advertise', this.onAdvertise);
+        this.client.on('message', this.onMessage);
+
+        this.client.on('error', (error) => {
+          console.error(`Websocket connection failed to "${address}".`);
+          reject({
+            ...error,
+            message: `Websocket connection failed to "${address}".`,
+          });
+        });
+
+        this.client.on('close', (event) => {
+          console.error(`WebSocket closed unexpectedly to "${address}".`);
+          reject({
+            ...event,
+            message: `WebSocket closed unexpectedly to "${address}".`,
+          });
+        });
+      } catch (error) {
+        console.error(`Failed to connect "${address}".`);
+        reject({
+          ...(error as ErrorNotificationMessage),
+          message: `Failed to connect "${address}".`,
+        });
+      }
     });
-
-    this.client.on('open', this.onOpen);
-    this.client.on('advertise', this.onAdvertise);
-    this.client.on('message', this.onMessage);
   };
 
   public pause = () => {
@@ -155,6 +182,12 @@ export class RobotCommunicationService {
 
   public resume = () => {
     this.paused = false;
+  };
+
+  public disconnect = () => {
+    if (this.client) {
+      this.client.close();
+    }
   };
 
   constructor() {

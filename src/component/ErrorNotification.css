@@ -1,0 +1,81 @@
+.error-notification-wrapper {
+  position: absolute;
+  background-color: var(--leva-colors-elevation1);
+  border-radius: var(--leva-radii-lg);
+  box-shadow: var(--leva-shadows-level1);
+  color: #fff;
+  padding: 10px 20px;
+  width: 600px;
+  z-index: 9;
+
+  &.middle {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &.bottom {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .error-icon-wrapper {
+    text-align: center;
+
+    .error-icon {
+      width: 65px;
+      height: 60px;
+    }
+  }
+
+  .error-button {
+    display: block;
+    border: none;
+    border-radius: var(--leva-radii-sm);
+    color: var(--leva-colors-highlight3);
+    background-color: var(--leva-colors-accent2);
+    cursor: pointer;
+    padding: 5px 15px;
+    margin-bottom: 15px;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .detail-icon {
+    margin-left: 8px;
+  }
+
+  .accordion-title {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .accordion-content {
+    height: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 500ms ease-in;
+
+    &.detailed {
+      height: 100%;
+      max-height: 350px;
+      transition: all 500ms ease-in;
+    }
+
+    .error-details {
+      border: 1px dashed #fff5;
+      padding: 10px;
+      word-wrap: break-word;
+    }
+  }
+}
