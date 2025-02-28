@@ -14,6 +14,7 @@ import {
 } from '../model/Go2RobotTopics';
 import { depthCamWorker } from './DepthCamWorker';
 import { ErrorNotificationMessage } from '../component/ErrorNotification';
+import { Dispatch, SetStateAction } from 'react';
 
 export class RobotCommunicationService {
   private client: FoxgloveClient | undefined = undefined;
@@ -136,43 +137,39 @@ export class RobotCommunicationService {
     }
   };
 
-  public connect = (address: string = 'ws://localhost:8765') => {
-    return new Promise((resolve, reject) => {
-      if (this.client) {
-        this.client.close();
-      }
+  public connect = (address: string = 'ws://localhost:8765', onEvent: Dispatch<SetStateAction<ErrorNotificationMessage | null>>) => {
+    if (this.client) {
+      this.disconnect();
+    }
 
-      try {
-        this.client = new FoxgloveClient({
-          ws: new WebSocket(address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
-        });
+    this.client = new FoxgloveClient({
+      ws: new WebSocket(address, [FoxgloveClient.SUPPORTED_SUBPROTOCOL]),
+    });
 
-        this.client.on('open', this.onOpen);
-        this.client.on('advertise', this.onAdvertise);
-        this.client.on('message', this.onMessage);
-
-        this.client.on('error', (error) => {
-          console.error(`Websocket connection failed to "${address}".`);
-          reject({
-            ...error,
-            message: `Websocket connection failed to "${address}".`,
-          });
-        });
-
-        this.client.on('close', (event) => {
-          console.error(`WebSocket closed unexpectedly to "${address}".`);
-          reject({
-            ...event,
-            message: `WebSocket closed unexpectedly to "${address}".`,
-          });
-        });
-      } catch (error) {
-        console.error(`Failed to connect "${address}".`);
-        reject({
-          ...(error as ErrorNotificationMessage),
-          message: `Failed to connect "${address}".`,
-        });
-      }
+    this.client.on('open', () => {
+      console.log(`[LOG: WS] Websocket connection opened to "${address}".`);
+      onEvent(null);
+      this.onOpen;
+    });
+    this.client.on('advertise', this.onAdvertise);
+    this.client.on('message', this.onMessage);
+    this.client.on('error', (error) => {
+      console.error(`LOG: WS] Websocket connection failed to "${address}".`, error);
+      onEvent({
+        type: 'error',
+        message: `Websocket connection failed to "${address}".`,
+        code: '-',
+        param: undefined,
+      });
+    });
+    this.client.on('close', (error) => {
+      console.error(`LOG: WS] WebSocket closed unexpectedly to "${address}".`, error);
+      onEvent({
+        type: 'close',
+        message: `WebSocket closed unexpectedly to "${address}".`,
+        code: '-',
+        param: undefined,
+      });
     });
   };
 

@@ -38,18 +38,23 @@ visualAgent.setSystemPrompt(
 const App = () => {
   const [config, setConfig] = useState<Config>(initialConfig);
   const [paused, setPaused] = useState(false);
-  const [connectionError, setConnectionError] = useState<ErrorNotificationMessage | null>(null)
-  const [chatError, setChatError] = useState<ErrorNotificationMessage | null>(null)
+  const [chatError, setChatError] = useState<ErrorNotificationMessage | null>(null);
+  const [connectionError, setConnectionError] = useState<ErrorNotificationMessage | null>(null);
 
   useEffect(() => {
-    chatAgent.setApiKey(config.apiKey);
-    visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
+    if (config.apiKey) {
+      chatAgent.setApiKey(config.apiKey);
+      visualAgent.setApiKey(config.apiKey, true, { model: 'gpt-4o-mini', maxTokens: 1000, cache: true });
+    } else {
+      setChatError({ code: '-', message: 'API key is missing.', param: undefined, type: 'error' });
+    }
   }, [config.apiKey]);
 
   useEffect(() => {
     connection.setTopicOverride(topicList.TOPIC_DEPTHCAM, config.depthCamTopic);
     connection.setTopicOverride(topicList.TOPIC_CAMERA, config.cameraTopic);
-    connectToWebsocket();
+    connection.connect(config.robotWs, setConnectionError);
+
     return () => {
       connection.disconnect();
     };
@@ -64,10 +69,7 @@ const App = () => {
   }, [paused]);
 
   const connectToWebsocket = () => {
-    connection
-      .connect(config.robotWs)
-      .then(() => setConnectionError(null))
-      .catch((error) => setConnectionError(error));
+    connection.connect(config.robotWs, setConnectionError);
   };
 
   const reconnect = () => {
@@ -76,7 +78,7 @@ const App = () => {
   };
 
   const handleChatError = (error: ErrorNotificationMessage) => {
-    setChatError(error)
+    setChatError(error);
   };
 
   return (
@@ -108,7 +110,6 @@ const App = () => {
       {config.showCamera ? <CameraSnapshot /> : ''}
       {config.showDepthCam ? <DepthCam /> : ''}
       <DirectRobotControls />
-
       {!chatError && <ChatWithAi handleConnection={handleChatError} />}
       <BrandLogo />
     </AppContext.Provider>
