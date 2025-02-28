@@ -68,7 +68,7 @@ export const Go2Robot = (props: { castShadow: boolean }) => {
     const event = e as CustomEvent<{ topic: string }>;
     if (event.detail.topic === topicList.TOPIC_ROBOT_DESCRIPTION) {
       const robotDescription = connection.channelByName[topicList.TOPIC_ROBOT_DESCRIPTION]?.lastMessage;
-      if (robotDescription && robotDescription.data) {
+      if (robotDescription?.data) {
         setRobotXml(robotDescription.data);
       }
     }
