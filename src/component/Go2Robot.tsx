@@ -4,14 +4,8 @@ import { RobotCommunicationService } from 'src/service/RobotCommunicationService
 import { LoadingManager, Vector3, Vector4 } from 'three';
 import URDFLoader, { URDFRobot } from 'urdf-loader';
 import { AppContext } from '../AppContext';
-import { initialJointState, initialPosition } from '../model/Go2RobotInterfaces';
+import { initialJointState, initialPosition, packageOverrides } from '../model/Go2RobotInterfaces';
 import { topicList } from '../model/Go2RobotTopics';
-
-const packageOverrides = {
-  go2_robot_sdk: import.meta.env.BASE_URL + 'assets/go2_robot',
-  go2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
-  realsense2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
-};
 
 const setJoints = (joints: Record<string, number>, mesh: URDFRobot) => {
   Object.keys(joints).forEach((joint) => {
@@ -64,22 +58,34 @@ export const Go2Robot = (props: { castShadow: boolean }) => {
     loader.packages = packageOverrides;
   }) as URDFRobot;
 
-  document.addEventListener('robotMessage', (e: Event) => {
-    const event = e as CustomEvent<{ topic: string }>;
-    if (event.detail.topic === topicList.TOPIC_ROBOT_DESCRIPTION) {
-      const robotDescription = connection.channelByName[topicList.TOPIC_ROBOT_DESCRIPTION]?.lastMessage;
-      if (robotDescription?.data) {
-        setRobotXml(robotDescription.data);
+  useEffect(() => {
+    const handleRobotMessage = (e: Event) => {
+      const event = e as CustomEvent<{ topic: string }>;
+      if (event.detail.topic === topicList.TOPIC_ROBOT_DESCRIPTION) {
+        const robotDescription = connection.channelByName[topicList.TOPIC_ROBOT_DESCRIPTION]?.lastMessage;
+        if (robotDescription?.data) {
+          setRobotXml(robotDescription.data);
+        }
       }
-    }
-  });
+    };
+
+    document.addEventListener('robotMessage', handleRobotMessage);
+
+    return () => {
+      document.removeEventListener('robotMessage', handleRobotMessage);
+    };
+  }, [connection]);
 
   useMemo(() => {
     if (robotXml) {
-      const manager = new LoadingManager();
-      const loader = new URDFLoader(manager);
-      loader.packages = packageOverrides;
-      robotMesh = loader.parse(robotXml);
+      try {
+        const manager = new LoadingManager();
+        const loader = new URDFLoader(manager);
+        loader.packages = packageOverrides;
+        robotMesh = loader.parse(robotXml);
+      } catch (e) {
+        console.error('Robot mesh loading from direct XML failed:', e);
+      }
     }
   }, [robotXml]);
 
@@ -97,7 +103,7 @@ export const Go2Robot = (props: { castShadow: boolean }) => {
 
   return (
     <group rotation={[Math.PI / -2, 0.0, 0.0, 'ZYX']} position={[0.0, -0.04, 0.0]}>
-      <primitive object={robotMesh} />
+      {robotMesh && <primitive object={robotMesh} />}
     </group>
   );
 };

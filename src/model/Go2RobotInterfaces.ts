@@ -71,6 +71,12 @@ export const initialPosition = {
   z: 0.375,
 };
 
+export const packageOverrides = {
+  go2_robot_sdk: import.meta.env.BASE_URL + 'assets/go2_robot',
+  go2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
+  realsense2_description: import.meta.env.BASE_URL + 'assets/go2_robot',
+};
+
 export interface Point {
   x: number | undefined;
   y: number | undefined;
